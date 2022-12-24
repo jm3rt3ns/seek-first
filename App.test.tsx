@@ -6,6 +6,13 @@ describe('General Meta checks', () => {
     it('has app name somewhere on main page', async () => {
         render(<App />);
 
-        await screen.findByText("Seek First");
+        await screen.findByText("Welcome");
+    })
+
+    it('should show a book and chapter selection when no plan is active', async () => {
+        render(<App />);
+
+        await screen.findByDisplayValue("Book");
+        await screen.findAllByLabelText("Chapter");
     })
 })
