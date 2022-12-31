@@ -12,7 +12,7 @@ import SelectBook from './SelectBook';
 import { FOGWHITE } from './COLORS';
 import { Provider } from 'react-redux';
 import { store } from './store';
-import SelectStartVerse from './SelectStartVerse';
+import SelectStartVerse, { VerseSelectionHeader } from './SelectStartVerse';
 import SelectChapter, { ChapterSelectionHeader } from './SelectChapter';
 
 // local
@@ -50,7 +50,7 @@ export const App = () => {
               <Stack.Screen name="Seek First" component={HomeScreen} />
               <Stack.Screen name="Select Book" component={SelectBook} options={{ presentation: "modal", headerShown: false }} />
               <Stack.Screen name="Select Chapter" component={SelectChapter} options={{ presentation: "modal", headerLeft: ChapterSelectionHeader  }} />
-              <Stack.Screen name="Select Start Verse" component={SelectStartVerse} options={{ presentation: "modal", headerShown: false}} />
+              <Stack.Screen name="Select Start Verse" component={SelectStartVerse} options={{ presentation: "modal", headerLeft: VerseSelectionHeader}} />
             </Stack.Navigator>
           </View>
         </NavigationContainer>

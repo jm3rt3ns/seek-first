@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, View, VirtualizedList, StyleSheet, Text, StatusBar, Pressable } from 'react-native';
+import { SafeAreaView, VirtualizedList, StyleSheet, StatusBar, Pressable } from 'react-native';
 import { NavigationContext } from '@react-navigation/native';
 import { FOGWHITE, MIDNIGHTBLACK } from './COLORS';
 import { Paragraph } from './components/Paragraph';
@@ -17,7 +17,7 @@ export const Item = ({ title, idx }: any) => {
     const dispatch = useAppDispatch();
     const navigation = React.useContext(NavigationContext);
     return (
-        <Pressable style={styles.item} onPress={() => { dispatch(setBook(idx)); navigation?.navigate("Select Chapter") }}>
+        <Pressable style={styles.item} onPress={() => { dispatch(setBook({ name: title, number: idx })); navigation?.navigate("Select Chapter") }}>
             <Paragraph style={styles.title}>{title}</Paragraph>
         </Pressable>
     );

@@ -3,11 +3,16 @@ import { PlanSelectionStatus } from './PlanSelectionStatus';
 import type { RootState } from './store';
 
 
+interface BookDefinition {
+    name: string,
+    number: number
+}
+
 
 // Define a type for the slice state
 interface MemPlanState {
     scriptureRef: {
-        book: number,
+        book: BookDefinition,
         chapter: number,
         startVerse: number,
         endVerse: number,
@@ -21,7 +26,10 @@ interface MemPlanState {
 // Define the initial state using that type
 const initialState: MemPlanState = {
     scriptureRef: {
-        book: 1,
+        book: {
+            name: "Genesis",
+            number: 1
+        },
         chapter: 1,
         startVerse: 1,
         endVerse: 1,
@@ -37,7 +45,7 @@ export const counterSlice = createSlice({
     // `createSlice` will infer the state type from the `initialState` argument
     initialState,
     reducers: {
-        setBook: (state, action: PayloadAction<number>) => {
+        setBook: (state, action: PayloadAction<BookDefinition>) => {
             state.scriptureRef.book = action.payload;
             state.status = PlanSelectionStatus.ChoosingChapter;
         },

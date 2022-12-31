@@ -44,9 +44,32 @@ describe("Select a passage to memorize", () => {
             fireEvent.press(bookOption);
         })
 
-        screen.debug();
-
-        const chapterOptions = screen.getAllByText("Choose a Chapter");
+        const chapterOptions = screen.getAllByText("Leviticus, Chapter:");
         expect(chapterOptions.length).toEqual(2);
+    })
+
+    it('opens verse selection screen when a book is selected', async () => {
+        render(<App />);
+
+        await act(async () => {
+            const selectButton = await screen.findByText("Select Book");
+            fireEvent.press(selectButton);
+        })
+
+        const bookOption = screen.getByText("Leviticus");
+
+        act(() => {
+            fireEvent.press(bookOption);
+        })
+
+        const chapterOptions = screen.getAllByText("Leviticus, Chapter:");
+        expect(chapterOptions.length).toEqual(2);
+
+        act(() => {
+            fireEvent.press(screen.getByText("21"));
+        })
+
+        const verseHeader = screen.getAllByText("Leviticus 21, Verses:");
+        expect(verseHeader.length).toEqual(2);
     })
 })
