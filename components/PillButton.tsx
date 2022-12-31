@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View, StyleSheet, Pressable } from 'react-native';
-import { CROWNGOLD } from '../App';
+import { CROWNGOLD } from '../COLORS';
 
 export const PillButton = (props: any) => {
   const { onPress, title = 'Save' } = props;
@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 20,
+    margin: 10,
     paddingHorizontal: 32,
     borderRadius: 100,
     elevation: 3,

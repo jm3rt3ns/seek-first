@@ -1,34 +1,42 @@
 import React from 'react';
-import { SafeAreaView, View, VirtualizedList, StyleSheet, Text, StatusBar } from 'react-native';
-import { FOGWHITE, MIDNIGHTBLACK } from './App';
+import { SafeAreaView, View, VirtualizedList, StyleSheet, Text, StatusBar, Pressable } from 'react-native';
+import { NavigationContext } from '@react-navigation/native';
+import { FOGWHITE, MIDNIGHTBLACK } from './COLORS';
 import { Paragraph } from './components/Paragraph';
+import { useAppDispatch, useAppSelector } from './hooks';
+import { setBook } from './planSlice';
 
 const DATA = require("./assets/key_english.json")["resultset"]["keys"];
 
-interface keyEnglish {
+export interface keyEnglish {
     n: string,
     b: number
 }
 
-const Item = ({ title }: any) => (
-    <View style={styles.item}>
-        <Paragraph style={styles.title}>{title}</Paragraph>
-    </View>
-);
+export const Item = ({ title, idx }: any) => {
+    const dispatch = useAppDispatch();
+    const navigation = React.useContext(NavigationContext);
+    return (
+        <Pressable style={styles.item} onPress={() => { dispatch(setBook(idx)); navigation?.navigate("Select Chapter") }}>
+            <Paragraph style={styles.title}>{title}</Paragraph>
+        </Pressable>
+    );
+}
 
-const getItemCount = () => DATA.length;
+export const getItemCount = (data: any[]) => data.length;
 
-const getItem = (data: keyEnglish[], index: number) => {
+export const getItem = (data: any[], index: number) => {
     return data[index];
 }
 
+
 const SelectBook = () => {
+    const selectedBook = useAppSelector(state => state.plans.scriptureRef.book);
     return (
         <SafeAreaView style={styles.container}>
             <VirtualizedList
                 data={DATA}
-                initialNumToRender={4}
-                renderItem={({ item }: { item: keyEnglish }) => <Item title={item.n} />}
+                renderItem={({ item }: { item: keyEnglish }) => <Item title={item.n} idx={item.b} />}
                 keyExtractor={(item: keyEnglish) => item.n}
                 getItemCount={getItemCount}
                 getItem={getItem}
@@ -37,7 +45,7 @@ const SelectBook = () => {
     );
 }
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
     container: {
         flex: 1,
         marginTop: StatusBar.currentHeight,

@@ -1,6 +1,7 @@
-import { render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import React from 'react';
 import App from './App';
+jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
 
 describe('General Meta checks', () => {
     it('has app name somewhere on main page', async () => {
@@ -13,5 +14,39 @@ describe('General Meta checks', () => {
         render(<App />);
 
         await screen.findByText("Select Book");
+    })
+})
+
+describe("Select a passage to memorize", () => {
+    it('opens book selection drawer when "Select Book" is touched', async () => {
+        render(<App />);
+
+        await act(async () => {
+            const selectButton = await screen.findByText("Select Book");
+            fireEvent.press(selectButton);
+        })
+
+        const bookOption = await screen.findByText("Leviticus");
+        expect(bookOption).toBeDefined();
+    })
+
+    it('opens chapter selection screen when a book is selected', async () => {
+        render(<App />);
+
+        await act(async () => {
+            const selectButton = await screen.findByText("Select Book");
+            fireEvent.press(selectButton);
+        })
+
+        const bookOption = screen.getByText("Leviticus");
+
+        act(() => {
+            fireEvent.press(bookOption);
+        })
+
+        screen.debug();
+
+        const chapterOptions = screen.getAllByText("Choose a Chapter");
+        expect(chapterOptions.length).toEqual(2);
     })
 })

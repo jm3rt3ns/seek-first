@@ -3,14 +3,11 @@ import React from 'react';
 
 // third party
 import { Text, View, StyleSheet, Alert, Button } from 'react-native';
-import SelectDropdown from 'react-native-select-dropdown'
 
 // local
-import { FOGWHITE, GREY } from './App';
+import { FOGWHITE, GREY } from './COLORS';
 import { Paragraph } from './components/Paragraph';
 import { PillButton } from './components/PillButton';
-
-const countries = ["Egypt", "Canada", "Australia", "Ireland"]
 
 const HomeScreen = () => {
 
