@@ -26,10 +26,12 @@ const getVerseCountInChapter = (db: any, bookNum: number, chapterNum: number, se
         tx.executeSql("SELECT count(*) FROM t_asv WHERE id BETWEEN ? and ?", [currentChapter, nextChapter],
             (txObj: any, { rows: { _array } }) => {
                 console.log(_array);
-                setVerseCount(_array[0]["count(*)"])
+                setVerseCount(_array[0]["count(*)"]);
+                db.closeAsync();
             },
             (txObj: any, error: any) => {
                 console.log('Error ', error);
+                db.closeAsync();
                 return true;
             }
         )

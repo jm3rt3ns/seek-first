@@ -53,7 +53,7 @@ const SelectStartVerse = () => {
                 numColumns={NUM_COLUMNS}
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
-                data={Array(verseCount).fill(1``````).map((element, index) => index + 1)}
+                data={Array(verseCount).fill(1).map((element, index) => index + 1)}
                 renderItem={({ item, index }) => {
                     return (<Pressable style={localStyles.item} onPress={() => { dispatch(setStartVerse(item)) }}><Text style={localStyles.title}>{item}</Text></Pressable>);
                 }}
