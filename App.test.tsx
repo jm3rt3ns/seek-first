@@ -72,4 +72,40 @@ describe("Select a passage to memorize", () => {
         const verseHeader = screen.getAllByText("Leviticus 21, Verses:");
         expect(verseHeader.length).toEqual(2);
     })
+
+    it.only('opens start date selection screen when a start and end verse are selected', async () => {
+        render(<App />);
+
+        await act(async () => {
+            const selectButton = await screen.findByText("Select Book");
+            fireEvent.press(selectButton);
+        })
+
+        const bookOption = screen.getByText("Leviticus");
+
+        act(() => {
+            fireEvent.press(bookOption);
+        })
+
+        const chapterOptions = screen.getAllByText("Leviticus, Chapter:");
+        expect(chapterOptions.length).toEqual(2);
+
+        act(() => {
+            fireEvent.press(screen.getByText("21"));
+        })
+
+        const verseHeader = screen.getAllByText("Leviticus 21, Verses:");
+        expect(verseHeader.length).toEqual(2);
+
+        act(() => {
+            const startVerse = screen.getByText("1");
+            fireEvent.press(startVerse);
+
+            const endVerse = screen.getByText("5");
+            fireEvent.press(endVerse);
+        })
+
+        const startDateHeader = screen.getAllByText("Memorize Leviticus 21:1-5:");
+        expect(startDateHeader.length).toEqual(2);
+    })
 })
