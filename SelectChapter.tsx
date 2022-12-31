@@ -25,23 +25,21 @@ const SelectChapter = () => {
     let chapters = [];
 
     for (let c = 0; c < numberOfChapters; c++) {
-        chapters.push(c+1);
+        chapters.push(c + 1);
     }
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView>
-                <FlatList
-                    contentContainerStyle={{ alignSelf: 'flex-start' }}
-                    numColumns={NUM_COLUMNS}
-                    showsVerticalScrollIndicator={false}
-                    showsHorizontalScrollIndicator={false}
-                    data={chapters}
-                    renderItem={({ item, index }) => {
-                        return (<Pressable style={localStyles.item} onPress={() => { dispatch(setChapter(item)); navigation?.navigate("Select Start Verse");}}><Text style={localStyles.title}>{item}</Text></Pressable>);
-                    }}
-                />
-            </ScrollView>
+            <FlatList
+                contentContainerStyle={{ alignSelf: 'flex-start' }}
+                numColumns={NUM_COLUMNS}
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+                data={chapters}
+                renderItem={({ item, index }) => {
+                    return (<Pressable style={localStyles.item} onPress={() => { dispatch(setChapter(item)); navigation?.navigate("Select Start Verse"); }}><Text style={localStyles.title}>{item}</Text></Pressable>);
+                }}
+            />
         </SafeAreaView>
     );
 }

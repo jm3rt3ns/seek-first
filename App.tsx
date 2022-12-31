@@ -9,7 +9,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { getHeaderTitle } from '@react-navigation/elements';
 import SelectBook from './SelectBook';
-import { FOGWHITE } from './COLORS';
+import { FOGWHITE, GREY } from './COLORS';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import SelectStartVerse, { VerseSelectionHeader } from './SelectStartVerse';
@@ -43,14 +43,14 @@ export const App = () => {
         <NavigationContainer>
           <View style={{ flex: 1, backgroundColor: "#999999", borderRadius: 10 }}>
             <Stack.Navigator initialRouteName="Seek First" screenOptions={{
-              headerStyle: { backgroundColor: '#999999', },
+              headerStyle: { backgroundColor: GREY, borderBottomColor: GREY, borderBottomWidth: 1 },
               headerTitle: () => <></>,
-              headerRight: () => <View><Image style={{ width: 100, height: 25 }} source={require('./assets/header_wordmark.png')} /></View>
+              headerRight: () => <View><Image style={{ width: 100, height: 25, margin: 5 }} source={require('./assets/header_wordmark.png')} /></View>
             }}>
               <Stack.Screen name="Seek First" component={HomeScreen} />
               <Stack.Screen name="Select Book" component={SelectBook} options={{ presentation: "modal", headerShown: false }} />
-              <Stack.Screen name="Select Chapter" component={SelectChapter} options={{ presentation: "modal", headerLeft: ChapterSelectionHeader  }} />
-              <Stack.Screen name="Select Start Verse" component={SelectStartVerse} options={{ presentation: "modal", headerLeft: VerseSelectionHeader}} />
+              <Stack.Screen name="Select Chapter" component={SelectChapter} options={{ presentation: "modal", headerLeft: ChapterSelectionHeader }} />
+              <Stack.Screen name="Select Start Verse" component={SelectStartVerse} options={{ presentation: "modal", headerLeft: VerseSelectionHeader }} />
             </Stack.Navigator>
           </View>
         </NavigationContainer>
