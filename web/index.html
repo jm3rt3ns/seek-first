@@ -1,6 +1,10 @@
 <meta charset="utf-8">
 <title>Seek First</title>
 <meta name="description" content="A 15-minute daily devotions guide: reading plan, prayer rotation, memory verses, a journal prompt, and a Bible story for the kids.">
+<meta name="theme-color" content="#20372e">
+<link rel="icon" href="assets/icon.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/icon.png">
+<link rel="manifest" href="assets/manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400;1,7..72,500&display=swap">
 <style>
@@ -205,6 +209,21 @@ details.formwrap .form{margin-top:8px}
   .sheet .passage{column-count:2}
   a{color:inherit;text-decoration:none}
 }
+/* branding + sign-in */
+.wordmark{display:inline-flex;align-items:center;gap:10px}
+.wordmark img{width:26px;height:26px;border-radius:50%;flex:none}
+.signin{padding-block:28px 0;display:grid;gap:18px}
+.signin .panel{background:linear-gradient(160deg,#2f5443 0%,#20372e 55%,#172a22 100%);color:#f3f4f0;border-radius:18px;padding:44px 30px 38px;text-align:center}
+.signin .panel img{width:min(240px,70%);height:auto;display:block;margin:0 auto 18px}
+.signin .panel p{font-family:var(--serif);font-size:19px;line-height:1.4;max-width:30ch;margin:0 auto;text-wrap:balance;color:#e6e9e3}
+.signin .card{padding:22px 20px}
+a.btn{text-decoration:none}
+.btn.google{width:100%;background:var(--surface);border-color:var(--line);font-weight:500;min-height:48px;gap:12px}
+.btn.google svg{width:20px;height:20px;flex:none}
+.signin .tiny{margin:14px 0 6px;line-height:1.5}
+.signin .alt{text-align:center;margin-top:6px}
+.userchip{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-2)}
+.userchip img{width:22px;height:22px;border-radius:50%}
 .sr{position:absolute;left:-9999px}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:no-preference){.verse-block{transition:filter .25s ease}}
@@ -212,7 +231,7 @@ details.formwrap .form{margin-top:8px}
 
 <div class="wrap">
   <header>
-    <div class="wordmark">Seek First <small id="dateLabel"></small></div>
+    <div class="wordmark"><img src="assets/icon.png" alt="" width="26" height="26">Seek First <small id="dateLabel"></small></div>
     <nav class="nav"><a href="#" id="navToday">← Today</a><a href="#progress" id="navProgress">Progress</a><a href="#print" id="navPrint">Print</a><a href="#manage" id="navManage">Manage</a></nav>
   </header>
   <main id="app"></main>
@@ -412,20 +431,28 @@ function ensureToday(){
 
 /* ---------- storage: artifact db when present, localStorage otherwise ---------- */
 const LS_STATE = 'seekfirst.state';
+const HDRS = {'content-type':'application/json','x-requested-with':'SeekFirst'};
 const store = {
-  db:null, sample:null, unsub:null, saveTimer:null,
+  backend:'local', db:null, sample:null, downloads:null, api:false, user:null, needsSignIn:false, unsub:null, saveTimer:null,
   readLocal(){ try{ const s=localStorage.getItem(LS_STATE); return s?JSON.parse(s):null }catch{ return null } },
   writeLocal(){ try{ localStorage.setItem(LS_STATE, JSON.stringify(S)) }catch{} },
   async init(){
-    if (window.claude?.use) window.claude.use('sample').then(s=>{ this.sample = s; }).catch(()=>{});
-    try { this.db = window.claude?.use ? await window.claude.use('db') : null; } catch { this.db = null; }
+    if (window.claude?.use) return this.initArtifact();
+    return this.initApi();
+  },
+  // Published as a claude.ai artifact: db for state, sample for the parser, downloads for the PDF.
+  async initArtifact(){
+    window.claude.use('sample').then(x=>{ this.sample = x; }).catch(()=>{});
+    window.claude.use('downloads').then(x=>{ this.downloads = x; }).catch(()=>{});
+    try { this.db = await window.claude.use('db'); } catch { this.db = null; }
     if (!this.db) return;
+    this.backend = 'artifact';
     const ref = this.db.doc('seekfirst/state');
     try {
       const snap = await ref.get();
       const remote = snap.exists ? snap.data() : null;
       if (remote && (remote.updatedAt||0) >= (S.updatedAt||0)) { S = migrate(remote); ensureToday(); render(); }
-      else if (S.updatedAt) { await ref.set(S); }
+      else if (S.updatedAt) { await ref.set(JSON.parse(JSON.stringify(S))); }
       this.unsub = ref.onSnapshot(sn => {
         if (!sn.exists || sn.metadata.hasPendingWrites) return;
         const d = sn.data();
@@ -433,27 +460,77 @@ const store = {
       }, ()=>{});
     } catch(e) { console.warn('db unavailable', e); }
   },
+  // Served by the Cloudflare Worker: a signed-in user's state lives in the API.
+  async initApi(){
+    let me = null;
+    try {
+      const r = await fetch('/api/me', {credentials:'same-origin', headers:{accept:'application/json'}});
+      if (r.ok && (r.headers.get('content-type')||'').includes('application/json')) me = await r.json();
+    } catch {}
+    if (!me) return;                      // no API behind this page (a local file or the repo copy): stay in the browser
+    this.api = true; this.user = me.user || null;
+    if (!this.user) {
+      let localOnly = false; try { localOnly = localStorage.getItem('seekfirst.localOnly')==='1'; } catch {}
+      this.needsSignIn = !localOnly; render(); return;
+    }
+    this.backend = 'api';
+    try {
+      const r = await fetch('/api/state', {credentials:'same-origin'});
+      const j = await r.json();
+      if (j.state && (j.updatedAt||0) >= (S.updatedAt||0)) { S = migrate(j.state); ensureToday(); this.writeLocal(); }
+      else if (S.updatedAt) { await this.put(); }
+    } catch(e) { console.warn('state load failed', e); }
+    render();
+  },
+  async put(){
+    const r = await fetch('/api/state', {method:'PUT', credentials:'same-origin', headers:HDRS, body:JSON.stringify(S)});
+    if (r.status===409) { const j = await r.json(); if (j.state) { S = migrate(j.state); ensureToday(); this.writeLocal(); render(); } return; }
+    if (r.status===401) { this.user=null; this.needsSignIn=true; render(); }
+  },
   save(){
     syncHistory();
     S.updatedAt = Date.now();
     this.writeLocal();
-    if (!this.db) return;
     clearTimeout(this.saveTimer);
-    this.saveTimer = setTimeout(()=>{ this.db.doc('seekfirst/state').set(JSON.parse(JSON.stringify(S))).catch(e=>console.warn('save failed',e)); }, 400);
+    if (this.backend==='artifact') this.saveTimer = setTimeout(()=>{ this.db.doc('seekfirst/state').set(JSON.parse(JSON.stringify(S))).catch(e=>console.warn('save failed',e)); }, 400);
+    else if (this.backend==='api') this.saveTimer = setTimeout(()=>{ this.put().catch(e=>console.warn('save failed',e)); }, 400);
   },
   async loadJournal(date){
-    if (this.db) { try { const s = await this.db.doc('journal/'+date).get(); return s.exists ? (s.data().text||'') : ''; } catch { return ''; } }
+    if (this.backend==='artifact') { try { const s = await this.db.doc('journal/'+date).get(); return s.exists ? (s.data().text||'') : ''; } catch { return ''; } }
+    if (this.backend==='api') { try { const r = await fetch('/api/journal/'+date, {credentials:'same-origin'}); const j = await r.json(); return j.text||''; } catch { return ''; } }
     try { return localStorage.getItem('seekfirst.journal.'+date) || ''; } catch { return ''; }
   },
   async saveJournal(date,text){
     try { localStorage.setItem('seekfirst.journal.'+date, text); } catch {}
-    if (this.db) await this.db.doc('journal/'+date).set({date, text, updatedAt:Date.now()});
+    if (this.backend==='artifact') await this.db.doc('journal/'+date).set({date, text, updatedAt:Date.now()});
+    if (this.backend==='api') { const r = await fetch('/api/journal/'+date, {method:'PUT', credentials:'same-origin', headers:HDRS, body:JSON.stringify({text})}); if (!r.ok) throw new Error('save failed'); }
   },
   async listJournal(){
-    if (this.db) { try { const q = await this.db.collection('journal').orderBy('date','desc').limit(90).get(); return q.docs.map(d=>d.data()).filter(d=>d.text&&d.text.trim()); } catch { return []; } }
+    if (this.backend==='artifact') { try { const q = await this.db.collection('journal').orderBy('date','desc').limit(90).get(); return q.docs.map(d=>d.data()).filter(d=>d.text&&d.text.trim()); } catch { return []; } }
+    if (this.backend==='api') { try { const r = await fetch('/api/journal', {credentials:'same-origin'}); const j = await r.json(); return j.entries||[]; } catch { return []; } }
     const out=[]; try { for (let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(k.startsWith('seekfirst.journal.')){ const t=localStorage.getItem(k); if(t&&t.trim()) out.push({date:k.slice(18),text:t}); } } } catch {}
     return out.sort((a,b)=>a.date<b.date?1:-1);
-  }
+  },
+  // Plain words → prayer-list actions. Returns null when no model is reachable (the caller falls back to rules).
+  async parsePrayer(text){
+    if (this.backend==='api') {
+      try {
+        const existing = S.prayer.items.filter(isActive).map(p=>({id:p.id, who:p.who, what:p.what}));
+        const r = await fetch('/api/prayer/parse', {method:'POST', credentials:'same-origin', headers:{...HDRS, 'x-local-date':dayKey()}, body:JSON.stringify({text, existing})});
+        if (r.ok) return await r.json();
+        const j = await r.json().catch(()=>({}));
+        return {actions:[], reply:'', note: j.error || 'The parser is unavailable right now.'};
+      } catch { return null; }
+    }
+    if (this.sample) {
+      try { return await this.sample.json(chatInstruction() + '\n\nNote (between the markers): <<<' + text.replace(/>>>/g,'') + '>>>', {modelTier:'quick', cache:false}); }
+      catch(e) { if (e && e.code==='not_granted') this.sample=null; else console.warn('sample failed', e); return null; }
+    }
+    return null;
+  },
+  get smart(){ return this.backend==='api' || !!this.sample; },
+  async signOut(){ try { await fetch('/api/auth/logout', {method:'POST', credentials:'same-origin', headers:HDRS}); } catch {} try { localStorage.removeItem('seekfirst.localOnly'); } catch {} location.href = '/'; },
+  async deleteAccount(){ const r = await fetch('/api/account', {method:'DELETE', credentials:'same-origin', headers:HDRS}); if (!r.ok) throw new Error('delete failed'); try { localStorage.clear(); } catch {} location.href = '/'; },
 };
 function migrate(d){ const base = defaultState(); return Object.assign(base, d, {plan:{...base.plan,...d.plan}, prayer:{...base.prayer,...d.prayer}, memory:{...base.memory,...d.memory}, kids:{...base.kids,...d.kids}, history:{...(d.history||{})}, today:{...base.today,...d.today}}); }
 function syncHistory(){
@@ -587,6 +664,7 @@ const h = (tag, attrs={}, ...kids) => {
 function render(){
   ensureToday();
   document.getElementById('dateLabel').textContent = longDate();
+  if (store.needsSignIn) { for (const id of ['navToday','navProgress','navPrint','navManage']) document.getElementById(id).hidden = true; app.replaceChildren(renderSignIn()); return; }
   const route = location.hash.replace('#','') || 'today';
   document.getElementById('navToday').hidden = route==='today';
   document.getElementById('navManage').hidden = route==='manage';
@@ -725,11 +803,8 @@ Rules: one add per distinct person or need. Time words set until: "today" = toda
 async function handleChat(text, log, input){
   const my = h('div',{class:'msg me'}, text); log.append(my);
   const thinking = h('div',{class:'msg bot thinking'}, 'Thinking…'); log.append(thinking); thinking.scrollIntoView({block:'nearest'});
-  let result;
-  if (store.sample) {
-    try { result = await store.sample.json(chatInstruction() + '\n\nNote (between the markers): <<<' + text.replace(/>>>/g,'') + '>>>', {modelTier:'quick', cache:false}); }
-    catch(e) { if (e && e.code==='not_granted') store.sample=null; else console.warn('sample failed', e); result = heuristicParse(text); }
-  } else result = heuristicParse(text);
+  let result = await store.parsePrayer(text);
+  if (result && result.note) { const note = result.note; result = heuristicParse(text); result.reply = result.reply || note; }
   if (!result || !Array.isArray(result.actions)) result = heuristicParse(text);
   const bot = h('div',{class:'msg bot'});
   let n=0;
@@ -762,7 +837,7 @@ function prayerChat(){
   return h('div',{class:'chat'},
     log,
     h('div',{class:'row'}, input, h('button',{class:'btn primary',onclick:send},'Add')),
-    h('p',{class:'hint'}, store.sample ? 'Write it however it comes to mind — a name, a need, how long. “Sarah’s surgery went well” marks hers answered.' : 'Write “pray for <who> about <what> this week”. Add “daily” to keep it every day.'));
+    h('p',{class:'hint'}, store.smart ? 'Write it however it comes to mind — a name, a need, how long. “Sarah’s surgery went well” marks hers answered.' : 'Write “pray for <who> about <what> this week”. Add “daily” to keep it every day.'));
 }
 
 /* Memorize */
@@ -856,6 +931,108 @@ function renderFinish(){
     h('div',{class:'actions',style:'margin-top:26px'}, h('a',{class:'btn',href:'#progress'}, 'See your progress'), h('button',{class:'btn quiet',onclick:()=>{ currentStep=0; stepChosen=true; render(); }}, 'Look back over today')));
 }
 
+/* ---------- sign-in ---------- */
+function renderSignIn(){
+  const g = h('span',{html:'<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.5 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.3l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.5 28.6c-.5-1.5-.8-3-.8-4.6s.3-3.1.8-4.6l-7.9-6.1C.9 16.6 0 20.2 0 24s.9 7.4 2.6 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.3 0 11.7-2.1 15.6-5.7l-7.7-6c-2.1 1.4-4.8 2.3-7.9 2.3-6.3 0-11.6-4.1-13.5-9.9l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>'});
+  const here = location.hash ? '/' + location.hash : '/';
+  return h('section',{class:'signin'},
+    h('div',{class:'panel'}, h('img',{src:'assets/wordmark-light.png',alt:'Seek First'}), h('p',{}, 'Fifteen quiet minutes a day. Read, pray, memorize, write, and read to the kids.')),
+    h('div',{class:'card'},
+      h('a',{class:'btn google',href:'/api/auth/login?return='+encodeURIComponent(here)}, g, 'Continue with Google'),
+      h('p',{class:'tiny'}, 'Your prayer list, journal, and progress are kept privately in your account and follow you between your phone and laptop.'),
+      h('div',{class:'alt'}, h('button',{class:'btn quiet sm',onclick:()=>{ try{localStorage.setItem('seekfirst.localOnly','1')}catch{}; store.needsSignIn=false; render(); }}, 'Use it on this device only'))));
+}
+
+/* ---------- daily sheet: data + PDF ---------- */
+function sheetData(){
+  ensurePrayerSelection(); ensureLearningCard();
+  const k = dayKey();
+  const segs = todaysReading();
+  const dayNum = Math.floor(new Date(k).getTime()/864e5);
+  return {
+    k, segs, ref: refLabel(segs), planName: PLANS[S.plan.id].name,
+    dateLong: new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'}),
+    prayers: S.today.prayIds.map(id=>S.prayer.items.find(p=>p.id===id)).filter(Boolean),
+    learning: S.memory.cards.find(c=>c.status==='learning') || null,
+    due: dueReviews().slice(0,4),
+    prompt: PROMPTS[(dayNum + (S.today.promptShift||0) + PROMPTS.length*100) % PROMPTS.length],
+    story: STORIES[S.kids.pos % STORIES.length],
+  };
+}
+async function ensureJsPdf(){
+  if (window.jspdf && window.jspdf.jsPDF) return window.jspdf.jsPDF;
+  await new Promise((res,rej)=>{ const el=document.createElement('script'); el.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'; el.onload=res; el.onerror=()=>rej(new Error('PDF library failed to load')); document.head.appendChild(el); });
+  return window.jspdf.jsPDF;
+}
+async function buildPdf(includeText){
+  const JsPDF = await ensureJsPdf();
+  const d = sheetData();
+  const doc = new JsPDF({unit:'pt', format:'letter'});
+  const W=612, H=792, M=46, gap=26, colW=(W-2*M-gap)/2, L=M, R=M+colW+gap;
+  let y = M+6;
+  doc.setFont('times','italic'); doc.setFontSize(16); doc.setTextColor(0); doc.text('Seek First', L, y+10);
+  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(60); doc.text(d.dateLong.toUpperCase(), W-M, y+10, {align:'right'});
+  y += 20; doc.setDrawColor(0); doc.setLineWidth(1.2); doc.line(L, y, W-M, y); y += 16;
+  const col = {L:y, R:y};
+  const X = side => side==='L' ? L : R;
+  const label = (side, t) => { doc.setFont('helvetica','bold'); doc.setFontSize(7.5); doc.setTextColor(80); doc.text(t.toUpperCase(), X(side), col[side]); col[side] += 4; doc.setDrawColor(180); doc.setLineWidth(.4); doc.line(X(side), col[side], X(side)+colW, col[side]); col[side] += 13; doc.setTextColor(0); doc.setDrawColor(0); };
+  const para = (side, t, o={}) => { const size=o.size||10.5, lh=o.lh||1.3, ind=o.indent||0; doc.setFont(o.font||'times', o.style||'normal'); doc.setFontSize(size); doc.setTextColor(o.color||0); const lines = doc.splitTextToSize(String(t), colW-ind); doc.text(lines, X(side)+ind, col[side]); col[side] += lines.length*size*lh + (o.after??4); doc.setTextColor(0); };
+  const box = side => { doc.setLineWidth(.8); doc.setDrawColor(0); doc.rect(X(side), col[side]-7.5, 8, 8); };
+  const rule = (side, w=colW) => { doc.setDrawColor(170); doc.setLineWidth(.5); doc.line(X(side), col[side], X(side)+w, col[side]); doc.setDrawColor(0); };
+  // left column
+  label('L','1 · Read'); para('L', d.ref, {style:'bold', size:15, after:2}); para('L', d.planName + (includeText ? ' · text below' : ''), {font:'helvetica', size:8, color:110, after:10});
+  label('L','2 · Pray');
+  for (const p of d.prayers) { box('L'); para('L', p.who + (p.what ? ' — ' + p.what : ''), {indent:13, after:3}); }
+  for (let i=0;i<2;i++) { box('L'); col.L += 4; rule('L'); col.L += 12; }
+  col.L += 4;
+  label('L','3 · Memorize');
+  if (d.learning) { para('L', d.learning.ref + '   ' + d.learning.topic, {style:'bold', size:11, after:2}); para('L', d.learning.text, {size:10.5, after:6}); }
+  if (d.due.length) { para('L', 'Review from memory:', {font:'helvetica', size:8, color:110, after:3}); for (const c of d.due) { box('L'); para('L', c.ref, {indent:13, after:3}); } }
+  if (!d.learning && !d.due.length) para('L', 'Nothing due today.', {font:'helvetica', size:8, color:110});
+  // right column
+  label('R','4 · Journal'); para('R', d.prompt, {style:'italic', size:10.5, after:8});
+  for (let i=0;i<9;i++) { col.R += 12; rule('R'); col.R += 10; }
+  col.R += 6;
+  label('R','5 · Kids'); para('R', d.story[0], {style:'bold', size:12, after:2}); para('R', d.story[1], {size:10.5, after:2}); para('R', 'Ask them: ' + d.story[2], {font:'helvetica', size:8.5, color:90});
+  // passage
+  if (includeText) {
+    let yy = Math.max(col.L, col.R) + 10;
+    doc.setFont('helvetica','bold'); doc.setFontSize(7.5); doc.setTextColor(80); doc.text(d.ref.toUpperCase(), L, yy); yy += 4; doc.setDrawColor(180); doc.setLineWidth(.4); doc.line(L, yy, W-M, yy); yy += 12; doc.setTextColor(0);
+    const size=9.2, lh=size*1.32, bottom=H-M; let x=L, top=yy;
+    doc.setFont('times','normal'); doc.setFontSize(size);
+    const put = (line) => { if (yy > bottom) { if (x===L) { x=R; yy=top; } else { doc.addPage(); x=L; top=M; yy=M; } } doc.text(line, x, yy); yy += lh; };
+    try {
+      for (const seg of d.segs) {
+        const book = await loadBook(seg.b); const verses = book[seg.c-1] || [];
+        if (d.segs.length>1) { doc.setFont('helvetica','bold'); doc.setFontSize(7.5); put(`${bookName(seg.b)} ${seg.c}`.toUpperCase()); doc.setFont('times','normal'); doc.setFontSize(size); }
+        const text = verses.slice(seg.v1-1, Math.min(seg.v2, verses.length)).map((t,i)=>`${seg.v1+i} ${t}`).join('  ');
+        for (const line of doc.splitTextToSize(text, colW)) put(line);
+        yy += 4;
+      }
+      doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(120); put('American Standard Version');
+    } catch { doc.setFont('helvetica','italic'); doc.setFontSize(8.5); put('Passage text unavailable — read it in your own Bible.'); }
+  }
+  return doc.output('blob');
+}
+async function savePdf(btn, includeText){
+  const label = btn.textContent; btn.disabled = true; btn.textContent = 'Preparing…';
+  try {
+    const blob = await buildPdf(includeText);
+    const filename = `seek-first-${dayKey()}.pdf`;
+    if (window.claude?.use) {
+      const dl = store.downloads || await window.claude.use('downloads');
+      if (!dl) throw new Error('Downloads are not available in this view.');
+      await dl.save({filename, data: blob});
+    } else {
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href), 10000);
+    }
+    btn.textContent = 'Saved ✓'; setTimeout(()=>{ btn.textContent = label; }, 2500);
+  } catch(e) {
+    btn.textContent = e && e.code==='declined' ? label : 'Could not save';
+    if (!(e && e.code==='declined')) { console.warn(e); setTimeout(()=>{ btn.textContent = label; }, 3000); }
+  } finally { btn.disabled = false; }
+}
+
 /* ---------- progress ---------- */
 function streaks(){
   const k = dayKey(); const hist = S.history;
@@ -940,8 +1117,10 @@ function renderPrint(){
   const root = h('div',{});
   const chk = h('input',{type:'checkbox',id:'print-text',style:'width:auto;margin-right:6px',checked:includeText});
   chk.addEventListener('change',()=>{ try{localStorage.setItem('seekfirst.printText', chk.checked?'1':'0')}catch{}; passageWrap.hidden = !chk.checked; if (chk.checked && !passage.dataset.loaded) { passage.dataset.loaded='1'; renderPassage(passage, segs, {chapterLabels:segs.length>1}); } });
+  const inArtifact = !!(window.claude && window.claude.use);
+  const pdfBtn = h('button',{class:'btn'+(inArtifact?' primary':''),onclick:()=>savePdf(pdfBtn, chk.checked)}, 'Download PDF');
   root.append(h('div',{class:'actions noprint',style:'margin-top:18px;align-items:center;justify-content:space-between'},
-    h('button',{class:'btn primary',onclick:()=>window.print()}, 'Print this page'),
+    h('div',{class:'actions',style:'margin:0'}, inArtifact ? null : h('button',{class:'btn primary',onclick:()=>window.print()}, 'Print'), pdfBtn),
     h('label',{for:'print-text',style:'display:flex;align-items:center;font-size:14px;color:var(--ink-2)'}, chk, 'Include the passage text')));
   const sheet = h('div',{class:'sheet'});
   sheet.append(h('div',{class:'mast'}, h('span',{class:'wm'}, 'Seek First'), h('span',{class:'dt'}, new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'}))));
@@ -966,7 +1145,7 @@ function renderPrint(){
   if (includeText) { passage.dataset.loaded='1'; renderPassage(passage, segs, {chapterLabels:segs.length>1}); }
   sheet.append(passageWrap);
   root.append(sheet);
-  root.append(h('p',{class:'tiny noprint',style:'margin-top:12px'}, 'Prints on one sheet; the passage may run onto the back. “Save as PDF” in the print dialog works too.'));
+  root.append(h('p',{class:'tiny noprint',style:'margin-top:12px'}, inArtifact ? 'Printing is blocked inside this viewer, so download the PDF and print it from there. One sheet; the passage may run onto the back.' : 'Prints on one sheet; the passage may run onto the back. The PDF is the same layout for phones and email.'));
   return root;
 }
 
@@ -1056,7 +1235,19 @@ function renderManage(){
   store.listJournal().then(entries=>{ jl.replaceChildren(); if(!entries.length){ jl.append(h('p',{class:'empty'},'No entries yet.')); return; } for (const e of entries) jl.append(h('details',{}, h('summary',{}, e.date, h('span',{}, e.text.slice(0,60).replace(/\s+/g,' ')+(e.text.length>60?'…':''))), h('div',{class:'body'}, e.text))); });
   root.append(h('section',{}, h('h2',{},'Journal'), jl));
 
-  root.append(h('section',{}, h('p',{class:'tiny'}, store.db ? 'Saved to this page’s private store; open it on any device.' : 'Saved in this browser only.')));
+  const acct = h('section',{}, h('h2',{},'Account'));
+  if (store.backend==='api' && store.user) {
+    acct.append(h('div',{class:'userchip',style:'margin-bottom:12px'}, store.user.picture ? h('img',{src:store.user.picture,alt:'',referrerpolicy:'no-referrer'}) : null, `${store.user.name||''} · ${store.user.email||''}`),
+      h('p',{class:'muted'}, 'Signed in with Google. Everything here is stored in your account and synced across your devices.'),
+      h('div',{class:'actions'}, h('button',{class:'btn',onclick:()=>store.signOut()}, 'Sign out'),
+        h('button',{class:'btn quiet danger',onclick:()=>{ if (confirm('Delete your account and everything stored in it? This cannot be undone.')) store.deleteAccount().catch(()=>alert('Could not delete right now. Try again in a moment.')); }}, 'Delete my account and data')));
+  } else if (store.api) {
+    acct.append(h('p',{class:'muted'}, 'Using this device only. Sign in to keep your list, journal, and progress across devices.'),
+      h('div',{class:'actions'}, h('a',{class:'btn',href:'/api/auth/login'}, 'Sign in with Google')));
+  } else {
+    acct.append(h('p',{class:'tiny'}, store.backend==='artifact' ? 'Saved to this page’s private store; open it on any device.' : 'Saved in this browser only.'));
+  }
+  root.append(acct);
   return root;
 }
 
