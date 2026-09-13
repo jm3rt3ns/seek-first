@@ -8,6 +8,7 @@
   --bg:#f3f4f0; --surface:#ffffff; --ink:#141a17; --ink-2:#4f5a54; --ink-3:#7d877f;
   --line:#d9ddd6; --line-2:#e8ebe6; --pine:#20372e; --pine-ink:#f3f4f0; --pine-soft:#e3eae5;
   --gold:#8a6512; --gold-fill:#f9c045; --good:#2f6b45; --danger:#9a3b2e;
+  --h0:#e6e9e3; --h1:#cfdcd4; --h2:#a9c4b3; --h3:#7ea892; --h4:#4f8069; --h5:#20372e;
   --serif:"Literata",Georgia,"Times New Roman",serif; --sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
   color-scheme:light;
 }
@@ -16,12 +17,14 @@
     --bg:#121715; --surface:#1a221e; --ink:#ebe8de; --ink-2:#b0b8b1; --ink-3:#7f8a82;
     --line:#2c3730; --line-2:#222c26; --pine:#2f4a3e; --pine-ink:#f3f4f0; --pine-soft:#1f2c26;
     --gold:#f9c045; --gold-fill:#f9c045; --good:#7fc39a; --danger:#e08a7c; color-scheme:dark;
+    --h0:#222c26; --h1:#2c4437; --h2:#3a5d4a; --h3:#4f7d63; --h4:#75a98a; --h5:#a8d6bb;
   }
 }
 :root[data-theme="dark"]{
   --bg:#121715; --surface:#1a221e; --ink:#ebe8de; --ink-2:#b0b8b1; --ink-3:#7f8a82;
   --line:#2c3730; --line-2:#222c26; --pine:#2f4a3e; --pine-ink:#f3f4f0; --pine-soft:#1f2c26;
   --gold:#f9c045; --gold-fill:#f9c045; --good:#7fc39a; --danger:#e08a7c; color-scheme:dark;
+  --h0:#222c26; --h1:#2c4437; --h2:#3a5d4a; --h3:#4f7d63; --h4:#75a98a; --h5:#a8d6bb;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -118,6 +121,90 @@ h3{font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.06em;t
 .jlist summary span{color:var(--ink-3);font-weight:400;font-size:13px;margin-left:10px}
 .jlist .body{font-family:var(--serif);font-size:16px;white-space:pre-wrap;color:var(--ink-2);margin-top:8px}
 .notice{font-size:13px;color:var(--ink-3);margin-top:10px}
+.nav{display:flex;gap:16px}
+.nav a{white-space:nowrap}
+@media (max-width:480px){.wordmark small{display:none}.nav{gap:12px}}
+@media (max-width:520px){.dots{grid-template-columns:1fr;gap:4px}.dots .sname{margin-top:8px}}
+/* chat */
+.chat{margin-top:18px}
+.chat .log{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.chat .msg{max-width:88%;padding:9px 13px;border-radius:14px;font-size:15px;line-height:1.45}
+.chat .msg.me{align-self:flex-end;background:var(--pine);color:var(--pine-ink);border-bottom-right-radius:4px}
+.chat .msg.bot{align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:4px}
+.chat .msg.bot .act{display:block;margin-top:4px}
+.chat .msg.bot .act button{color:var(--gold);font-size:13px;margin-left:8px;text-decoration:underline}
+.chat .msg.bot .act .k{font-weight:600}
+.chat .msg.thinking{color:var(--ink-3);font-style:italic}
+.chat .row{display:flex;gap:8px}
+.chat .row input{flex:1;font-size:16px;border-radius:22px;padding:11px 16px}
+.chat .row .btn{border-radius:22px;padding-inline:18px}
+.chat .hint{font-size:13px;color:var(--ink-3);margin-top:8px}
+details.formwrap{margin-top:14px}
+details.formwrap summary{font-size:13px;color:var(--ink-3);cursor:pointer}
+details.formwrap .form{margin-top:8px}
+/* progress */
+.prog section{padding-block:24px;border-bottom:1px solid var(--line)}
+.prog section:last-child{border-bottom:0}
+.hero{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding-block:22px 6px}
+@media (max-width:480px){.hero{gap:8px}}
+.hero .n{font-family:var(--serif);font-size:44px;font-weight:500;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.hero .l{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-top:8px}
+.heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,14px);grid-auto-columns:14px;gap:3px;margin-top:14px;overflow-x:auto;padding-bottom:4px}
+.heat .c{width:14px;height:14px;border-radius:3px;background:var(--h0)}
+.heat .c[data-n="1"]{background:var(--h1)} .heat .c[data-n="2"]{background:var(--h2)} .heat .c[data-n="3"]{background:var(--h3)} .heat .c[data-n="4"]{background:var(--h4)} .heat .c[data-n="5"]{background:var(--h5)}
+.heat .c.future{background:transparent;border:1px dashed var(--line)}
+.heat .c.today{outline:2px solid var(--gold-fill);outline-offset:1px}
+.heat-cap{font-size:13px;color:var(--ink-2);margin-top:8px;min-height:20px;font-variant-numeric:tabular-nums}
+.legend{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--ink-3);margin-top:8px}
+.legend .c{width:12px;height:12px;border-radius:3px}
+.bar-row{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:baseline;margin-top:14px}
+.bar-row .name{font-weight:500}
+.bar-row .val{font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.bar-row .track{grid-column:1/-1;height:8px;background:var(--h0);border-radius:4px;overflow:hidden}
+.bar-row .fill{height:100%;background:var(--h5);border-radius:4px;min-width:2px}
+.bar-row .sub{grid-column:1/-1;font-size:13px;color:var(--ink-3)}
+.dots{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:center;margin-top:12px}
+.dots .sname{font-size:12px;color:var(--ink-3);letter-spacing:.03em;white-space:nowrap}
+.dots .rowd{display:flex;gap:5px;flex-wrap:wrap}
+.dots .d{width:16px;height:16px;border-radius:50%;background:var(--h0);border:2px solid transparent}
+.dots .d.review{background:var(--h5)} .dots .d.learning{border-color:var(--gold-fill);background:transparent} .dots .d.paused{border-color:var(--ink-3);background:transparent}
+.miles{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.mile{font-size:13px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);color:var(--ink-3)}
+.mile.hit{border-color:var(--gold-fill);color:var(--ink);background:color-mix(in srgb,var(--gold-fill) 18%,transparent)}
+.mile.hit::before{content:"✓ ";color:var(--gold)}
+/* print sheet */
+.sheet{background:var(--surface);border:1px solid var(--line);padding:26px 28px;margin-top:16px;font-size:14px;line-height:1.4}
+.sheet .mast{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:6px;margin-bottom:14px}
+.sheet .mast .wm{font-family:var(--serif);font-style:italic;font-size:20px}
+.sheet .mast .dt{font-size:13px;letter-spacing:.04em;text-transform:uppercase}
+.sheet .cols{display:grid;grid-template-columns:1fr 1fr;gap:0 26px}
+@media (max-width:560px){.sheet .cols{grid-template-columns:1fr}}
+.sheet .blk{margin-bottom:14px;break-inside:avoid}
+.sheet h4{font-family:var(--sans);font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 5px;padding-bottom:3px;border-bottom:1px solid var(--line);color:var(--ink-2)}
+.sheet .big{font-family:var(--serif);font-size:19px;font-weight:500;line-height:1.25;margin:0 0 4px}
+.sheet .v{font-family:var(--serif);font-size:14px;line-height:1.45;margin:4px 0}
+.sheet .box{display:inline-block;width:11px;height:11px;border:1.5px solid var(--ink);border-radius:2px;vertical-align:-1px;margin-right:7px}
+.sheet .pl{margin:0;padding:0;list-style:none}
+.sheet .pl li{padding:3px 0;font-size:13.5px}
+.sheet .pl li .w{color:var(--ink-2)}
+.sheet .line{border-bottom:1px solid var(--line);height:20px}
+.sheet .line.wide{height:24px}
+.sheet .small{font-size:12px;color:var(--ink-3)}
+.sheet .passage{margin-top:8px;column-count:2;column-gap:22px;font-family:var(--serif);font-size:12.5px;line-height:1.45}
+.sheet .passage p{margin:0 0 .6em}
+.sheet .passage sup{font-family:var(--sans);font-size:8px;color:var(--ink-3);margin-right:2px}
+.sheet .passage .chap{column-span:all;font-family:var(--sans);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:6px 0 4px}
+@media (max-width:560px){.sheet .passage{column-count:1}}
+@media print{
+  @page{margin:13mm 14mm}
+  html,body{background:#fff!important;color:#000!important;padding:0!important;font-size:12.5px}
+  header,.noprint{display:none!important}
+  .wrap{max-width:none}
+  .sheet{border:0;padding:0;margin:0;color:#000;--ink:#000;--ink-2:#222;--ink-3:#555;--line:#999;--surface:#fff;--bg:#fff;--h0:#eee;--h5:#000}
+  .sheet .cols{grid-template-columns:1fr 1fr}
+  .sheet .passage{column-count:2}
+  a{color:inherit;text-decoration:none}
+}
 .sr{position:absolute;left:-9999px}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:no-preference){.verse-block{transition:filter .25s ease}}
@@ -126,7 +213,7 @@ h3{font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.06em;t
 <div class="wrap">
   <header>
     <div class="wordmark">Seek First <small id="dateLabel"></small></div>
-    <nav class="nav"><a href="#manage" id="navManage">Manage</a><a href="#" id="navToday" hidden>← Today</a></nav>
+    <nav class="nav"><a href="#" id="navToday">← Today</a><a href="#progress" id="navProgress">Progress</a><a href="#print" id="navPrint">Print</a><a href="#manage" id="navManage">Manage</a></nav>
   </header>
   <main id="app"></main>
 </div>
@@ -299,6 +386,7 @@ const pad = n => String(n).padStart(2,'0');
 const dayKey = (d=new Date()) => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const addDays = (key,n) => { const [y,m,d]=key.split('-').map(Number); const t=new Date(y,m-1,d+n); return dayKey(t); };
 const daysBetween = (a,b) => { const [y1,m1,d1]=a.split('-').map(Number),[y2,m2,d2]=b.split('-').map(Number); return Math.round((new Date(y2,m2-1,d2)-new Date(y1,m1-1,d1))/864e5); };
+const shortDate = key => { const [y,m,d]=key.split('-').map(Number); return new Date(y,m-1,d).toLocaleDateString(undefined,{month:'short',day:'numeric'}); };
 const ago = key => { if(!key) return 'never'; const n=daysBetween(key,dayKey()); return n===0?'today':n===1?'yesterday':`${n} days ago`; };
 const longDate = () => new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
 
@@ -309,7 +397,8 @@ const defaultState = () => ({
   prayer:{items:[], perDay:4},
   memory:{cards:[], nextTms:0},
   kids:{pos:0},
-  today:{date:'', done:{}, prayIds:[], promptShift:0, recited:false},
+  history:{},
+  today:{date:'', done:{}, prayIds:[], promptShift:0, recited:false, prayed:0, reviewed:0},
 });
 let S = defaultState();
 let currentStep = 0;
@@ -317,17 +406,18 @@ let stepChosen = false;
 
 function ensureToday(){
   const k = dayKey();
-  if (S.today.date !== k) S.today = {date:k, done:{}, prayIds:[], promptShift:0, recited:false};
+  if (S.today.date !== k) S.today = {date:k, done:{}, prayIds:[], promptShift:0, recited:false, prayed:0, reviewed:0};
   if (!S.plan.pos || S.plan.pos.length !== PLANS[S.plan.id].tracks.length) S.plan.pos = PLANS[S.plan.id].tracks.map(()=>0);
 }
 
 /* ---------- storage: artifact db when present, localStorage otherwise ---------- */
 const LS_STATE = 'seekfirst.state';
 const store = {
-  db:null, unsub:null, saveTimer:null,
+  db:null, sample:null, unsub:null, saveTimer:null,
   readLocal(){ try{ const s=localStorage.getItem(LS_STATE); return s?JSON.parse(s):null }catch{ return null } },
   writeLocal(){ try{ localStorage.setItem(LS_STATE, JSON.stringify(S)) }catch{} },
   async init(){
+    if (window.claude?.use) window.claude.use('sample').then(s=>{ this.sample = s; }).catch(()=>{});
     try { this.db = window.claude?.use ? await window.claude.use('db') : null; } catch { this.db = null; }
     if (!this.db) return;
     const ref = this.db.doc('seekfirst/state');
@@ -344,6 +434,7 @@ const store = {
     } catch(e) { console.warn('db unavailable', e); }
   },
   save(){
+    syncHistory();
     S.updatedAt = Date.now();
     this.writeLocal();
     if (!this.db) return;
@@ -364,7 +455,15 @@ const store = {
     return out.sort((a,b)=>a.date<b.date?1:-1);
   }
 };
-function migrate(d){ const base = defaultState(); return Object.assign(base, d, {plan:{...base.plan,...d.plan}, prayer:{...base.prayer,...d.prayer}, memory:{...base.memory,...d.memory}, kids:{...base.kids,...d.kids}, today:{...base.today,...d.today}}); }
+function migrate(d){ const base = defaultState(); return Object.assign(base, d, {plan:{...base.plan,...d.plan}, prayer:{...base.prayer,...d.prayer}, memory:{...base.memory,...d.memory}, kids:{...base.kids,...d.kids}, history:{...(d.history||{})}, today:{...base.today,...d.today}}); }
+function syncHistory(){
+  if (!S.today.date) return;
+  const done = Object.keys(S.today.done).filter(k=>S.today.done[k]);
+  if (done.length || S.today.prayed || S.today.reviewed) S.history[S.today.date] = {done, prayed:S.today.prayed||0, reviewed:S.today.reviewed||0};
+  else delete S.history[S.today.date];
+  const keys = Object.keys(S.history).sort();
+  while (keys.length > 800) delete S.history[keys.shift()];
+}
 
 /* ---------- bible text ---------- */
 const bookCache = {};
@@ -440,13 +539,16 @@ function advanceReading(){
 
 /* ---------- prayer rotation ---------- */
 function pickPrayers(){
-  const active = S.prayer.items.filter(p=>!p.answered);
+  const active = S.prayer.items.filter(isActive);
   const daily = active.filter(p=>p.daily);
   const rest = active.filter(p=>!p.daily).sort((a,b)=> (a.lastPrayed||'') < (b.lastPrayed||'') ? -1 : (a.lastPrayed||'') > (b.lastPrayed||'') ? 1 : a.added < b.added ? -1 : 1);
   return [...daily, ...rest.slice(0, Math.max(0, S.prayer.perDay))].map(p=>p.id);
 }
+const isActive = p => !p.answered && !p.ended;
 function ensurePrayerSelection(){
-  const validIds = new Set(S.prayer.items.filter(p=>!p.answered).map(p=>p.id));
+  const k = dayKey();
+  for (const p of S.prayer.items) if (!p.answered && !p.ended && p.until && p.until < k) p.ended = k;
+  const validIds = new Set(S.prayer.items.filter(isActive).map(p=>p.id));
   S.today.prayIds = (S.today.prayIds||[]).filter(id=>validIds.has(id));
   if (S.today.prayIds.length===0 && validIds.size) S.today.prayIds = pickPrayers();
 }
@@ -467,7 +569,7 @@ function gradeReview(card, ok){
   const k = dayKey();
   if (ok) { card.interval = Math.max(1, Math.round((card.interval||1) * 2.2)); card.due = addDays(k, Math.min(card.interval, 120)); card.reps=(card.reps||0)+1; }
   else { card.interval = 1; card.due = addDays(k,1); }
-  card.lastRep = k;
+  card.lastRep = k; S.today.reviewed = (S.today.reviewed||0)+1;
 }
 
 /* ---------- rendering ---------- */
@@ -485,10 +587,12 @@ const h = (tag, attrs={}, ...kids) => {
 function render(){
   ensureToday();
   document.getElementById('dateLabel').textContent = longDate();
-  const manage = location.hash === '#manage';
-  document.getElementById('navManage').hidden = manage;
-  document.getElementById('navToday').hidden = !manage;
-  app.replaceChildren(manage ? renderManage() : renderToday());
+  const route = location.hash.replace('#','') || 'today';
+  document.getElementById('navToday').hidden = route==='today';
+  document.getElementById('navManage').hidden = route==='manage';
+  document.getElementById('navProgress').hidden = route==='progress';
+  document.getElementById('navPrint').hidden = route==='print';
+  app.replaceChildren(route==='manage' ? renderManage() : route==='progress' ? renderProgress() : route==='print' ? renderPrint() : renderToday());
 }
 
 function renderToday(){
@@ -552,17 +656,18 @@ function renderPray(){
       const prayed = p.lastPrayed===k;
       const row = h('div',{class:'item'+(prayed?' prayed':'')},
         h('div',{}, h('div',{class:'who'}, p.who), p.what ? h('div',{class:'what'}, p.what) : null,
-          h('div',{class:'meta'}, h('span',{class:'chip'}, p.cat||'—'), p.daily?h('span',{class:'chip'},'daily'):null, `last prayed ${ago(p.lastPrayed===k ? p.prevPrayed : p.lastPrayed)}`)),
+          h('div',{class:'meta'}, h('span',{class:'chip'}, p.cat||'—'), p.daily?h('span',{class:'chip'},'daily'):null, p.until?h('span',{class:'chip'},'through '+shortDate(p.until)):null, `last prayed ${ago(p.lastPrayed===k ? p.prevPrayed : p.lastPrayed)}`)),
         h('div',{class:'side'},
-          h('button',{class:'btn sm'+(prayed?' quiet':''),onclick:()=>{ if(prayed){ p.lastPrayed=p.prevPrayed||''; } else { p.prevPrayed=p.lastPrayed||''; p.lastPrayed=k; p.count=(p.count||0)+1; } store.save(); render(); }}, prayed?'Undo':'Prayed'),
+          h('button',{class:'btn sm'+(prayed?' quiet':''),onclick:()=>{ if(prayed){ p.lastPrayed=p.prevPrayed||''; } else { p.prevPrayed=p.lastPrayed||''; p.lastPrayed=k; p.count=(p.count||0)+1; S.today.prayed=(S.today.prayed||0)+1; } store.save(); render(); }}, prayed?'Undo':'Prayed'),
           h('button',{class:'btn sm quiet',title:'Mark answered',onclick:()=>{ p.answered=k; store.save(); render(); }}, 'Answered')));
       list.append(row);
     }
     sec.append(list);
-    const active = S.prayer.items.filter(p=>!p.answered).length;
+    const active = S.prayer.items.filter(isActive).length;
     sec.append(h('p',{class:'tiny'}, `${active} on the list · ${S.prayer.perDay} rotate in each day, plus any marked daily.`));
   }
-  sec.append(prayerForm());
+  sec.append(prayerChat());
+  sec.append(h('details',{class:'formwrap'}, h('summary',{},'Add with a form instead'), prayerForm()));
   sec.append(doneRow('pray',{label:'Prayed'}));
   return sec;
 }
@@ -571,12 +676,93 @@ function prayerForm(){
   const what = h('input',{id:'pr-what',placeholder:'What — the request (optional)',autocomplete:'off'});
   const cat = h('select',{id:'pr-cat'}, PRAY_CATS.map(c=>h('option',{value:c},c)));
   const daily = h('input',{type:'checkbox',id:'pr-daily',style:'width:auto;margin-right:6px'});
-  const add = () => { if(!who.value.trim()) { who.focus(); return; } S.prayer.items.push({id:uid(), who:who.value.trim(), what:what.value.trim(), cat:cat.value, daily:daily.checked, added:dayKey(), lastPrayed:'', count:0, answered:''}); const added = S.prayer.items[S.prayer.items.length-1]; if (added.daily || S.today.prayIds.length < S.prayer.perDay) S.today.prayIds.push(added.id); who.value=''; what.value=''; daily.checked=false; store.save(); render(); };
+  const add = () => { if(!who.value.trim()) { who.focus(); return; } addRequest({who:who.value, what:what.value, cat:cat.value, daily:daily.checked}); who.value=''; what.value=''; daily.checked=false; store.save(); render(); };
   who.addEventListener('keydown',e=>{ if(e.key==='Enter') add(); }); what.addEventListener('keydown',e=>{ if(e.key==='Enter') add(); });
   return h('div',{class:'form'},
     h('h3',{},'Add a request'),
     h('div',{class:'row'}, h('div',{}, h('label',{for:'pr-who'},'Who'), who), h('div',{}, h('label',{for:'pr-what'},'What'), what)),
     h('div',{class:'row'}, h('div',{}, h('label',{for:'pr-cat'},'Category'), cat), h('div',{style:'display:flex;align-items:end;gap:10px'}, h('label',{for:'pr-daily',style:'display:flex;align-items:center;text-transform:none;letter-spacing:0;font-size:14px;color:var(--ink-2);margin:0 0 10px'}, daily, 'Pray daily'), h('button',{class:'btn sm',style:'margin-bottom:6px',onclick:add},'Add'))));
+}
+
+/* Prayer chat: plain words in, structured requests out */
+const chatLog = [];  // session-only transcript
+function addRequest(o){
+  const item = {id:uid(), who:(o.who||'').trim(), what:(o.what||'').trim(), cat:PRAY_CATS.includes(o.cat)?o.cat:'Friends', daily:!!o.daily, until:/^\d{4}-\d{2}-\d{2}$/.test(o.until||'')?o.until:'', added:dayKey(), lastPrayed:'', count:0, answered:'', ended:''};
+  if (!item.who) return null;
+  S.prayer.items.push(item);
+  if (item.daily || S.today.prayIds.length < S.prayer.perDay) S.today.prayIds.push(item.id);
+  return item;
+}
+function heuristicParse(text){
+  const k = dayKey(); const t = text.trim(); const low = t.toLowerCase();
+  const answered = low.match(/^(answered|praise)[:\s-]+(.+)$/);
+  if (answered) { const who = answered[2].trim(); const p = S.prayer.items.filter(isActive).find(x=>who.toLowerCase().includes(x.who.toLowerCase())); return p ? {actions:[{type:'answered',id:p.id}], reply:''} : {actions:[], reply:`I couldn't find "${who}" on the list.`}; }
+  let until=''; let body = t.replace(/^(please\s+)?(pray|praying|prayer)\s+(for|about)\s+/i,'');
+  const dur = low.match(/\b(this week|this month|today|for (\d+) (day|days|week|weeks))\b/);
+  if (dur) { const m=dur[0]; until = m==='today'?k : m==='this week'?addDays(k,7) : m==='this month'?addDays(k,30) : addDays(k, +dur[2] * (dur[3].startsWith('week')?7:1)); body = body.replace(new RegExp('\\s*'+m.replace(/\s+/g,'\\s+'),'i'),''); }
+  const daily = /\b(every day|daily|each day)\b/i.test(body); body = body.replace(/\b(every day|daily|each day)\b/i,'');
+  const m = body.match(/^(.+?)\s*(?:—|–|-|:|,|\babout\b|\bwho\b|\bwhose\b|\bthat\b|\bregarding\b|\bneeds?\b|\bfor\b)\s*(.*)$/i);
+  let who = (m ? m[1] : body).replace(/^(my|our)\s+/i,'').trim(); let what = (m ? m[2] : '').replace(/[.\s]+$/,'').trim();
+  if (who.split(/\s+/).length > 4 && !m) { what = who; who = who.split(/\s+/).slice(0,2).join(' '); }
+  who = who.charAt(0).toUpperCase()+who.slice(1);
+  const b = (who+' '+what).toLowerCase();
+  const cat = /\b(mom|dad|mother|father|wife|husband|son|daughter|kids?|children|brother|sister|grand\w+|family|parents?)\b/.test(b)?'Family' : /\b(church|pastor|elders?|small group|congregation|sunday school|youth group)\b/.test(b)?'Church' : /\b(missionar\w+|nation|country|world|persecuted|war|israel|ukraine|china|india|africa|government|president)\b/.test(b)?'World' : /^(me|myself|i)\b/.test(who.toLowerCase())||/\b(my own|myself)\b/.test(b)?'Me' : 'Friends';
+  return {actions:[{type:'add',who,what,cat,daily,until}], reply:''};
+}
+function chatInstruction(){
+  const list = S.prayer.items.filter(isActive).map(p=>`${p.id} · ${p.who}${p.what?' · '+p.what:''}`).join('\n') || '(empty)';
+  return `You turn a person's plain-language note into prayer-list actions for a personal devotions app. Today is ${dayKey()}.
+Existing active requests (id · who · what):
+${list}
+
+Reply with ONLY this JSON, no prose: {"actions":[...],"reply":"one short warm sentence, no more than 12 words"}
+Action shapes:
+{"type":"add","who":"person or group","what":"the need in the writer's words, short; empty if none","cat":"Family|Friends|Church|World|Me","daily":false,"until":"YYYY-MM-DD or empty"}
+{"type":"answered","id":"id of an existing request"}
+{"type":"remove","id":"id of an existing request"}
+Rules: one add per distinct person or need. Time words set until: "today" = today, "this week" = 7 days from today, "this month" = 30 days, "for N days/weeks" accordingly, otherwise empty. "every day"/"daily" sets daily true. cat: spouse, children, parents, siblings → Family; pastor, church, small group → Church; nations, missionaries, leaders, disasters → World; the writer's own need (I, me, my) → Me; anyone else → Friends. If the note says an existing request was answered, resolved, healed, or is no longer needed, use answered (or remove if they say to remove or delete it) with the matching id — do not add a duplicate.`;
+}
+async function handleChat(text, log, input){
+  const my = h('div',{class:'msg me'}, text); log.append(my);
+  const thinking = h('div',{class:'msg bot thinking'}, 'Thinking…'); log.append(thinking); thinking.scrollIntoView({block:'nearest'});
+  let result;
+  if (store.sample) {
+    try { result = await store.sample.json(chatInstruction() + '\n\nNote (between the markers): <<<' + text.replace(/>>>/g,'') + '>>>', {modelTier:'quick', cache:false}); }
+    catch(e) { if (e && e.code==='not_granted') store.sample=null; else console.warn('sample failed', e); result = heuristicParse(text); }
+  } else result = heuristicParse(text);
+  if (!result || !Array.isArray(result.actions)) result = heuristicParse(text);
+  const bot = h('div',{class:'msg bot'});
+  let n=0;
+  for (const a of result.actions){
+    if (a.type==='add') { const it = addRequest(a); if(!it) continue; n++;
+      const line = h('span',{class:'act'}, 'Added ', h('span',{class:'k'}, it.who), it.what?` — ${it.what}`:'', ` · ${it.cat}${it.daily?' · daily':''}${it.until?' · through '+shortDate(it.until):''}`,
+        h('button',{onclick:()=>{ S.prayer.items=S.prayer.items.filter(x=>x.id!==it.id); S.today.prayIds=S.today.prayIds.filter(x=>x!==it.id); store.save(); line.replaceChildren('Removed ', h('span',{class:'k'},it.who)); rerenderPrayList(); }},'undo'));
+      bot.append(line);
+    } else if (a.type==='answered' || a.type==='remove') { const p = S.prayer.items.find(x=>x.id===a.id); if(!p) continue; n++;
+      const prev = {answered:p.answered, ended:p.ended};
+      if (a.type==='answered') p.answered = dayKey(); else p.ended = dayKey();
+      const line = h('span',{class:'act'}, a.type==='answered'?'Marked answered: ':'Removed: ', h('span',{class:'k'}, p.who),
+        h('button',{onclick:()=>{ Object.assign(p, prev); store.save(); line.replaceChildren('Restored ', h('span',{class:'k'},p.who)); rerenderPrayList(); }},'undo'));
+      bot.append(line);
+    }
+  }
+  if (!n) bot.append(result.reply || "I couldn't make a request out of that — try “pray for Ana about her surgery on Friday”.");
+  else if (result.reply) bot.append(h('span',{class:'act',style:'color:var(--ink-3)'}, String(result.reply)));
+  thinking.replaceWith(bot);
+  chatLog.push(my, bot);
+  if (n) { store.save(); rerenderPrayList(); }
+  input.focus();
+}
+function rerenderPrayList(){ const keep = document.querySelector('.chat .row input'); const v = keep ? keep.value : ''; render(); const inp = document.querySelector('.chat .row input'); if (inp) { inp.value = v; inp.focus(); } }
+function prayerChat(){
+  const log = h('div',{class:'log'}, chatLog.slice(-8));
+  const input = h('input',{id:'chat-in',placeholder:'e.g. pray for Michael about his back this week',autocomplete:'off','aria-label':'Describe a prayer request'});
+  const send = () => { const t = input.value.trim(); if(!t) return; input.value=''; handleChat(t, log, input); };
+  input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); send(); } });
+  return h('div',{class:'chat'},
+    log,
+    h('div',{class:'row'}, input, h('button',{class:'btn primary',onclick:send},'Add')),
+    h('p',{class:'hint'}, store.sample ? 'Write it however it comes to mind — a name, a need, how long. “Sarah’s surgery went well” marks hers answered.' : 'Write “pray for <who> about <what> this week”. Add “daily” to keep it every day.'));
 }
 
 /* Memorize */
@@ -667,7 +853,121 @@ function renderFinish(){
     h('h1',{}, 'Go in peace.'),
     h('p',{class:'verse-block'}, learning.text),
     h('p',{class:'cite'}, learning.ref),
-    h('div',{class:'actions',style:'margin-top:26px'}, h('button',{class:'btn quiet',onclick:()=>{ currentStep=0; stepChosen=true; render(); }}, 'Look back over today')));
+    h('div',{class:'actions',style:'margin-top:26px'}, h('a',{class:'btn',href:'#progress'}, 'See your progress'), h('button',{class:'btn quiet',onclick:()=>{ currentStep=0; stepChosen=true; render(); }}, 'Look back over today')));
+}
+
+/* ---------- progress ---------- */
+function streaks(){
+  const k = dayKey(); const hist = S.history;
+  const has = d => !!(hist[d] && hist[d].done && hist[d].done.length);
+  let cur=0, d = has(k) ? k : addDays(k,-1);
+  while (has(d)) { cur++; d = addDays(d,-1); }
+  let best=0, run=0, prev=null;
+  for (const day of Object.keys(hist).sort()) { if (!has(day)) { run=0; prev=null; continue; } run = (prev && daysBetween(prev,day)===1) ? run+1 : 1; prev=day; best=Math.max(best,run); }
+  return {cur, best:Math.max(best,cur)};
+}
+function renderProgress(){
+  syncHistory();
+  const k = dayKey(); const hist = S.history;
+  const st = streaks();
+  const days = Object.values(hist).filter(d=>d.done&&d.done.length);
+  const fullDays = days.filter(d=>d.done.length===STEPS.length).length;
+  const readDays = days.filter(d=>d.done.includes('read')).length;
+  const prayersPrayed = S.prayer.items.reduce((n,p)=>n+(p.count||0),0);
+  const answered = S.prayer.items.filter(p=>p.answered).length;
+  const inReview = S.memory.cards.filter(c=>c.status==='review').length;
+  const root = h('div',{class:'prog'});
+  root.append(h('div',{class:'hero'},
+    h('div',{}, h('div',{class:'n'}, st.cur), h('div',{class:'l'}, 'day streak')),
+    h('div',{}, h('div',{class:'n'}, fullDays), h('div',{class:'l'}, 'full days')),
+    h('div',{}, h('div',{class:'n'}, inReview), h('div',{class:'l'}, 'verses by heart'))));
+  // heat calendar: 16 weeks, Sunday-first columns
+  const start = addDays(k, -(new Date().getDay() + 15*7));
+  const grid = h('div',{class:'heat',role:'img','aria-label':'Steps completed per day over the last 16 weeks'});
+  const cap = h('div',{class:'heat-cap'}, `Steps done each day · showed up ${days.filter(d=>true).length ? Object.keys(hist).filter(d=>d>=start&&hist[d].done.length).length : 0} of the last ${daysBetween(start,k)+1} days`);
+  for (let i=0;i<16*7;i++){
+    const d = addDays(start,i); const n = hist[d] ? hist[d].done.length : 0; const future = d>k;
+    const c = h('div',{class:'c'+(future?' future':'')+(d===k?' today':''), 'data-n':future?0:n, title: future?'' : `${d} · ${n} of 5`});
+    if (!future) { const show=()=>{ cap.textContent = `${shortDate(d)} · ${n} of 5 steps${hist[d]&&hist[d].prayed?` · prayed for ${hist[d].prayed}`:''}${hist[d]&&hist[d].reviewed?` · reviewed ${hist[d].reviewed}`:''}`; }; c.addEventListener('mouseenter',show); c.addEventListener('click',show); }
+    grid.append(c);
+  }
+  const legend = h('div',{class:'legend'}, 'none', ...[1,2,3,4,5].map(n=>h('span',{class:'c',style:`background:var(--h${n})`})), 'all five');
+  root.append(h('section',{}, h('h2',{}, 'Showing up'), h('p',{class:'muted'}, `Best streak ${st.best} day${st.best===1?'':'s'}. A day counts when you finish at least one step; the shade is how many of the five.`), grid, cap, legend));
+  // plan
+  const plan = PLANS[S.plan.id]; const planSec = h('section',{}, h('h2',{}, 'Reading plan'), h('p',{class:'muted'}, plan.name));
+  plan.tracks.forEach((t,i)=>{ const pos=S.plan.pos[i], total=t.chapters.length, per = plan.tracks.length===1?S.plan.perDay:1; const left = total-pos;
+    planSec.append(h('div',{class:'bar-row'}, h('span',{class:'name'}, t.name), h('span',{class:'val'}, `${pos} / ${total} chapters`), h('div',{class:'track'}, h('div',{class:'fill',style:`width:${(100*pos/total).toFixed(1)}%`})), h('span',{class:'sub'}, `${left} to go · about ${Math.ceil(left/per)} days at this pace`))); });
+  root.append(planSec);
+  // memory dots
+  const series = [...new Set(TMS.map(v=>v.series))];
+  const byTms = Object.fromEntries(S.memory.cards.filter(c=>c.tms!=null).map(c=>[c.tms,c]));
+  const dots = h('div',{class:'dots'});
+  series.forEach(sname=>{ const row = h('div',{class:'rowd'}); TMS.forEach((v,i)=>{ if(v.series!==sname) return; const c=byTms[i]; row.append(h('span',{class:'d'+(c?' '+c.status:''), title:`${v.ref} — ${c?c.status:'not started'}`})); }); dots.append(h('span',{class:'sname'}, sname.replace(/^[A-E]\. /,'')), row); });
+  const customs = S.memory.cards.filter(c=>c.tms==null).length;
+  root.append(h('section',{}, h('h2',{}, 'Hidden in your heart'), h('p',{class:'muted'}, `${inReview} in review${customs?` (${customs} of your own)`:''} · ${S.memory.cards.filter(c=>c.status==='learning').length} learning · ${60 - Object.keys(byTms).length} of the 60 still ahead. Filled = in review, gold ring = learning now.`), dots));
+  // prayer
+  root.append(h('section',{}, h('h2',{}, 'Prayer'), h('div',{class:'hero',style:'padding-block:6px 0'},
+    h('div',{}, h('div',{class:'n'}, prayersPrayed), h('div',{class:'l'}, 'prayers prayed')),
+    h('div',{}, h('div',{class:'n'}, answered), h('div',{class:'l'}, 'answered')),
+    h('div',{}, h('div',{class:'n'}, S.prayer.items.filter(isActive).length), h('div',{class:'l'}, 'on the list')))));
+  // kids
+  const kpos = S.kids.pos % STORIES.length;
+  root.append(h('section',{}, h('h2',{}, 'Kids’ stories'), h('div',{class:'bar-row'}, h('span',{class:'name'}, 'Genesis to Revelation'), h('span',{class:'val'}, `${kpos} / ${STORIES.length}`), h('div',{class:'track'}, h('div',{class:'fill',style:`width:${(100*kpos/STORIES.length).toFixed(1)}%`})), h('span',{class:'sub'}, kpos ? `Next: ${STORIES[kpos][0]}` : 'Starting at the beginning'))));
+  // milestones
+  const miles = [
+    ['First full day', fullDays>=1], ['7-day streak', st.best>=7], ['30-day streak', st.best>=30], ['100-day streak', st.best>=100],
+    ['First verse by heart', inReview>=1], ['12 verses — one series', inReview>=12], ['All 60 verses', inReview>=60],
+    ['First answered prayer', answered>=1], ['100 prayers prayed', prayersPrayed>=100],
+    ['Kids through the Old Testament', kpos>=52], ['Kids through the whole story', S.kids.pos>=STORIES.length],
+    ['100 chapters read', readDays*(plan.tracks.length===1?S.plan.perDay:plan.tracks.length)>=100],
+  ];
+  root.append(h('section',{}, h('h2',{}, 'Milestones'), h('div',{class:'miles'}, miles.map(([n,hit])=>h('span',{class:'mile'+(hit?' hit':'')}, n)))));
+  return root;
+}
+
+/* ---------- print sheet ---------- */
+function renderPrint(){
+  ensurePrayerSelection(); ensureLearningCard();
+  const k = dayKey();
+  const segs = todaysReading();
+  const learning = S.memory.cards.find(c=>c.status==='learning');
+  const due = dueReviews();
+  const prayers = S.today.prayIds.map(id=>S.prayer.items.find(p=>p.id===id)).filter(Boolean);
+  const dayNum = Math.floor(new Date(k).getTime()/864e5);
+  const prompt = PROMPTS[(dayNum + (S.today.promptShift||0) + PROMPTS.length*100) % PROMPTS.length];
+  const [ktitle, kref, kask] = STORIES[S.kids.pos % STORIES.length];
+  let includeText = true; try { includeText = localStorage.getItem('seekfirst.printText')!=='0'; } catch {}
+  const root = h('div',{});
+  const chk = h('input',{type:'checkbox',id:'print-text',style:'width:auto;margin-right:6px',checked:includeText});
+  chk.addEventListener('change',()=>{ try{localStorage.setItem('seekfirst.printText', chk.checked?'1':'0')}catch{}; passageWrap.hidden = !chk.checked; if (chk.checked && !passage.dataset.loaded) { passage.dataset.loaded='1'; renderPassage(passage, segs, {chapterLabels:segs.length>1}); } });
+  root.append(h('div',{class:'actions noprint',style:'margin-top:18px;align-items:center;justify-content:space-between'},
+    h('button',{class:'btn primary',onclick:()=>window.print()}, 'Print this page'),
+    h('label',{for:'print-text',style:'display:flex;align-items:center;font-size:14px;color:var(--ink-2)'}, chk, 'Include the passage text')));
+  const sheet = h('div',{class:'sheet'});
+  sheet.append(h('div',{class:'mast'}, h('span',{class:'wm'}, 'Seek First'), h('span',{class:'dt'}, new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'}))));
+  const left = h('div',{}); const right = h('div',{});
+  left.append(h('div',{class:'blk'}, h('h4',{}, '1 · Read'), h('p',{class:'big'}, refLabel(segs)), h('p',{class:'small'}, PLANS[S.plan.id].name + (includeText?' · text below':''))));
+  const pl = h('ul',{class:'pl'});
+  for (const p of prayers) pl.append(h('li',{}, h('span',{class:'box'}), h('strong',{style:'font-weight:600'}, p.who), p.what?h('span',{class:'w'}, ' — '+p.what):null));
+  for (let i=0;i<2;i++) pl.append(h('li',{}, h('span',{class:'box'}), h('span',{class:'line',style:'display:inline-block;width:80%;height:12px'})));
+  left.append(h('div',{class:'blk'}, h('h4',{}, '2 · Pray'), pl));
+  const mem = h('div',{class:'blk'}, h('h4',{}, '3 · Memorize'));
+  if (learning) mem.append(h('p',{class:'big',style:'font-size:15px'}, learning.ref, h('span',{class:'small',style:'font-family:var(--sans);font-weight:400;margin-left:8px'}, learning.topic)), h('p',{class:'v'}, learning.text));
+  if (due.length) { mem.append(h('p',{class:'small',style:'margin:8px 0 2px'}, 'Review from memory:')); for (const c of due.slice(0,4)) mem.append(h('p',{class:'v',style:'margin:2px 0'}, h('span',{class:'box'}), c.ref)); }
+  if (!learning && !due.length) mem.append(h('p',{class:'small'}, 'Nothing due today.'));
+  left.append(mem);
+  const jr = h('div',{class:'blk'}, h('h4',{}, '4 · Journal'), h('p',{class:'v',style:'font-style:italic'}, prompt));
+  for (let i=0;i<9;i++) jr.append(h('div',{class:'line wide'}));
+  right.append(jr);
+  right.append(h('div',{class:'blk'}, h('h4',{}, '5 · Kids'), h('p',{class:'big',style:'font-size:16px'}, ktitle), h('p',{class:'v',style:'margin:0'}, kref), h('p',{class:'small'}, 'Ask them: ' + kask)));
+  sheet.append(h('div',{class:'cols'}, left, right));
+  const passage = h('div',{class:'passage'});
+  const passageWrap = h('div',{class:'blk passage-wrap',hidden:!includeText}, h('h4',{}, refLabel(segs)), passage);
+  if (includeText) { passage.dataset.loaded='1'; renderPassage(passage, segs, {chapterLabels:segs.length>1}); }
+  sheet.append(passageWrap);
+  root.append(sheet);
+  root.append(h('p',{class:'tiny noprint',style:'margin-top:12px'}, 'Prints on one sheet; the passage may run onto the back. “Save as PDF” in the print dialog works too.'));
+  return root;
 }
 
 /* ---------- manage ---------- */
@@ -696,14 +996,14 @@ function renderManage(){
     h('p',{class:'notice'}, 'Missed a day? Nothing to catch up — the plan simply continues from where you left off.')));
 
   // prayer
-  const active = S.prayer.items.filter(p=>!p.answered).sort((a,b)=>(a.cat||'')<(b.cat||'')?-1:1);
-  const answered = S.prayer.items.filter(p=>p.answered).sort((a,b)=>a.answered<b.answered?1:-1);
+  const active = S.prayer.items.filter(isActive).sort((a,b)=>(a.cat||'')<(b.cat||'')?-1:1);
+  const answered = S.prayer.items.filter(p=>p.answered||p.ended).sort((a,b)=>(a.answered||a.ended)<(b.answered||b.ended)?1:-1);
   const perDayP = h('select',{id:'m-pperday'}, [2,3,4,5,6,8,10].map(n=>h('option',{value:n,selected:n===S.prayer.perDay},`${n} a day`)));
   perDayP.addEventListener('change',()=>{ S.prayer.perDay=+perDayP.value; store.save(); });
   const plist = h('div',{class:'list'});
   for (const p of active) {
     plist.append(h('div',{class:'item'},
-      h('div',{}, h('div',{class:'who'}, p.who), p.what?h('div',{class:'what'},p.what):null, h('div',{class:'meta'}, h('span',{class:'chip'},p.cat||'—'), p.daily?h('span',{class:'chip'},'daily'):null, `added ${p.added} · prayed ${p.count||0}× · last ${ago(p.lastPrayed)}`)),
+      h('div',{}, h('div',{class:'who'}, p.who), p.what?h('div',{class:'what'},p.what):null, h('div',{class:'meta'}, h('span',{class:'chip'},p.cat||'—'), p.daily?h('span',{class:'chip'},'daily'):null, p.until?h('span',{class:'chip'},'through '+shortDate(p.until)):null, `added ${p.added} · prayed ${p.count||0}× · last ${ago(p.lastPrayed)}`)),
       h('div',{class:'side'},
         h('button',{class:'btn sm quiet',onclick:()=>{ p.daily=!p.daily; store.save(); render(); }}, p.daily?'Un-daily':'Daily'),
         h('button',{class:'btn sm quiet',onclick:()=>{ const w=prompt('Who',p.who); if(w===null) return; const t=prompt('What',p.what||''); if(t===null) return; p.who=w.trim()||p.who; p.what=t.trim(); store.save(); render(); }}, 'Edit'),
@@ -711,12 +1011,12 @@ function renderManage(){
         h('button',{class:'btn sm quiet danger',onclick:()=>{ if(confirm(`Remove ${p.who}?`)){ S.prayer.items=S.prayer.items.filter(x=>x.id!==p.id); store.save(); render(); } }}, 'Remove'))));
   }
   const alist = h('div',{class:'list'});
-  for (const p of answered) alist.append(h('div',{class:'item'}, h('div',{}, h('div',{class:'who'}, p.who), p.what?h('div',{class:'what'},p.what):null, h('div',{class:'meta'}, `answered ${p.answered}`)), h('div',{class:'side'}, h('button',{class:'btn sm quiet',onclick:()=>{ p.answered=''; store.save(); render(); }},'Reopen'))));
+  for (const p of answered) alist.append(h('div',{class:'item'}, h('div',{}, h('div',{class:'who'}, p.who), p.what?h('div',{class:'what'},p.what):null, h('div',{class:'meta'}, p.answered ? `answered ${p.answered}` : `ended ${p.ended}`)), h('div',{class:'side'}, h('button',{class:'btn sm quiet',onclick:()=>{ p.answered=''; p.ended=''; p.until=''; store.save(); render(); }},'Reopen'), h('button',{class:'btn sm quiet danger',onclick:()=>{ if(confirm(`Delete ${p.who} for good?`)){ S.prayer.items=S.prayer.items.filter(x=>x.id!==p.id); store.save(); render(); } }},'Delete'))));
   root.append(h('section',{}, h('h2',{},'Prayer list'),
     h('div',{class:'row2'}, h('div',{}, h('label',{for:'m-pperday'},'How many rotate in each day'), perDayP)),
     active.length ? plist : h('p',{class:'empty'},'No requests yet.'),
     prayerForm(),
-    answered.length ? h('div',{style:'margin-top:22px'}, h('h3',{},`Answered · ${answered.length}`), alist) : null));
+    answered.length ? h('div',{style:'margin-top:22px'}, h('h3',{},`Answered & past · ${answered.length}`), alist) : null));
 
   // memory
   const byTms = Object.fromEntries(S.memory.cards.filter(c=>c.tms!=null).map(c=>[c.tms,c]));

@@ -2,7 +2,11 @@
 
 A single-page, distraction-free guide for a 15-minute devotion: today's reading,
 who to pray for, a memory verse (new + spaced review), a journal prompt, and a
-Bible story for the kids.
+Bible story for the kids. Prayer requests can be typed in plain words
+("pray for Michael about his back this week") — the page asks Claude to
+structure them when published as an artifact, with a rule-based fallback
+otherwise. `#progress` shows streaks and a step-per-day calendar; `#print`
+lays the day out as a one-page printable sheet.
 
 - `index.html` — the whole app (no build step).
 - `bible/*.json` — ASV text per book, exported from `../assets/bible-sqlite.db`;
