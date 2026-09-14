@@ -21,7 +21,10 @@
   "vars": {
     // Public values. Secrets (GOOGLE_CLIENT_SECRET, ANTHROPIC_API_KEY) are set with `wrangler secret put`.
     "GOOGLE_CLIENT_ID": "REPLACE_WITH_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
-    "APP_ORIGIN": "https://seekfirst.example.com"
+    "APP_ORIGIN": "https://seekfirst.jackmertens.com"
   },
+  "routes": [
+    { "pattern": "seekfirst.jackmertens.com", "custom_domain": true }
+  ],
   "observability": { "enabled": true }
 }
