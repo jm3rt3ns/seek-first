@@ -83,7 +83,9 @@ h3{font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.06em;t
 .verse-block{font-family:var(--serif);font-size:20px;line-height:1.55;max-width:60ch;margin:10px 0 0}
 .verse-block.hidden{filter:blur(7px);user-select:none;pointer-events:none}
 .ref{font-family:var(--serif);font-weight:500;font-size:24px;margin:0}
+.ref .tr-tag{font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:.07em;color:var(--ink-3);margin-left:9px;vertical-align:.3em}
 .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.actions select.mini{width:auto;max-width:9em}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-weight:500;font-size:15px}
 @media (hover:hover){.btn:hover{border-color:var(--ink-3)}}
 .btn:active{transform:scale(.985)}
@@ -458,7 +460,7 @@ const defaultState = () => ({
   prayer:{items:[], perDay:4},
   memory:{cards:[], nextTms:0},
   kids:{pos:0},
-  settings:{parser:'auto'},
+  settings:{parser:'auto', readTranslation:'asv', memoryTranslation:'asv'},
   history:{},
   today:{date:'', done:{}, prayIds:[], promptShift:0, recited:false, prayed:0, reviewed:0},
 });
@@ -528,6 +530,33 @@ function syncHistory(){
 }
 
 /* ---------- bible text ---------- */
+/* The ASV ships with the page. The other three are copyrighted, so their text is
+   never stored here — it is fetched a passage at a time from the publisher's own
+   API and cached for the life of the page. ESV and NLT want a free key of the
+   reader's own; NET asks for none. Anything that fails falls back to the ASV. */
+/*#region translations*/
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const TRANSLATIONS = {
+  asv: {abbr:'ASV', name:'American Standard Version',
+        credit:'American Standard Version (1901) · public domain'},
+  net: {abbr:'NET', name:'New English Translation',
+        credit:'NET Bible® copyright © 1996–2017 Biblical Studies Press, L.L.C. · netbible.com'},
+  esv: {abbr:'ESV', name:'English Standard Version', key:'esv', keyUrl:'https://api.esv.org/',
+        credit:'ESV® Bible, copyright © 2001 by Crossway. Used by permission. All rights reserved.'},
+  nlt: {abbr:'NLT', name:'New Living Translation', key:'nlt', keyUrl:'https://api.nlt.to/',
+        credit:'Holy Bible, New Living Translation, copyright © 1996, 2004, 2015 by Tyndale House Foundation. Used by permission.'},
+};
+const TRANSLATION_IDS = ['asv','net','esv','nlt'];
+const translationId = id => TRANSLATIONS[id] ? id : 'asv';
+const trAbbr = id => TRANSLATIONS[translationId(id)].abbr;
+const apiKey = {
+  get(t){ try { return localStorage.getItem('seekfirst.key.'+t) || '' } catch { return '' } },
+  set(t,v){ try { v ? localStorage.setItem('seekfirst.key.'+t, v) : localStorage.removeItem('seekfirst.key.'+t) } catch {} },
+};
+function translationReady(id){ const t = TRANSLATIONS[translationId(id)]; return !t.key || !!apiKey.get(t.key); }
+const readTranslation = () => translationId(S.settings.readTranslation);
+const memoryTranslation = () => translationId(S.settings.memoryTranslation);
+
 const bookCache = {};
 async function loadBook(b){
   if (bookCache[b]) return bookCache[b];
@@ -556,20 +585,112 @@ function parseRef(ref){
   }
   return out;
 }
-async function renderPassage(el, segs, {chapterLabels=true}={}){
+
+/* ---------- fetched translations ---------- */
+const segCache = {};
+const wholeChapter = s => s.v1===1 && s.v2>=999;
+const segRef = s => `${bookName(s.b)} ${s.c}` + (wholeChapter(s) ? '' : `:${s.v1}-${s.v2}`);
+function forgetTranslation(id){ for (const k of Object.keys(segCache)) if (k.startsWith(id+':')) delete segCache[k]; }
+
+async function fetchNet(s){
+  const r = await fetch(`https://labs.bible.org/api/?passage=${encodeURIComponent(segRef(s))}&type=json&formatting=plain`);
+  if (!r.ok) throw new Error('NET '+r.status);
+  const rows = await r.json();
+  if (!Array.isArray(rows)) throw new Error('NET shape');
+  return rows.map(v=>({n:+v.verse, t:String(v.text||'').replace(/\s+/g,' ').trim()})).filter(v=>v.t);
+}
+async function fetchEsv(s, key){
+  const q = new URLSearchParams({q:segRef(s), 'include-headings':'false', 'include-footnotes':'false',
+    'include-passage-references':'false', 'include-short-copyright':'false', 'include-verse-numbers':'true',
+    'include-first-verse-numbers':'true', 'indent-poetry':'false', 'indent-paragraphs':'0'});
+  const r = await fetch('https://api.esv.org/v3/passage/text/?'+q, {headers:{Authorization:'Token '+key}});
+  if (!r.ok) throw new Error('ESV '+r.status);
+  const d = await r.json();
+  return splitNumbered((d.passages||[]).join(' '));
+}
+// "[1] In the beginning… [2] And the earth…" -> one entry a verse
+function splitNumbered(txt){
+  const parts = String(txt).split(/\[(\d+)\]/);
+  const out=[];
+  for (let i=1;i<parts.length;i+=2){
+    const t = String(parts[i+1]||'').replace(/\s+/g,' ').trim();
+    if (t) out.push({n:+parts[i], t});
+  }
+  return out;
+}
+async function fetchNlt(s, key){
+  const ref = `${bookName(s.b).replace(/\s+/g,'')}.${s.c}` + (wholeChapter(s) ? '' : `.${s.v1}-${s.v2}`);
+  const r = await fetch(`https://api.nlt.to/api/passages?version=NLT&ref=${encodeURIComponent(ref)}&key=${encodeURIComponent(key)}`);
+  if (!r.ok) throw new Error('NLT '+r.status);
+  // parsed into an inert document: scripts never run and only textContent is read back
+  const doc = new DOMParser().parseFromString(await r.text(), 'text/html');
+  doc.querySelectorAll('h1,h2,h3,h4,.tn,.a-tn,.cw,.cw_ch,.subhead').forEach(n=>n.remove());
+  const out=[];
+  for (const v of doc.querySelectorAll('verse_export')){
+    const vn = v.querySelector('.vn');
+    const n = parseInt(v.getAttribute('vn') || (vn ? vn.textContent : ''), 10);
+    if (vn) vn.remove();
+    const t = (v.textContent||'').replace(/\s+/g,' ').trim();
+    if (t) out.push({n: n || out.length + s.v1, t});
+  }
+  return out;
+}
+
+async function asvVerses(s){
+  const book = await loadBook(s.b);
+  const verses = book[s.c-1] || [];
+  return verses.slice(s.v1-1, Math.min(s.v2, verses.length)).map((t,i)=>({n:s.v1+i, t}));
+}
+// -> {tid, verses, why}: tid is what was actually found, which may be the ASV standing in
+async function segmentVerses(s, want){
+  want = translationId(want);
+  if (want==='asv') return {tid:'asv', verses: await asvVerses(s)};
+  const tr = TRANSLATIONS[want];
+  const key = tr.key ? apiKey.get(tr.key) : '';
+  if (tr.key && !key) return {tid:'asv', verses: await asvVerses(s), why:'key'};
+  const ck = `${want}:${s.b}:${s.c}:${s.v1}:${s.v2}`;
+  if (!segCache[ck]) {
+    segCache[ck] = (want==='net' ? fetchNet(s) : want==='esv' ? fetchEsv(s, key) : fetchNlt(s, key))
+      .then(vs => { if (!vs.length) throw new Error('empty'); return vs; })
+      .catch(e => { delete segCache[ck]; throw e; });
+  }
+  try {
+    let verses = await segCache[ck];
+    if (!wholeChapter(s)) verses = verses.filter(v => v.n>=s.v1 && v.n<=s.v2);
+    if (!verses.length) throw new Error('empty');
+    return {tid:want, verses};
+  } catch { return {tid:'asv', verses: await asvVerses(s), why:'away'}; }
+}
+async function renderPassage(el, segs, {chapterLabels=true, translation}={}){
+  const want = translationId(translation || readTranslation());
   el.innerHTML = '<p class="tiny">Loading text…</p>';
   try {
-    let html='';
+    let html=''; const used=[]; let why='';
     for (const s of segs){
-      const book = await loadBook(s.b);
-      const verses = book[s.c-1] || [];
-      if (chapterLabels) html += `<div class="chap">${bookName(s.b)} ${s.c}</div>`;
-      html += '<p>' + verses.slice(s.v1-1, Math.min(s.v2, verses.length)).map((t,i)=>`<sup>${s.v1+i}</sup>${esc(t)}`).join(' ') + '</p>';
+      const got = await segmentVerses(s, want);
+      if (!used.includes(got.tid)) used.push(got.tid);
+      if (got.why && !why) why = got.why;
+      if (chapterLabels) html += `<div class="chap">${esc(bookName(s.b))} ${s.c}</div>`;
+      html += '<p>' + got.verses.map(v=>`<sup>${v.n}</sup>${esc(v.t)}`).join(' ') + '</p>';
     }
-    el.innerHTML = html + '<p class="tiny">American Standard Version</p>';
+    html += used.map(t=>`<p class="tiny">${esc(TRANSLATIONS[t].credit)}</p>`).join('');
+    if (why==='key') html += `<p class="tiny">Showing the ASV — add a free ${esc(trAbbr(want))} key under <a href="#manage">Manage → Translations</a>.</p>`;
+    else if (why==='away') html += `<p class="tiny">The ${esc(trAbbr(want))} could not be reached just now, so this is the ASV.</p>`;
+    el.innerHTML = html;
   } catch { el.innerHTML = '<p class="tiny">Text not available here — read it in your own Bible.</p>'; }
 }
-const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+// a passage as one run of prose, for a memory card
+async function passageText(segs, want){
+  let text='', tid=null;
+  for (const s of segs){
+    const got = await segmentVerses(s, want);
+    if (tid && got.tid!==tid) return {text:'', tid:got.tid};
+    tid = got.tid;
+    text += (text ? ' ' : '') + got.verses.map(v=>v.t).join(' ');
+  }
+  return {text:text.trim(), tid};
+}
+/*#endregion*/
 
 /* ---------- reading plan ---------- */
 function todaysReading(){
@@ -622,8 +743,29 @@ function ensureLearningCard(){
   while (S.memory.nextTms < TMS.length && S.memory.cards.some(c=>c.tms===S.memory.nextTms)) S.memory.nextTms++;
   if (S.memory.nextTms >= TMS.length) return;
   const v = TMS[S.memory.nextTms];
-  S.memory.cards.push({id:uid(), tms:S.memory.nextTms, ref:v.ref, text:v.text, topic:v.topic, series:v.series, status:'learning', reps:0, lastRep:'', interval:0, due:'', added:dayKey()});
+  const card = {id:uid(), tms:S.memory.nextTms, ref:v.ref, text:v.text, tr:'asv', topic:v.topic, series:v.series, status:'learning', reps:0, lastRep:'', interval:0, due:'', added:dayKey()};
+  S.memory.cards.push(card);
+  fitMemoryTranslation(card);
   S.memory.nextTms++;
+}
+/* A course card carries the wording the reader is working on. A card that has not
+   been recited yet takes the memory default; once it has, it keeps the words it was
+   learned in — nobody wants the verse to change under them mid-week. */
+const trTried = new Set();
+function fitMemoryTranslation(card){
+  const want = memoryTranslation();
+  if (!card || card.tms==null || (card.tr||'asv')===want) return;
+  const mark = card.id+':'+want;
+  if (trTried.has(mark)) return;
+  trTried.add(mark);
+  const segs = parseRef(card.ref);
+  if (!segs) return;
+  passageText(segs, want).then(got=>{
+    const live = S.memory.cards.find(c=>c.id===card.id);
+    if (!live || !got.text || got.tid!==want) return;
+    live.text = got.text; live.tr = want;
+    store.save(); render();
+  }).catch(()=>{});
 }
 function dueReviews(){ const k=dayKey(); return S.memory.cards.filter(c=>c.status==='review' && c.due && c.due<=k).sort((a,b)=>a.due<b.due?-1:1); }
 function promoteToReview(card, interval=1){ card.status='review'; card.interval=interval; card.due=addDays(dayKey(),interval); }
@@ -686,6 +828,17 @@ function doneRow(stepId, {label='Done', onDone}={}){
     ));
 }
 
+/* a translation picker: compact in a step, spelled out in Manage */
+function translationSelect(current, onPick, {mini=false, id}={}){
+  const attrs = {class: mini ? 'mini' : '', 'aria-label':'Translation'};
+  if (id) attrs.id = id;
+  const sel = h('select', attrs, TRANSLATION_IDS.map(t => h('option',{value:t, selected:t===current},
+    mini ? TRANSLATIONS[t].abbr
+         : `${TRANSLATIONS[t].abbr} \u2014 ${TRANSLATIONS[t].name}${translationReady(t) ? '' : ' \u00b7 needs a key'}`)));
+  sel.addEventListener('change', ()=> onPick(translationId(sel.value)));
+  return sel;
+}
+
 /* Read */
 function renderRead(){
   const segs = todaysReading();
@@ -697,8 +850,10 @@ function renderRead(){
   const text = h('div',{class:'scripture'});
   const showKey = 'seekfirst.showText';
   let show = true; try { show = localStorage.getItem(showKey)!=='0'; } catch {}
-  const toggle = h('button',{class:'btn quiet sm',onclick:()=>{ show=!show; try{localStorage.setItem(showKey, show?'1':'0')}catch{}; text.hidden=!show; toggle.textContent = show?'Hide text':'Show text'; if(show&&!text.dataset.loaded){ text.dataset.loaded='1'; renderPassage(text, segs, {chapterLabels: segs.length>1}); } }}, show?'Hide text':'Show text');
-  sec.append(h('div',{class:'actions',style:'margin-top:6px'}, toggle));
+  const trSel = translationSelect(readTranslation(), tid=>{ S.settings.readTranslation=tid; store.save(); render(); }, {mini:true});
+  trSel.hidden = !show;
+  const toggle = h('button',{class:'btn quiet sm',onclick:()=>{ show=!show; try{localStorage.setItem(showKey, show?'1':'0')}catch{}; text.hidden=!show; trSel.hidden=!show; toggle.textContent = show?'Hide text':'Show text'; if(show&&!text.dataset.loaded){ text.dataset.loaded='1'; renderPassage(text, segs, {chapterLabels: segs.length>1}); } }}, show?'Hide text':'Show text');
+  sec.append(h('div',{class:'actions',style:'margin-top:6px'}, toggle, trSel));
   text.hidden = !show;
   if (show) { text.dataset.loaded='1'; renderPassage(text, segs, {chapterLabels: segs.length>1}); }
   sec.append(text);
@@ -1324,13 +1479,14 @@ function renderMemory(){
   const k = dayKey();
   sec.append(h('h1',{}, learning ? 'New verse' : 'Nothing new to learn'));
   if (learning){
+    if (!learning.reps) fitMemoryTranslation(learning);
     const recitedToday = learning.lastRep===k;
     const text = h('p',{class:'verse-block'}, learning.text);
     let hidden=false;
     const hideBtn = h('button',{class:'btn sm',onclick:()=>{ hidden=!hidden; text.classList.toggle('hidden',hidden); hideBtn.textContent = hidden?'Show text':'Hide text & recite'; }}, 'Hide text & recite');
     sec.append(h('div',{class:'card'},
       h('p',{class:'eyebrow'}, `${learning.series} · ${learning.topic}`),
-      h('p',{class:'ref'}, learning.ref), text,
+      h('p',{class:'ref'}, learning.ref, trTag(learning)), text,
       h('div',{class:'actions'}, hideBtn,
         h('button',{class:'btn sm'+(recitedToday?' quiet':''),onclick:()=>{ if(!recitedToday){ learning.reps=(learning.reps||0)+1; learning.lastRep=k; store.save(); render(); } }}, recitedToday ? `Recited today ✓ (${learning.reps} days)` : `I recited it (${learning.reps||0} days so far)`),
         h('button',{class:'btn sm quiet',onclick:()=>{ promoteToReview(learning, 2); store.save(); render(); }}, 'I know it — move to review')),
@@ -1353,14 +1509,17 @@ function renderMemory(){
       const grades = h('div',{class:'actions',hidden:true,style:'margin-top:10px'},
         h('button',{class:'btn sm primary',onclick:()=>{ gradeReview(c,true); store.save(); render(); }}, 'Remembered'),
         h('button',{class:'btn sm',onclick:()=>{ gradeReview(c,false); store.save(); render(); }}, 'Forgot — see it tomorrow'));
-      list.append(h('div',{class:'card'}, h('p',{class:'eyebrow'}, c.topic||'Custom'), h('p',{class:'ref'}, c.ref), text, h('div',{class:'actions'}, reveal), grades));
+      list.append(h('div',{class:'card'}, h('p',{class:'eyebrow'}, c.topic||'Custom'), h('p',{class:'ref'}, c.ref, trTag(c)), text, h('div',{class:'actions'}, reveal), grades));
     }
     if (due.length>4) list.append(h('p',{class:'tiny'}, `${due.length-4} more waiting — they’ll show once these are done.`));
     sec.append(list);
   }
+  for (const t of shownTranslations([learning, ...due.slice(0,4)])) sec.append(h('p',{class:'tiny'}, TRANSLATIONS[t].credit));
   sec.append(doneRow('memory',{label:'Done'}));
   return sec;
 }
+const trTag = card => card && card.tr && card.tr!=='asv' ? h('span',{class:'tr-tag'}, TRANSLATIONS[card.tr].abbr) : null;
+const shownTranslations = cards => [...new Set(cards.filter(Boolean).map(c=>c.tr).filter(t=>t && t!=='asv' && TRANSLATIONS[t]))];
 
 /* Journal */
 function renderJournal(){
@@ -1503,9 +1662,10 @@ function renderPrint(){
   for (let i=0;i<2;i++) pl.append(h('li',{}, h('span',{class:'box'}), h('span',{class:'line',style:'display:inline-block;width:80%;height:12px'})));
   left.append(h('div',{class:'blk'}, h('h4',{}, '2 · Pray'), pl));
   const mem = h('div',{class:'blk'}, h('h4',{}, '3 · Memorize'));
-  if (learning) mem.append(h('p',{class:'big',style:'font-size:15px'}, learning.ref, h('span',{class:'small',style:'font-family:var(--sans);font-weight:400;margin-left:8px'}, learning.topic)), h('p',{class:'v'}, learning.text));
+  if (learning) mem.append(h('p',{class:'big',style:'font-size:15px'}, learning.ref, h('span',{class:'small',style:'font-family:var(--sans);font-weight:400;margin-left:8px'}, learning.topic + (trTag(learning) ? ' \u00b7 ' + TRANSLATIONS[learning.tr].abbr : ''))), h('p',{class:'v'}, learning.text));
   if (due.length) { mem.append(h('p',{class:'small',style:'margin:8px 0 2px'}, 'Review from memory:')); for (const c of due.slice(0,4)) mem.append(h('p',{class:'v',style:'margin:2px 0'}, h('span',{class:'box'}), c.ref)); }
   if (!learning && !due.length) mem.append(h('p',{class:'small'}, 'Nothing due today.'));
+  for (const t of shownTranslations([learning])) mem.append(h('p',{class:'small'}, TRANSLATIONS[t].credit));
   left.append(mem);
   const jr = h('div',{class:'blk'}, h('h4',{}, '4 · Journal'), h('p',{class:'v',style:'font-style:italic'}, prompt));
   for (let i=0;i<9;i++) jr.append(h('div',{class:'line wide'}));
@@ -1545,6 +1705,25 @@ function renderManage(){
     h('div',{class:'row2'}, h('div',{}, h('label',{for:'m-plan'},'Plan'), planSel), h('div',{}, h('label',{for:'m-perday'},'Pace'), perDay)),
     posWrap,
     h('p',{class:'notice'}, 'Missed a day? Nothing to catch up — the plan simply continues from where you left off.')));
+
+  // translations
+  const readSel = translationSelect(readTranslation(), tid=>{ S.settings.readTranslation=tid; store.save(); render(); }, {id:'m-tr-read'});
+  const memSel = translationSelect(memoryTranslation(), tid=>{ S.settings.memoryTranslation=tid; store.save(); render(); }, {id:'m-tr-mem'});
+  const keyField = id => {
+    const tr = TRANSLATIONS[id];
+    const inp = h('input',{id:'m-key-'+id, type:'text', autocomplete:'off', spellcheck:'false', placeholder:'Paste your key', value:apiKey.get(tr.key)});
+    inp.addEventListener('change',()=>{ apiKey.set(tr.key, inp.value.trim()); forgetTranslation(id); render(); });
+    return h('div',{}, h('label',{for:'m-key-'+id}, `${tr.abbr} key`), inp,
+      h('p',{class:'tiny'}, h('a',{href:tr.keyUrl, target:'_blank', rel:'noopener'}, `Get a free ${tr.abbr} key`),
+        apiKey.get(tr.key) ? ' \u00b7 saved in this browser' : ' \u00b7 none saved yet'));
+  };
+  root.append(h('section',{}, h('h2',{},'Translations'),
+    h('div',{class:'row2'},
+      h('div',{}, h('label',{for:'m-tr-read'},'Reading, kids\u2019 stories, and the print sheet'), readSel),
+      h('div',{}, h('label',{for:'m-tr-mem'},'New memory verses'), memSel)),
+    h('p',{class:'notice'}, 'The ASV is part of this page: it never needs the network and is always there to fall back on. The NET is fetched from netbible.com as you read it. The ESV and the NLT are fetched from their publishers and want a free key of your own \u2014 the key stays in this browser, and the only thing sent with it is the reference you are reading.'),
+    h('div',{class:'row2'}, keyField('esv'), keyField('nlt')),
+    h('p',{class:'notice'}, 'Verses you have already begun memorizing keep the wording you learned them in; the memory default applies to verses as they come up. You can change any of this whenever you like \u2014 nothing is lost.')));
 
   // prayer
   const active = S.prayer.items.filter(isActive).sort((a,b)=>(a.cat||'')<(b.cat||'')?-1:1);
@@ -1594,8 +1773,9 @@ function renderManage(){
     const status = c ? (c.status==='learning' ? 'learning' : `review · due ${c.due}`) : (i===S.memory.nextTms ? 'next' : '');
     const side = h('div',{class:'side'});
     if (!c) {
-      side.append(h('button',{class:'btn sm quiet',onclick:()=>{ S.memory.cards.push({id:uid(),tms:i,ref:v.ref,text:v.text,topic:v.topic,series:v.series,status:'review',reps:3,lastRep:dayKey(),interval:7,due:addDays(dayKey(),1),added:dayKey()}); store.save(); render(); }}, 'Already know it'));
-      side.append(h('button',{class:'btn sm quiet',onclick:()=>{ const cur=S.memory.cards.find(x=>x.status==='learning'); if(cur){ cur.status='paused'; } S.memory.cards.push({id:uid(),tms:i,ref:v.ref,text:v.text,topic:v.topic,series:v.series,status:'learning',reps:0,lastRep:'',interval:0,due:'',added:dayKey()}); store.save(); render(); }}, 'Learn now'));
+      const newCard = extra => { const c = Object.assign({id:uid(),tms:i,ref:v.ref,text:v.text,tr:'asv',topic:v.topic,series:v.series,reps:0,lastRep:'',interval:0,due:'',added:dayKey()}, extra); S.memory.cards.push(c); fitMemoryTranslation(c); store.save(); render(); };
+      side.append(h('button',{class:'btn sm quiet',onclick:()=>newCard({status:'review',reps:3,lastRep:dayKey(),interval:7,due:addDays(dayKey(),1)})}, 'Already know it'));
+      side.append(h('button',{class:'btn sm quiet',onclick:()=>{ const cur=S.memory.cards.find(x=>x.status==='learning'); if(cur){ cur.status='paused'; } newCard({status:'learning'}); }}, 'Learn now'));
     } else if (c.status==='paused') {
       side.append(h('button',{class:'btn sm quiet',onclick:()=>{ const cur=S.memory.cards.find(x=>x.status==='learning'); if(cur) cur.status='paused'; c.status='learning'; store.save(); render(); }}, 'Resume'));
     } else {

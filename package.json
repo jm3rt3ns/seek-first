@@ -9,7 +9,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest",
-    "test:web": "node --test web/prayer-parse.test.mjs"
+    "test:web": "node --test web/*.test.mjs"
   },
   "dependencies": {
     "@expo/webpack-config": "^0.17.2",

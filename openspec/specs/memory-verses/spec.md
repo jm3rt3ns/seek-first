@@ -12,12 +12,41 @@ learned keep coming back.
 
 The course SHALL be the 60 ASV verses of `tms.json`, ordered, each with a series
 (A–E), a topic, a reference, and its text. The list is content, not state: a card in
-the reader's state references a verse by its index.
+the reader's state references a verse by its index, and carries the wording being
+learned along with the translation it came from.
 
 #### Scenario: Course composition
 
 - **WHEN** the memory view is opened
 - **THEN** the verses are grouped under their five series in course order
+
+### Requirement: New Verses Take the Memory Translation
+
+A course card SHALL be created with the ASV text of `tms.json` and then, when
+`settings.memoryTranslation` names another translation, SHALL have its text replaced
+by that translation's wording of the same reference once it arrives. A card that has
+already been recited SHALL keep the words it was learned in, whatever the default
+becomes afterwards. A verse the reader typed themselves SHALL never be rewritten. A
+card SHALL show which translation it is in when that is not the ASV, with that
+publisher's credit below the step, and a fetch that fails SHALL leave the ASV wording
+in place with nothing said about it.
+
+#### Scenario: Setting a memory default
+
+- **WHEN** the reader sets the memory default to the NLT and the next course verse
+  starts
+- **THEN** that card is the NLT wording, labelled NLT, credited to Tyndale
+
+#### Scenario: Changing the default mid-verse
+
+- **WHEN** the reader has recited this week's verse twice and then changes the default
+- **THEN** the verse they are working on keeps its wording, and the change reaches the
+  next verse instead
+
+#### Scenario: The translation cannot be fetched
+
+- **WHEN** a new card's translation is unreachable
+- **THEN** the card stays in the ASV and the step reads exactly as it always has
 
 ### Requirement: One Verse Is Being Learned at a Time
 

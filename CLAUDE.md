@@ -27,6 +27,7 @@ No build step, no framework, no dependencies, no `npm install`. Edit the file, r
 web/index.html      the whole app
 web/bible/N.json    ASV text, one file per book (1–66): [chapter][verse] strings
 web/bible/books.json, tms.json   also inlined into index.html as <script type="application/json">
+web/*.test.mjs      node --test over the #region blocks lifted out of index.html
 web/wrangler.jsonc  Cloudflare Workers static-assets config (no Worker script)
 ```
 
@@ -64,6 +65,11 @@ bible loading and `parseRef` → per-feature logic → `render*` functions → `
   `addDays` / `daysBetween`, never raw `Date` arithmetic.
 - Bible text is the public-domain ASV, exported from `assets/bible-sqlite.db`
   (table `t_asv`, ids `BBCCCVVV`). Keep the per-book JSON shape if you regenerate it.
+- The NET, ESV, and NLT are copyrighted: never commit their text. They are fetched a
+  passage at a time from the publishers' APIs (`labs.bible.org`, `api.esv.org`,
+  `api.nlt.to`), cached in memory, credited on screen, and always able to fall back to
+  the ASV. ESV and NLT keys are the reader's own and live in `localStorage` only —
+  never in `S`, which syncs to the artifact store.
 
 ### The tone rules are product requirements
 
@@ -99,7 +105,9 @@ its cases don't run; `planSlice.setEndVerse` writes to `startVerse` and
 - Root `package.json` pins `"packageManager": "yarn@1.22.22"`. Don't remove it:
   Cloudflare installs from the repo root before deploying `web/`, and Corepack's Yarn
   4 default would migrate the Yarn 1 lockfile and fail the build with `YN0028`.
-- There are no tests for `web/`; verify changes by loading the page and walking the
-  five steps, including at phone width and in dark mode.
+- `yarn test:web` runs `node --test` over `web/*.test.mjs`, which lift the marked
+  `/*#region …*/` blocks out of `index.html` and exercise them with no DOM: the prayer
+  rule engine and the translation layer. Anything else is verified by loading the page
+  and walking the five steps, including at phone width and in dark mode.
 - 4.2MB of `bible/*.json` is committed on purpose — it is the app's data, not build
   output.
