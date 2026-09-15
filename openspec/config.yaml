@@ -1,0 +1,43 @@
+schema: spec-driven
+
+context: |
+  Seek First is a distraction-free daily devotions guide: about fifteen minutes of
+  reading, prayer, scripture memory, journaling, and a Bible story for the kids.
+
+  What ships is `web/` — one static `index.html` (markup, CSS, and vanilla JS in the
+  one file, no build step, no framework) plus `bible/*.json`, deployed to Cloudflare
+  Workers static assets. State lives in the reader's browser (`localStorage`), or in
+  the artifact store when the page is published as a claude.ai artifact. There is no
+  account, no server, and no telemetry.
+
+  The repository root is a separate, unfinished Expo / React Native prototype
+  (TypeScript, Redux Toolkit, React Navigation, expo-sqlite) for choosing a passage to
+  memorize. It is not deployed and does not share code with `web/`. Work on the
+  devotions app almost always means `web/index.html` alone.
+
+  Conventions: plain JS with no dependencies in the web app; scripture is the
+  public-domain ASV, exported from `assets/bible-sqlite.db`; the reader is never
+  nagged, never behind, and never asked to catch up.
+
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing
