@@ -1,0 +1,1074 @@
+<meta charset="utf-8">
+<title>Seek First</title>
+<meta name="description" content="A 15-minute daily devotions guide: reading plan, prayer rotation, memory verses, a journal prompt, and a Bible story for the kids.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400;1,7..72,500&display=swap">
+<style>
+:root{
+  --bg:#f3f4f0; --surface:#ffffff; --ink:#141a17; --ink-2:#4f5a54; --ink-3:#7d877f;
+  --line:#d9ddd6; --line-2:#e8ebe6; --pine:#20372e; --pine-ink:#f3f4f0; --pine-soft:#e3eae5;
+  --gold:#8a6512; --gold-fill:#f9c045; --good:#2f6b45; --danger:#9a3b2e;
+  --h0:#e6e9e3; --h1:#cfdcd4; --h2:#a9c4b3; --h3:#7ea892; --h4:#4f8069; --h5:#20372e;
+  --serif:"Literata",Georgia,"Times New Roman",serif; --sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#121715; --surface:#1a221e; --ink:#ebe8de; --ink-2:#b0b8b1; --ink-3:#7f8a82;
+    --line:#2c3730; --line-2:#222c26; --pine:#2f4a3e; --pine-ink:#f3f4f0; --pine-soft:#1f2c26;
+    --gold:#f9c045; --gold-fill:#f9c045; --good:#7fc39a; --danger:#e08a7c; color-scheme:dark;
+    --h0:#222c26; --h1:#2c4437; --h2:#3a5d4a; --h3:#4f7d63; --h4:#75a98a; --h5:#a8d6bb;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121715; --surface:#1a221e; --ink:#ebe8de; --ink-2:#b0b8b1; --ink-3:#7f8a82;
+  --line:#2c3730; --line-2:#222c26; --pine:#2f4a3e; --pine-ink:#f3f4f0; --pine-soft:#1f2c26;
+  --gold:#f9c045; --gold-fill:#f9c045; --good:#7fc39a; --danger:#e08a7c; color-scheme:dark;
+  --h0:#222c26; --h1:#2c4437; --h2:#3a5d4a; --h3:#4f7d63; --h4:#75a98a; --h5:#a8d6bb;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5;padding-inline:20px;padding-block:0 64px;min-height:100vh}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+input,textarea,select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 12px;width:100%}
+textarea{resize:vertical;min-height:140px;font-family:var(--serif);font-size:17px;line-height:1.6}
+select{appearance:auto}
+.wrap{max-width:620px;margin:0 auto}
+header{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding-block:22px 8px;border-bottom:1px solid var(--line)}
+.wordmark{font-family:var(--serif);font-style:italic;font-weight:500;font-size:20px;letter-spacing:.01em;color:var(--ink)}
+.wordmark small{font-style:normal;font-family:var(--sans);font-size:12px;color:var(--ink-3);margin-left:10px;letter-spacing:.02em}
+.nav a,.nav button{font-size:13px;color:var(--ink-2);text-decoration:none;letter-spacing:.02em;padding:6px 0}
+.nav a:hover,.nav button:hover{color:var(--ink)}
+/* progress strip */
+.steps{display:flex;gap:4px;padding-block:18px 6px;list-style:none;margin:0;padding-inline:0}
+.steps li{flex:1;min-width:0}
+.steps button{width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:6px 2px;border-radius:4px}
+.steps .bar{display:block;width:100%;height:3px;background:var(--line);border-radius:2px}
+.steps .lbl{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.steps li.done .bar{background:var(--gold-fill)}
+.steps li.cur .bar{background:var(--pine)}
+.steps li.cur.done .bar{background:var(--gold-fill)}
+.steps li.cur .lbl{color:var(--ink);font-weight:600}
+.steps li.done .lbl::after{content:" ✓";color:var(--gold)}
+/* step section */
+.step{padding-block:22px 0}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:0 0 6px}
+h1{font-family:var(--serif);font-weight:500;font-size:30px;line-height:1.2;margin:0 0 6px;text-wrap:balance;letter-spacing:-.005em}
+h2{font-family:var(--serif);font-weight:500;font-size:22px;line-height:1.25;margin:0 0 8px;text-wrap:balance}
+h3{font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);margin:0 0 10px}
+.muted{color:var(--ink-2)}
+.tiny{font-size:13px;color:var(--ink-3)}
+.scripture{font-family:var(--serif);font-size:18px;line-height:1.65;max-width:62ch;margin:14px 0 0}
+.scripture p{margin:0 0 .9em}
+.scripture sup{font-family:var(--sans);font-size:10px;color:var(--ink-3);margin-right:4px;vertical-align:.45em;letter-spacing:0}
+.scripture .chap{font-family:var(--sans);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:1.4em 0 .6em}
+.scripture .chap:first-child{margin-top:.2em}
+.verse-block{font-family:var(--serif);font-size:20px;line-height:1.55;max-width:60ch;margin:10px 0 0}
+.verse-block.hidden{filter:blur(7px);user-select:none;pointer-events:none}
+.ref{font-family:var(--serif);font-weight:500;font-size:24px;margin:0}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-weight:500;font-size:15px}
+.btn:hover{border-color:var(--ink-3)}
+.btn.primary{background:var(--pine);color:var(--pine-ink);border-color:var(--pine)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.quiet{border-color:transparent;background:transparent;color:var(--ink-2);padding-inline:8px}
+.btn.quiet:hover{color:var(--ink)}
+.btn.sm{min-height:34px;padding:0 12px;font-size:13px;border-radius:6px}
+.btn.danger{color:var(--danger)}
+.done-row{margin-top:28px;padding-top:18px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.done-row .btn.primary{min-width:180px}
+.list{display:flex;flex-direction:column;gap:0;margin:8px 0 0}
+.item{display:grid;grid-template-columns:1fr auto;gap:6px 14px;padding:14px 0;border-top:1px solid var(--line-2);align-items:start}
+.item:first-child{border-top:0}
+.item .who{font-family:var(--serif);font-size:19px;font-weight:500;line-height:1.3}
+.item .what{color:var(--ink-2);font-size:15px;line-height:1.45;max-width:58ch}
+.item .meta{font-size:12px;color:var(--ink-3);letter-spacing:.02em}
+.item .side{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.item.prayed .who{color:var(--ink-3)}
+.item.prayed .who::after{content:" ✓";color:var(--gold)}
+.chip{display:inline-block;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2);background:var(--pine-soft);padding:2px 8px;border-radius:999px;margin-right:6px}
+.form{display:grid;gap:10px;margin-top:18px;padding:16px;border:1px dashed var(--line);border-radius:10px}
+.form .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:480px){.form .row{grid-template-columns:1fr}}
+.form label{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);display:block;margin-bottom:4px}
+.empty{padding:22px 0 6px;color:var(--ink-2);font-family:var(--serif);font-size:17px;max-width:52ch}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-top:14px}
+.card + .card{margin-top:10px}
+.card .eyebrow{margin-bottom:2px}
+.review-list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.save-state{font-size:12px;color:var(--ink-3);min-width:60px;text-align:right}
+.finish{padding-block:48px 20px;text-align:left}
+.finish h1{font-size:34px}
+.finish .verse-block{margin-top:22px}
+.finish .cite{font-family:var(--sans);font-size:13px;color:var(--ink-3);margin-top:8px;letter-spacing:.03em}
+/* manage */
+.manage section{padding-block:26px;border-bottom:1px solid var(--line)}
+.manage section:last-child{border-bottom:0}
+.manage .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+@media (max-width:480px){.manage .row2{grid-template-columns:1fr}}
+.manage label{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);display:block;margin-bottom:4px}
+.tms-list{display:flex;flex-direction:column}
+.tms-list .series{font-family:var(--serif);font-weight:500;font-size:17px;margin:18px 0 4px}
+.tms-list .series:first-child{margin-top:8px}
+.tms-row{display:grid;grid-template-columns:1fr auto;gap:8px 12px;padding:9px 0;border-top:1px solid var(--line-2);align-items:center;font-size:14px}
+.tms-row .t{color:var(--ink-3);font-size:12px;letter-spacing:.03em;text-transform:uppercase}
+.tms-row .st{font-size:12px;color:var(--ink-3)}
+.tms-row .st.learning{color:var(--gold)} .tms-row .st.review{color:var(--good)}
+.jlist{display:flex;flex-direction:column}
+.jlist details{border-top:1px solid var(--line-2);padding:8px 0}
+.jlist summary{cursor:pointer;font-weight:500}
+.jlist summary span{color:var(--ink-3);font-weight:400;font-size:13px;margin-left:10px}
+.jlist .body{font-family:var(--serif);font-size:16px;white-space:pre-wrap;color:var(--ink-2);margin-top:8px}
+.notice{font-size:13px;color:var(--ink-3);margin-top:10px}
+.nav{display:flex;gap:16px}
+.nav a{white-space:nowrap}
+@media (max-width:480px){.wordmark small{display:none}.nav{gap:12px}}
+@media (max-width:520px){.dots{grid-template-columns:1fr;gap:4px}.dots .sname{margin-top:8px}}
+/* chat */
+.chat{margin-top:18px}
+.chat .log{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.chat .msg{max-width:88%;padding:9px 13px;border-radius:14px;font-size:15px;line-height:1.45}
+.chat .msg.me{align-self:flex-end;background:var(--pine);color:var(--pine-ink);border-bottom-right-radius:4px}
+.chat .msg.bot{align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:4px}
+.chat .msg.bot .act{display:block;margin-top:4px}
+.chat .msg.bot .act button{color:var(--gold);font-size:13px;margin-left:8px;text-decoration:underline}
+.chat .msg.bot .act .k{font-weight:600}
+.chat .msg.thinking{color:var(--ink-3);font-style:italic}
+.chat .row{display:flex;gap:8px}
+.chat .row input{flex:1;font-size:16px;border-radius:22px;padding:11px 16px}
+.chat .row .btn{border-radius:22px;padding-inline:18px}
+.chat .hint{font-size:13px;color:var(--ink-3);margin-top:8px}
+details.formwrap{margin-top:14px}
+details.formwrap summary{font-size:13px;color:var(--ink-3);cursor:pointer}
+details.formwrap .form{margin-top:8px}
+/* progress */
+.prog section{padding-block:24px;border-bottom:1px solid var(--line)}
+.prog section:last-child{border-bottom:0}
+.hero{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding-block:22px 6px}
+@media (max-width:480px){.hero{gap:8px}}
+.hero .n{font-family:var(--serif);font-size:44px;font-weight:500;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.hero .l{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-top:8px}
+.heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,14px);grid-auto-columns:14px;gap:3px;margin-top:14px;overflow-x:auto;padding-bottom:4px}
+.heat .c{width:14px;height:14px;border-radius:3px;background:var(--h0)}
+.heat .c[data-n="1"]{background:var(--h1)} .heat .c[data-n="2"]{background:var(--h2)} .heat .c[data-n="3"]{background:var(--h3)} .heat .c[data-n="4"]{background:var(--h4)} .heat .c[data-n="5"]{background:var(--h5)}
+.heat .c.future{background:transparent;border:1px dashed var(--line)}
+.heat .c.today{outline:2px solid var(--gold-fill);outline-offset:1px}
+.heat-cap{font-size:13px;color:var(--ink-2);margin-top:8px;min-height:20px;font-variant-numeric:tabular-nums}
+.legend{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--ink-3);margin-top:8px}
+.legend .c{width:12px;height:12px;border-radius:3px}
+.bar-row{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:baseline;margin-top:14px}
+.bar-row .name{font-weight:500}
+.bar-row .val{font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.bar-row .track{grid-column:1/-1;height:8px;background:var(--h0);border-radius:4px;overflow:hidden}
+.bar-row .fill{height:100%;background:var(--h5);border-radius:4px;min-width:2px}
+.bar-row .sub{grid-column:1/-1;font-size:13px;color:var(--ink-3)}
+.dots{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:center;margin-top:12px}
+.dots .sname{font-size:12px;color:var(--ink-3);letter-spacing:.03em;white-space:nowrap}
+.dots .rowd{display:flex;gap:5px;flex-wrap:wrap}
+.dots .d{width:16px;height:16px;border-radius:50%;background:var(--h0);border:2px solid transparent}
+.dots .d.review{background:var(--h5)} .dots .d.learning{border-color:var(--gold-fill);background:transparent} .dots .d.paused{border-color:var(--ink-3);background:transparent}
+.miles{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.mile{font-size:13px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);color:var(--ink-3)}
+.mile.hit{border-color:var(--gold-fill);color:var(--ink);background:color-mix(in srgb,var(--gold-fill) 18%,transparent)}
+.mile.hit::before{content:"✓ ";color:var(--gold)}
+/* print sheet */
+.sheet{background:var(--surface);border:1px solid var(--line);padding:26px 28px;margin-top:16px;font-size:14px;line-height:1.4}
+.sheet .mast{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:6px;margin-bottom:14px}
+.sheet .mast .wm{font-family:var(--serif);font-style:italic;font-size:20px}
+.sheet .mast .dt{font-size:13px;letter-spacing:.04em;text-transform:uppercase}
+.sheet .cols{display:grid;grid-template-columns:1fr 1fr;gap:0 26px}
+@media (max-width:560px){.sheet .cols{grid-template-columns:1fr}}
+.sheet .blk{margin-bottom:14px;break-inside:avoid}
+.sheet h4{font-family:var(--sans);font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 5px;padding-bottom:3px;border-bottom:1px solid var(--line);color:var(--ink-2)}
+.sheet .big{font-family:var(--serif);font-size:19px;font-weight:500;line-height:1.25;margin:0 0 4px}
+.sheet .v{font-family:var(--serif);font-size:14px;line-height:1.45;margin:4px 0}
+.sheet .box{display:inline-block;width:11px;height:11px;border:1.5px solid var(--ink);border-radius:2px;vertical-align:-1px;margin-right:7px}
+.sheet .pl{margin:0;padding:0;list-style:none}
+.sheet .pl li{padding:3px 0;font-size:13.5px}
+.sheet .pl li .w{color:var(--ink-2)}
+.sheet .line{border-bottom:1px solid var(--line);height:20px}
+.sheet .line.wide{height:24px}
+.sheet .small{font-size:12px;color:var(--ink-3)}
+.sheet .passage{margin-top:8px;column-count:2;column-gap:22px;font-family:var(--serif);font-size:12.5px;line-height:1.45}
+.sheet .passage p{margin:0 0 .6em}
+.sheet .passage sup{font-family:var(--sans);font-size:8px;color:var(--ink-3);margin-right:2px}
+.sheet .passage .chap{column-span:all;font-family:var(--sans);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:6px 0 4px}
+@media (max-width:560px){.sheet .passage{column-count:1}}
+@media print{
+  @page{margin:13mm 14mm}
+  html,body{background:#fff!important;color:#000!important;padding:0!important;font-size:12.5px}
+  header,.noprint{display:none!important}
+  .wrap{max-width:none}
+  .sheet{border:0;padding:0;margin:0;color:#000;--ink:#000;--ink-2:#222;--ink-3:#555;--line:#999;--surface:#fff;--bg:#fff;--h0:#eee;--h5:#000}
+  .sheet .cols{grid-template-columns:1fr 1fr}
+  .sheet .passage{column-count:2}
+  a{color:inherit;text-decoration:none}
+}
+.sr{position:absolute;left:-9999px}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:no-preference){.verse-block{transition:filter .25s ease}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="wordmark">Seek First <small id="dateLabel"></small></div>
+    <nav class="nav"><a href="#" id="navToday">← Today</a><a href="#progress" id="navProgress">Progress</a><a href="#print" id="navPrint">Print</a><a href="#manage" id="navManage">Manage</a></nav>
+  </header>
+  <main id="app"></main>
+</div>
+
+<script id="books" type="application/json">[{"b":1,"n":"Genesis","t":"OT","c":50},{"b":2,"n":"Exodus","t":"OT","c":40},{"b":3,"n":"Leviticus","t":"OT","c":27},{"b":4,"n":"Numbers","t":"OT","c":36},{"b":5,"n":"Deuteronomy","t":"OT","c":34},{"b":6,"n":"Joshua","t":"OT","c":24},{"b":7,"n":"Judges","t":"OT","c":21},{"b":8,"n":"Ruth","t":"OT","c":4},{"b":9,"n":"1 Samuel","t":"OT","c":31},{"b":10,"n":"2 Samuel","t":"OT","c":24},{"b":11,"n":"1 Kings","t":"OT","c":22},{"b":12,"n":"2 Kings","t":"OT","c":25},{"b":13,"n":"1 Chronicles","t":"OT","c":29},{"b":14,"n":"2 Chronicles","t":"OT","c":36},{"b":15,"n":"Ezra","t":"OT","c":10},{"b":16,"n":"Nehemiah","t":"OT","c":13},{"b":17,"n":"Esther","t":"OT","c":10},{"b":18,"n":"Job","t":"OT","c":42},{"b":19,"n":"Psalms","t":"OT","c":150},{"b":20,"n":"Proverbs","t":"OT","c":31},{"b":21,"n":"Ecclesiastes","t":"OT","c":12},{"b":22,"n":"Song of Solomon","t":"OT","c":8},{"b":23,"n":"Isaiah","t":"OT","c":66},{"b":24,"n":"Jeremiah","t":"OT","c":52},{"b":25,"n":"Lamentations","t":"OT","c":5},{"b":26,"n":"Ezekiel","t":"OT","c":48},{"b":27,"n":"Daniel","t":"OT","c":12},{"b":28,"n":"Hosea","t":"OT","c":14},{"b":29,"n":"Joel","t":"OT","c":3},{"b":30,"n":"Amos","t":"OT","c":9},{"b":31,"n":"Obadiah","t":"OT","c":1},{"b":32,"n":"Jonah","t":"OT","c":4},{"b":33,"n":"Micah","t":"OT","c":7},{"b":34,"n":"Nahum","t":"OT","c":3},{"b":35,"n":"Habakkuk","t":"OT","c":3},{"b":36,"n":"Zephaniah","t":"OT","c":3},{"b":37,"n":"Haggai","t":"OT","c":2},{"b":38,"n":"Zechariah","t":"OT","c":14},{"b":39,"n":"Malachi","t":"OT","c":4},{"b":40,"n":"Matthew","t":"NT","c":28},{"b":41,"n":"Mark","t":"NT","c":16},{"b":42,"n":"Luke","t":"NT","c":24},{"b":43,"n":"John","t":"NT","c":21},{"b":44,"n":"Acts","t":"NT","c":28},{"b":45,"n":"Romans","t":"NT","c":16},{"b":46,"n":"1 Corinthians","t":"NT","c":16},{"b":47,"n":"2 Corinthians","t":"NT","c":13},{"b":48,"n":"Galatians","t":"NT","c":6},{"b":49,"n":"Ephesians","t":"NT","c":6},{"b":50,"n":"Philippians","t":"NT","c":4},{"b":51,"n":"Colossians","t":"NT","c":4},{"b":52,"n":"1 Thessalonians","t":"NT","c":5},{"b":53,"n":"2 Thessalonians","t":"NT","c":3},{"b":54,"n":"1 Timothy","t":"NT","c":6},{"b":55,"n":"2 Timothy","t":"NT","c":4},{"b":56,"n":"Titus","t":"NT","c":3},{"b":57,"n":"Philemon","t":"NT","c":1},{"b":58,"n":"Hebrews","t":"NT","c":13},{"b":59,"n":"James","t":"NT","c":5},{"b":60,"n":"1 Peter","t":"NT","c":5},{"b":61,"n":"2 Peter","t":"NT","c":3},{"b":62,"n":"1 John","t":"NT","c":5},{"b":63,"n":"2 John","t":"NT","c":1},{"b":64,"n":"3 John","t":"NT","c":1},{"b":65,"n":"Jude","t":"NT","c":1},{"b":66,"n":"Revelation","t":"NT","c":22}]</script>
+<script id="tms" type="application/json">[{"series":"A. Living the New Life","topic":"Christ the Center","ref":"2 Corinthians 5:17","text":"Wherefore if any man is in Christ, he is a new creature: the old things are passed away; behold, they are become new."},{"series":"A. Living the New Life","topic":"Christ the Center","ref":"Galatians 2:20","text":"I have been crucified with Christ; and it is no longer I that live, but Christ living in me: and that life which I now live in the flesh I live in faith, the faith which is in the Son of God, who loved me, and gave himself up for me."},{"series":"A. Living the New Life","topic":"Obedience to Christ","ref":"Romans 12:1","text":"I beseech you therefore, brethren, by the mercies of God, to present your bodies a living sacrifice, holy, acceptable to God, which is your spiritual service."},{"series":"A. Living the New Life","topic":"Obedience to Christ","ref":"John 14:21","text":"He that hath my commandments, and keepeth them, he it is that loveth me: and he that loveth me shall be loved of my Father, and I will love him, and will manifest myself unto him."},{"series":"A. Living the New Life","topic":"God's Word","ref":"2 Timothy 3:16","text":"Every scripture inspired of God is also profitable for teaching, for reproof, for correction, for instruction which is in righteousness."},{"series":"A. Living the New Life","topic":"God's Word","ref":"Joshua 1:8","text":"This book of the law shall not depart out of thy mouth, but thou shalt meditate thereon day and night, that thou mayest observe to do according to all that is written therein: for then thou shalt make thy way prosperous, and then thou shalt have good success."},{"series":"A. Living the New Life","topic":"Prayer","ref":"John 15:7","text":"If ye abide in me, and my words abide in you, ask whatsoever ye will, and it shall be done unto you."},{"series":"A. Living the New Life","topic":"Prayer","ref":"Philippians 4:6-7","text":"In nothing be anxious; but in everything by prayer and supplication with thanksgiving let your requests be made known unto God. And the peace of God, which passeth all understanding, shall guard your hearts and your thoughts in Christ Jesus."},{"series":"A. Living the New Life","topic":"Fellowship","ref":"Matthew 18:20","text":"For where two or three are gathered together in my name, there am I in the midst of them."},{"series":"A. Living the New Life","topic":"Fellowship","ref":"Hebrews 10:24-25","text":"and let us consider one another to provoke unto love and good works; not forsaking our own assembling together, as the custom of some is, but exhorting one another; and so much the more, as ye see the day drawing nigh."},{"series":"A. Living the New Life","topic":"Witnessing","ref":"Matthew 4:19","text":"And he saith unto them, Come ye after me, and I will make you fishers of men."},{"series":"A. Living the New Life","topic":"Witnessing","ref":"Romans 1:16","text":"For I am not ashamed of the gospel: for it is the power of God unto salvation to every one that believeth; to the Jew first, and also to the Greek."},{"series":"B. Proclaiming Christ","topic":"All Have Sinned","ref":"Romans 3:23","text":"for all have sinned, and fall short of the glory of God;"},{"series":"B. Proclaiming Christ","topic":"All Have Sinned","ref":"Isaiah 53:6","text":"All we like sheep have gone astray; we have turned every one to his own way; and Jehovah hath laid on him the iniquity of us all."},{"series":"B. Proclaiming Christ","topic":"Sin's Penalty","ref":"Romans 6:23","text":"For the wages of sin is death; but the free gift of God is eternal life in Christ Jesus our Lord."},{"series":"B. Proclaiming Christ","topic":"Sin's Penalty","ref":"Hebrews 9:27","text":"And inasmuch as it is appointed unto men once to die, and after this cometh judgment;"},{"series":"B. Proclaiming Christ","topic":"Christ Paid the Penalty","ref":"Romans 5:8","text":"But God commendeth his own love toward us, in that, while we were yet sinners, Christ died for us."},{"series":"B. Proclaiming Christ","topic":"Christ Paid the Penalty","ref":"1 Peter 3:18","text":"Because Christ also suffered for sins once, the righteous for the unrighteous, that he might bring us to God; being put to death in the flesh, but made alive in the spirit;"},{"series":"B. Proclaiming Christ","topic":"Salvation Not by Works","ref":"Ephesians 2:8-9","text":"for by grace have ye been saved through faith; and that not of yourselves, it is the gift of God; not of works, that no man should glory."},{"series":"B. Proclaiming Christ","topic":"Salvation Not by Works","ref":"Titus 3:5","text":"not by works done in righteousness, which we did ourselves, but according to his mercy he saved us, through the washing of regeneration and renewing of the Holy Spirit,"},{"series":"B. Proclaiming Christ","topic":"Must Receive Christ","ref":"John 1:12","text":"But as many as received him, to them gave he the right to become children of God, even to them that believe on his name:"},{"series":"B. Proclaiming Christ","topic":"Must Receive Christ","ref":"Revelation 3:20","text":"Behold, I stand at the door and knock: if any man hear my voice and open the door, I will come in to him, and will sup with him, and he with me."},{"series":"B. Proclaiming Christ","topic":"Assurance of Salvation","ref":"1 John 5:13","text":"These things have I written unto you, that ye may know that ye have eternal life, even unto you that believe on the name of the Son of God."},{"series":"B. Proclaiming Christ","topic":"Assurance of Salvation","ref":"John 5:24","text":"Verily, verily, I say unto you, He that heareth my word, and believeth him that sent me, hath eternal life, and cometh not into judgment, but hath passed out of death into life."},{"series":"C. Reliance on God's Resources","topic":"His Spirit","ref":"1 Corinthians 3:16","text":"Know ye not that ye are a temple of God, and that the Spirit of God dwelleth in you?"},{"series":"C. Reliance on God's Resources","topic":"His Spirit","ref":"1 Corinthians 2:12","text":"But we received, not the spirit of the world, but the spirit which is from God; that we might know the things that were freely given to us of God."},{"series":"C. Reliance on God's Resources","topic":"His Strength","ref":"Isaiah 41:10","text":"Fear thou not, for I am with thee; be not dismayed, for I am thy God; I will strengthen thee; yea, I will help thee; yea, I will uphold thee with the right hand of my righteousness."},{"series":"C. Reliance on God's Resources","topic":"His Strength","ref":"Philippians 4:13","text":"I can do all things in him that strengtheneth me."},{"series":"C. Reliance on God's Resources","topic":"His Faithfulness","ref":"Lamentations 3:22-23","text":"It is of Jehovah's lovingkindnesses that we are not consumed, because his compassions fail not. They are new every morning; great is thy faithfulness."},{"series":"C. Reliance on God's Resources","topic":"His Faithfulness","ref":"Numbers 23:19","text":"God is not a man, that he should lie, Neither the son of man, that he should repent: Hath he said, and will he not do it? Or hath he spoken, and will he not make it good?"},{"series":"C. Reliance on God's Resources","topic":"His Peace","ref":"Isaiah 26:3","text":"Thou wilt keep him in perfect peace, whose mind is stayed on thee; because he trusteth in thee."},{"series":"C. Reliance on God's Resources","topic":"His Peace","ref":"1 Peter 5:7","text":"casting all your anxiety upon him, because he careth for you."},{"series":"C. Reliance on God's Resources","topic":"His Provision","ref":"Romans 8:32","text":"He that spared not his own Son, but delivered him up for us all, how shall he not also with him freely give us all things?"},{"series":"C. Reliance on God's Resources","topic":"His Provision","ref":"Philippians 4:19","text":"And my God shall supply every need of yours according to his riches in glory in Christ Jesus."},{"series":"C. Reliance on God's Resources","topic":"His Help in Temptation","ref":"Hebrews 2:18","text":"For in that he himself hath suffered being tempted, he is able to succor them that are tempted."},{"series":"C. Reliance on God's Resources","topic":"His Help in Temptation","ref":"Psalm 119:9, 11","text":"Wherewith shall a young man cleanse his way? By taking heed thereto according to thy word. Thy word have I laid up in my heart, That I might not sin against thee."},{"series":"D. Being Christ's Disciple","topic":"Put Christ First","ref":"Matthew 6:33","text":"But seek ye first his kingdom, and his righteousness; and all these things shall be added unto you."},{"series":"D. Being Christ's Disciple","topic":"Put Christ First","ref":"Luke 9:23","text":"And he said unto all, If any man would come after me, let him deny himself, and take up his cross daily, and follow me."},{"series":"D. Being Christ's Disciple","topic":"Separate from the World","ref":"1 John 2:15-16","text":"Love not the world, neither the things that are in the world. If any man love the world, the love of the Father is not in him. For all that is in the world, the lust of the flesh and the lust of the eyes and the vain glory of life, is not of the Father, but is of the world."},{"series":"D. Being Christ's Disciple","topic":"Separate from the World","ref":"Romans 12:2","text":"And be not fashioned according to this world: but be ye transformed by the renewing of your mind, and ye may prove what is the good and acceptable and perfect will of God."},{"series":"D. Being Christ's Disciple","topic":"Be Steadfast","ref":"1 Corinthians 15:58","text":"Wherefore, my beloved brethren, be ye stedfast, unmoveable, always abounding in the work of the Lord, forasmuch as ye know that your labor is not vain in the Lord."},{"series":"D. Being Christ's Disciple","topic":"Be Steadfast","ref":"Hebrews 12:3","text":"For consider him that hath endured such gainsaying of sinners against himself, that ye wax not weary, fainting in your souls."},{"series":"D. Being Christ's Disciple","topic":"Serve Others","ref":"Mark 10:45","text":"For the Son of man also came not to be ministered unto, but to minister, and to give his life a ransom for many."},{"series":"D. Being Christ's Disciple","topic":"Serve Others","ref":"2 Corinthians 4:5","text":"For we preach not ourselves, but Christ Jesus as Lord, and ourselves as your servants for Jesus' sake."},{"series":"D. Being Christ's Disciple","topic":"Give Generously","ref":"Proverbs 3:9-10","text":"Honor Jehovah with thy substance, And with the first-fruits of all thine increase: So shall thy barns be filled with plenty, And thy vats shall overflow with new wine."},{"series":"D. Being Christ's Disciple","topic":"Give Generously","ref":"2 Corinthians 9:6-7","text":"But this I say, He that soweth sparingly shall reap also sparingly; and he that soweth bountifully shall reap also bountifully. Let each man do according as he hath purposed in his heart: not grudgingly, or of necessity: for God loveth a cheerful giver."},{"series":"D. Being Christ's Disciple","topic":"Develop World Vision","ref":"Acts 1:8","text":"But ye shall receive power, when the Holy Spirit is come upon you: and ye shall be my witnesses both in Jerusalem, and in all Judaea and Samaria, and unto the uttermost part of the earth."},{"series":"D. Being Christ's Disciple","topic":"Develop World Vision","ref":"Matthew 28:19-20","text":"Go ye therefore, and make disciples of all the nations, baptizing them into the name of the Father and of the Son and of the Holy Spirit: teaching them to observe all things whatsoever I commanded you: and lo, I am with you always, even unto the end of the world."},{"series":"E. Growth in Christlikeness","topic":"Love","ref":"John 13:34-35","text":"A new commandment I give unto you, that ye love one another; even as I have loved you, that ye also love one another. By this shall all men know that ye are my disciples, if ye have love one to another."},{"series":"E. Growth in Christlikeness","topic":"Love","ref":"1 John 3:18","text":"My Little children, let us not love in word, neither with the tongue; but in deed and truth."},{"series":"E. Growth in Christlikeness","topic":"Humility","ref":"Philippians 2:3-4","text":"doing nothing through faction or through vainglory, but in lowliness of mind each counting other better than himself; not looking each of you to his own things, but each of you also to the things of others."},{"series":"E. Growth in Christlikeness","topic":"Humility","ref":"1 Peter 5:5-6","text":"Likewise, ye younger, be subject unto the elder. Yea, all of you gird yourselves with humility, to serve one another: for God resisteth the proud, but giveth grace to the humble. Humble yourselves therefore under the mighty hand of God, that he may exalt you in due time;"},{"series":"E. Growth in Christlikeness","topic":"Purity","ref":"Ephesians 5:3","text":"But fornication, and all uncleanness, or covetousness, let it not even be named among you, as becometh saints;"},{"series":"E. Growth in Christlikeness","topic":"Purity","ref":"1 Peter 2:11","text":"Beloved, I beseech you as sojourners and pilgrims, to abstain from fleshly lust, which war against the soul;"},{"series":"E. Growth in Christlikeness","topic":"Honesty","ref":"Leviticus 19:11","text":"Ye shall not steal; neither shall ye deal falsely, nor lie one to another."},{"series":"E. Growth in Christlikeness","topic":"Honesty","ref":"Acts 24:16","text":"Herein I also exercise myself to have a conscience void of offence toward God and men always."},{"series":"E. Growth in Christlikeness","topic":"Faith","ref":"Hebrews 11:6","text":"And without faith it is impossible to be well-pleasing unto him; for he that cometh to God must believe that he is, and that he is a rewarder of them that seek after him."},{"series":"E. Growth in Christlikeness","topic":"Faith","ref":"Romans 4:20-21","text":"yet, looking unto the promise of God, he wavered not through unbelief, but waxed strong through faith, giving glory to God, and being fully assured that what he had promised, he was able also to perform."},{"series":"E. Growth in Christlikeness","topic":"Good Works","ref":"Galatians 6:9-10","text":"And let us not be weary in well-doing: for in due season we shall reap, if we faint not. So then, as we have opportunity, let us work that which is good toward all men, and especially toward them that are of the household of the faith."},{"series":"E. Growth in Christlikeness","topic":"Good Works","ref":"Matthew 5:16","text":"Even so let your light shine before men; that they may see your good works, and glorify your Father who is in heaven."}]</script>
+<script>
+/* ---------- static content ---------- */
+const BOOKS = JSON.parse(document.getElementById('books').textContent);
+const TMS = JSON.parse(document.getElementById('tms').textContent);
+const BOOK_BY_NUM = Object.fromEntries(BOOKS.map(b=>[b.b,b]));
+const bookName = b => (BOOK_BY_NUM[b].n === 'Psalms' ? 'Psalm' : BOOK_BY_NUM[b].n);
+const range = (a,b)=>Array.from({length:b-a+1},(_,i)=>a+i);
+
+const PLANS = {
+  nt:       {name:'New Testament, a chapter a day', tracks:[{name:'New Testament', books:range(40,66)}]},
+  gospels:  {name:'Gospels & Acts',                 tracks:[{name:'Gospels & Acts', books:range(40,44)}]},
+  psalms:   {name:'Psalms & Proverbs',              tracks:[{name:'Psalms & Proverbs', books:[19,20]}]},
+  balanced: {name:'Old Testament + New Testament + a Psalm', tracks:[
+              {name:'Old Testament', books:range(1,39).filter(b=>b!==19)},
+              {name:'New Testament', books:range(40,66)},
+              {name:'Psalms', books:[19]}]},
+  ot:       {name:'Old Testament',                  tracks:[{name:'Old Testament', books:range(1,39)}]},
+  whole:    {name:'Whole Bible, in order',          tracks:[{name:'Bible', books:range(1,66)}]},
+};
+for (const p of Object.values(PLANS)) for (const t of p.tracks) {
+  t.chapters = [];
+  for (const b of t.books) for (let c=1;c<=BOOK_BY_NUM[b].c;c++) t.chapters.push([b,c]);
+}
+
+const PRAY_CATS = ['Family','Friends','Church','World','Me'];
+
+const PROMPTS = [
+  "What does today's passage show me about who God is?",
+  "Is there a command to obey, a promise to hold, or a warning to heed in what I read?",
+  "Where did I see God's kindness yesterday?",
+  "What am I anxious about right now? Write it as a prayer.",
+  "Who do I need to forgive, or ask forgiveness from?",
+  "What would it look like to seek God's kingdom first today?",
+  "What sin keeps resurfacing? What truth answers it?",
+  "Write out one verse from today's reading in your own words.",
+  "What am I thankful for that I haven't yet thanked God for?",
+  "Where do I feel weak today? How does God meet weakness?",
+  "What is one way I can serve my family today?",
+  "What has God been teaching me this month?",
+  "Who in my life needs the gospel? What is one step toward them?",
+  "What do I want more than God right now? Be honest.",
+  "Write a prayer for each of your children, one line each.",
+  "What promise of God do I need to believe today?",
+  "Where am I tempted to take control instead of trusting?",
+  "What did I learn about Jesus in this week's reading?",
+  "If today were my last, what would matter? What does that change about today?",
+  "What is God asking me to let go of?",
+  "How have I seen prayer answered lately?",
+  "What does it mean that I am a new creation? (2 Corinthians 5:17)",
+  "Write a psalm of praise in your own words.",
+  "What was hard yesterday? Bring it to God here.",
+  "Who has encouraged me in the faith? Thank God for them by name.",
+  "What would obedience cost me today? Is it worth it?",
+  "What do I hope my children remember about God from our home?",
+  "Where is God calling me to be steadfast?",
+  "Which verse am I memorizing right now? Why does it matter?",
+  "Confess: where have I been proud, impatient, or unkind?",
+  "What does rest look like for me? Is Christ my rest?",
+  "Tell the story of how God brought you to faith, in one paragraph.",
+  "What is one small act of generosity I can do today?",
+  "What fear is loudest today? What does Scripture say to it?",
+  "How can I love the person nearest me the way Christ loves me?",
+  "What am I looking forward to in eternity?",
+];
+
+const STORIES = [
+ ['God Makes Everything','Genesis 1',"What is your favorite thing God made?"],
+ ['God Makes People','Genesis 2',"Why did God make people?"],
+ ['The First Sin','Genesis 3',"What happens when we disobey God?"],
+ ['Cain and Abel','Genesis 4:1-16',"Why was Cain so angry?"],
+ ['Noah Builds the Ark','Genesis 6:9-22',"Why did God tell Noah to build a boat?"],
+ ['The Flood','Genesis 7-8',"How did God take care of Noah?"],
+ ['The Rainbow Promise','Genesis 9:8-17',"What does the rainbow remind us of?"],
+ ['The Tower of Babel','Genesis 11:1-9',"What were the people trying to do?"],
+ ['God Calls Abram','Genesis 12:1-9',"What did God promise Abram?"],
+ ['Stars in the Sky','Genesis 15',"How many children did God promise Abraham?"],
+ ['Isaac Is Born','Genesis 21:1-7',"Why did Sarah laugh?"],
+ ['Abraham and Isaac','Genesis 22:1-19',"How did God provide?"],
+ ['Jacob and Esau','Genesis 25:19-34',"What did Esau trade away?"],
+ ["Jacob's Dream",'Genesis 28:10-22',"What did Jacob see in his dream?"],
+ ["Joseph's Coat",'Genesis 37',"Why were the brothers jealous?"],
+ ['Joseph in Prison','Genesis 39',"Was God with Joseph in prison?"],
+ ["Pharaoh's Dreams",'Genesis 41',"How did God use Joseph to help Egypt?"],
+ ['Joseph Forgives','Genesis 45',"How did Joseph treat his brothers?"],
+ ['Baby Moses','Exodus 2:1-10',"Who found the baby in the basket?"],
+ ['The Burning Bush','Exodus 3',"What did God ask Moses to do?"],
+ ['The Plagues','Exodus 7:14-24; 10:21-29',"Why did God send the plagues?"],
+ ['The Passover','Exodus 12:1-32',"What did the lamb's blood do?"],
+ ['Crossing the Red Sea','Exodus 14',"How did God save his people?"],
+ ['Bread from Heaven','Exodus 16',"What did God give the people to eat?"],
+ ['The Ten Commandments','Exodus 20:1-21',"Which commandment do you remember?"],
+ ['The Golden Calf','Exodus 32',"Why was worshiping the calf wrong?"],
+ ['The Twelve Spies','Numbers 13:17-33; 14:1-10',"Who trusted God?"],
+ ["Balaam's Donkey",'Numbers 22:21-41',"What did the donkey see?"],
+ ['Rahab and the Spies','Joshua 2',"How did Rahab help?"],
+ ['The Walls of Jericho','Joshua 6',"What made the walls fall down?"],
+ ["Gideon's Small Army",'Judges 7',"Why did God make the army smaller?"],
+ ['Samson','Judges 16',"Where did Samson's strength come from?"],
+ ['Ruth Stays with Naomi','Ruth 1-2',"Why did Ruth stay?"],
+ ['Hannah Prays for a Son','1 Samuel 1',"What did Hannah ask God for?"],
+ ['God Calls Samuel','1 Samuel 3',"What did Samuel say to God?"],
+ ['David Is Chosen','1 Samuel 16',"What does God look at?"],
+ ['David and Goliath','1 Samuel 17',"Why wasn't David afraid?"],
+ ['David and Jonathan','1 Samuel 18:1-4; 20:1-42',"What makes a good friend?"],
+ ['David Spares Saul','1 Samuel 24',"Why didn't David hurt Saul?"],
+ ['Solomon Asks for Wisdom','1 Kings 3',"What would you ask God for?"],
+ ['Elijah and the Ravens','1 Kings 17',"How did God feed Elijah?"],
+ ['Elijah on Mount Carmel','1 Kings 18',"Who is the real God?"],
+ ['Naaman Is Healed','2 Kings 5',"Who told Naaman about the prophet?"],
+ ['Josiah Finds the Book','2 Kings 22',"What did the king do when he heard God's words?"],
+ ['Jonah Runs Away','Jonah 1-2',"Where did Jonah try to go?"],
+ ['Jonah Goes to Nineveh','Jonah 3-4',"Why was God kind to Nineveh?"],
+ ["Daniel and the King's Food",'Daniel 1',"How did Daniel obey God?"],
+ ['The Fiery Furnace','Daniel 3',"Who was in the fire with them?"],
+ ["Daniel and the Lions",'Daniel 6',"Why did Daniel keep praying?"],
+ ['Esther Becomes Queen','Esther 2-4',"Why was Esther afraid?"],
+ ['Esther Saves Her People','Esther 5-7',"How was Esther brave?"],
+ ['Nehemiah Builds the Wall','Nehemiah 2; 4',"What did Nehemiah do first?"],
+ ['An Angel Visits Mary','Luke 1:26-38',"What did the angel tell Mary?"],
+ ['Jesus Is Born','Luke 2:1-20',"Who came to see baby Jesus?"],
+ ['The Wise Men','Matthew 2:1-12',"What gifts did they bring?"],
+ ['The Boy Jesus in the Temple','Luke 2:41-52',"Where did Mary and Joseph find Jesus?"],
+ ['Jesus Is Baptized','Matthew 3',"What did God say about Jesus?"],
+ ['Jesus Is Tempted','Matthew 4:1-11',"How did Jesus answer the devil?"],
+ ['Jesus Calls the Fishermen','Luke 5:1-11',"What did the fishermen leave behind?"],
+ ['Water into Wine','John 2:1-11',"What was Jesus' first miracle?"],
+ ['Jesus Calms the Storm','Mark 4:35-41',"Why weren't the disciples supposed to be afraid?"],
+ ['Jesus Feeds Five Thousand','John 6:1-15',"What did the boy share?"],
+ ['Jesus Walks on Water','Matthew 14:22-33',"Why did Peter start to sink?"],
+ ['The Good Samaritan','Luke 10:25-37',"Who was a neighbor?"],
+ ['The Lost Sheep and the Lost Son','Luke 15',"How did the father feel when his son came home?"],
+ ['Jesus Heals a Paralyzed Man','Mark 2:1-12',"How did the friends help?"],
+ ['Jesus and the Children','Mark 10:13-16',"What did Jesus say about children?"],
+ ['Zacchaeus','Luke 19:1-10',"How did Zacchaeus change?"],
+ ['Lazarus Lives Again','John 11:1-44',"What did Jesus do at the tomb?"],
+ ['Palm Sunday','Luke 19:28-40',"What did the people shout?"],
+ ['The Last Supper','Luke 22:7-23',"What did Jesus tell them to remember?"],
+ ['Jesus Washes Feet','John 13:1-17',"Why did Jesus wash their feet?"],
+ ['Jesus Is Arrested','Luke 22:39-62',"What did Peter do?"],
+ ['Jesus Dies on the Cross','Luke 23:26-49',"Why did Jesus die?"],
+ ['Jesus Is Alive!','Luke 24:1-12',"What did the women find?"],
+ ['The Road to Emmaus','Luke 24:13-35',"When did they recognize Jesus?"],
+ ['Jesus Goes to Heaven','Acts 1:1-11',"What did Jesus tell his friends to do?"],
+ ['Pentecost','Acts 2:1-41',"What did the Holy Spirit do?"],
+ ['Peter Heals a Lame Man','Acts 3:1-10',"What did Peter give the man?"],
+ ['Philip and the Ethiopian','Acts 8:26-40',"What did Philip explain?"],
+ ['Saul Meets Jesus','Acts 9:1-19',"How did Saul change?"],
+ ['Peter Escapes Prison','Acts 12:1-17',"Who opened the doors?"],
+ ['Paul and Silas Sing in Prison','Acts 16:16-34',"What happened when they sang?"],
+ ["Paul's Shipwreck",'Acts 27',"How did God keep everyone safe?"],
+ ['Jesus Will Come Back','Revelation 21:1-7; 22:1-5',"What will heaven be like?"],
+];
+
+const STEPS = [
+  {id:'read',  label:'Read'},
+  {id:'pray',  label:'Pray'},
+  {id:'memory',label:'Memory'},
+  {id:'journal',label:'Journal'},
+  {id:'kids',  label:'Kids'},
+];
+
+/* ---------- dates ---------- */
+const pad = n => String(n).padStart(2,'0');
+const dayKey = (d=new Date()) => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const addDays = (key,n) => { const [y,m,d]=key.split('-').map(Number); const t=new Date(y,m-1,d+n); return dayKey(t); };
+const daysBetween = (a,b) => { const [y1,m1,d1]=a.split('-').map(Number),[y2,m2,d2]=b.split('-').map(Number); return Math.round((new Date(y2,m2-1,d2)-new Date(y1,m1-1,d1))/864e5); };
+const shortDate = key => { const [y,m,d]=key.split('-').map(Number); return new Date(y,m-1,d).toLocaleDateString(undefined,{month:'short',day:'numeric'}); };
+const ago = key => { if(!key) return 'never'; const n=daysBetween(key,dayKey()); return n===0?'today':n===1?'yesterday':`${n} days ago`; };
+const longDate = () => new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+
+/* ---------- state ---------- */
+const defaultState = () => ({
+  v:1, updatedAt:0,
+  plan:{id:'nt', pos:[0], perDay:1},
+  prayer:{items:[], perDay:4},
+  memory:{cards:[], nextTms:0},
+  kids:{pos:0},
+  history:{},
+  today:{date:'', done:{}, prayIds:[], promptShift:0, recited:false, prayed:0, reviewed:0},
+});
+let S = defaultState();
+let currentStep = 0;
+let stepChosen = false;
+
+function ensureToday(){
+  const k = dayKey();
+  if (S.today.date !== k) S.today = {date:k, done:{}, prayIds:[], promptShift:0, recited:false, prayed:0, reviewed:0};
+  if (!S.plan.pos || S.plan.pos.length !== PLANS[S.plan.id].tracks.length) S.plan.pos = PLANS[S.plan.id].tracks.map(()=>0);
+}
+
+/* ---------- storage: artifact db when present, localStorage otherwise ---------- */
+const LS_STATE = 'seekfirst.state';
+const store = {
+  db:null, sample:null, unsub:null, saveTimer:null,
+  readLocal(){ try{ const s=localStorage.getItem(LS_STATE); return s?JSON.parse(s):null }catch{ return null } },
+  writeLocal(){ try{ localStorage.setItem(LS_STATE, JSON.stringify(S)) }catch{} },
+  async init(){
+    if (window.claude?.use) window.claude.use('sample').then(s=>{ this.sample = s; }).catch(()=>{});
+    try { this.db = window.claude?.use ? await window.claude.use('db') : null; } catch { this.db = null; }
+    if (!this.db) return;
+    const ref = this.db.doc('seekfirst/state');
+    try {
+      const snap = await ref.get();
+      const remote = snap.exists ? snap.data() : null;
+      if (remote && (remote.updatedAt||0) >= (S.updatedAt||0)) { S = migrate(remote); ensureToday(); render(); }
+      else if (S.updatedAt) { await ref.set(S); }
+      this.unsub = ref.onSnapshot(sn => {
+        if (!sn.exists || sn.metadata.hasPendingWrites) return;
+        const d = sn.data();
+        if ((d.updatedAt||0) > (S.updatedAt||0)) { S = migrate(d); ensureToday(); render(); }
+      }, ()=>{});
+    } catch(e) { console.warn('db unavailable', e); }
+  },
+  save(){
+    syncHistory();
+    S.updatedAt = Date.now();
+    this.writeLocal();
+    if (!this.db) return;
+    clearTimeout(this.saveTimer);
+    this.saveTimer = setTimeout(()=>{ this.db.doc('seekfirst/state').set(JSON.parse(JSON.stringify(S))).catch(e=>console.warn('save failed',e)); }, 400);
+  },
+  async loadJournal(date){
+    if (this.db) { try { const s = await this.db.doc('journal/'+date).get(); return s.exists ? (s.data().text||'') : ''; } catch { return ''; } }
+    try { return localStorage.getItem('seekfirst.journal.'+date) || ''; } catch { return ''; }
+  },
+  async saveJournal(date,text){
+    try { localStorage.setItem('seekfirst.journal.'+date, text); } catch {}
+    if (this.db) await this.db.doc('journal/'+date).set({date, text, updatedAt:Date.now()});
+  },
+  async listJournal(){
+    if (this.db) { try { const q = await this.db.collection('journal').orderBy('date','desc').limit(90).get(); return q.docs.map(d=>d.data()).filter(d=>d.text&&d.text.trim()); } catch { return []; } }
+    const out=[]; try { for (let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(k.startsWith('seekfirst.journal.')){ const t=localStorage.getItem(k); if(t&&t.trim()) out.push({date:k.slice(18),text:t}); } } } catch {}
+    return out.sort((a,b)=>a.date<b.date?1:-1);
+  }
+};
+function migrate(d){ const base = defaultState(); return Object.assign(base, d, {plan:{...base.plan,...d.plan}, prayer:{...base.prayer,...d.prayer}, memory:{...base.memory,...d.memory}, kids:{...base.kids,...d.kids}, history:{...(d.history||{})}, today:{...base.today,...d.today}}); }
+function syncHistory(){
+  if (!S.today.date) return;
+  const done = Object.keys(S.today.done).filter(k=>S.today.done[k]);
+  if (done.length || S.today.prayed || S.today.reviewed) S.history[S.today.date] = {done, prayed:S.today.prayed||0, reviewed:S.today.reviewed||0};
+  else delete S.history[S.today.date];
+  const keys = Object.keys(S.history).sort();
+  while (keys.length > 800) delete S.history[keys.shift()];
+}
+
+/* ---------- bible text ---------- */
+const bookCache = {};
+async function loadBook(b){
+  if (bookCache[b]) return bookCache[b];
+  const r = await fetch(`bible/${b}.json`);
+  if (!r.ok) throw new Error('no text');
+  return (bookCache[b] = await r.json());
+}
+function findBook(name){
+  const n = name.trim().toLowerCase().replace(/\s+/g,' ');
+  return BOOKS.find(b => b.n.toLowerCase()===n || (b.n==='Psalms' && n==='psalm'));
+}
+// "Exodus 7:14-24; 10:21-29", "Genesis 7-8", "Luke 2:1-20", "John 3"
+function parseRef(ref){
+  const out=[]; let book=null;
+  for (let part of ref.split(';')){
+    part = part.trim();
+    const m = part.match(/^((?:[1-3]\s)?[A-Za-z ]+?)\s+(\d.*)$/);
+    let rest;
+    if (m) { book = findBook(m[1]); rest = m[2]; } else rest = part;
+    if (!book) return null;
+    const cv = rest.match(/^(\d+)(?::(\d+)(?:-(\d+))?)?(?:-(\d+))?$/);
+    if (!cv) return null;
+    const c1=+cv[1];
+    if (cv[2]) out.push({b:book.b,c:c1,v1:+cv[2],v2:cv[3]?+cv[3]:+cv[2]});
+    else { const c2 = cv[4]?+cv[4]:c1; for(let c=c1;c<=c2;c++) out.push({b:book.b,c,v1:1,v2:999}); }
+  }
+  return out;
+}
+async function renderPassage(el, segs, {chapterLabels=true}={}){
+  el.innerHTML = '<p class="tiny">Loading text…</p>';
+  try {
+    let html='';
+    for (const s of segs){
+      const book = await loadBook(s.b);
+      const verses = book[s.c-1] || [];
+      if (chapterLabels) html += `<div class="chap">${bookName(s.b)} ${s.c}</div>`;
+      html += '<p>' + verses.slice(s.v1-1, Math.min(s.v2, verses.length)).map((t,i)=>`<sup>${s.v1+i}</sup>${esc(t)}`).join(' ') + '</p>';
+    }
+    el.innerHTML = html + '<p class="tiny">American Standard Version</p>';
+  } catch { el.innerHTML = '<p class="tiny">Text not available here — read it in your own Bible.</p>'; }
+}
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- reading plan ---------- */
+function todaysReading(){
+  const plan = PLANS[S.plan.id];
+  const segs=[];
+  plan.tracks.forEach((t,i)=>{
+    const n = plan.tracks.length===1 ? S.plan.perDay : 1;
+    for (let k=0;k<n;k++){ const [b,c] = t.chapters[(S.plan.pos[i]+k) % t.chapters.length]; segs.push({b,c,v1:1,v2:999}); }
+  });
+  return segs;
+}
+function refLabel(segs){
+  // group consecutive chapters of the same book: "Matthew 5–7"
+  const parts=[]; 
+  for (const s of segs){
+    const last = parts[parts.length-1];
+    if (last && last.b===s.b && s.v1===1 && s.v2===999 && last.c2===s.c-1) last.c2=s.c;
+    else parts.push({b:s.b,c1:s.c,c2:s.c,v1:s.v1,v2:s.v2});
+  }
+  return parts.map(p => {
+    if (p.v1===1 && p.v2===999) return `${bookName(p.b)} ${p.c1}${p.c2>p.c1?'–'+p.c2:''}`;
+    return `${bookName(p.b)} ${p.c1}:${p.v1}${p.v2>p.v1?'–'+p.v2:''}`;
+  }).join(' · ');
+}
+function advanceReading(){
+  const plan = PLANS[S.plan.id];
+  plan.tracks.forEach((t,i)=>{ const n = plan.tracks.length===1 ? S.plan.perDay : 1; S.plan.pos[i] = (S.plan.pos[i]+n) % t.chapters.length; });
+}
+
+/* ---------- prayer rotation ---------- */
+function pickPrayers(){
+  const active = S.prayer.items.filter(isActive);
+  const daily = active.filter(p=>p.daily);
+  const rest = active.filter(p=>!p.daily).sort((a,b)=> (a.lastPrayed||'') < (b.lastPrayed||'') ? -1 : (a.lastPrayed||'') > (b.lastPrayed||'') ? 1 : a.added < b.added ? -1 : 1);
+  return [...daily, ...rest.slice(0, Math.max(0, S.prayer.perDay))].map(p=>p.id);
+}
+const isActive = p => !p.answered && !p.ended;
+function ensurePrayerSelection(){
+  const k = dayKey();
+  for (const p of S.prayer.items) if (!p.answered && !p.ended && p.until && p.until < k) p.ended = k;
+  const validIds = new Set(S.prayer.items.filter(isActive).map(p=>p.id));
+  S.today.prayIds = (S.today.prayIds||[]).filter(id=>validIds.has(id));
+  if (S.today.prayIds.length===0 && validIds.size) S.today.prayIds = pickPrayers();
+}
+const uid = () => Math.random().toString(36).slice(2,10);
+
+/* ---------- memory (topical memory system) ---------- */
+function ensureLearningCard(){
+  if (S.memory.cards.some(c=>c.status==='learning')) return;
+  while (S.memory.nextTms < TMS.length && S.memory.cards.some(c=>c.tms===S.memory.nextTms)) S.memory.nextTms++;
+  if (S.memory.nextTms >= TMS.length) return;
+  const v = TMS[S.memory.nextTms];
+  S.memory.cards.push({id:uid(), tms:S.memory.nextTms, ref:v.ref, text:v.text, topic:v.topic, series:v.series, status:'learning', reps:0, lastRep:'', interval:0, due:'', added:dayKey()});
+  S.memory.nextTms++;
+}
+function dueReviews(){ const k=dayKey(); return S.memory.cards.filter(c=>c.status==='review' && c.due && c.due<=k).sort((a,b)=>a.due<b.due?-1:1); }
+function promoteToReview(card, interval=1){ card.status='review'; card.interval=interval; card.due=addDays(dayKey(),interval); }
+function gradeReview(card, ok){
+  const k = dayKey();
+  if (ok) { card.interval = Math.max(1, Math.round((card.interval||1) * 2.2)); card.due = addDays(k, Math.min(card.interval, 120)); card.reps=(card.reps||0)+1; }
+  else { card.interval = 1; card.due = addDays(k,1); }
+  card.lastRep = k; S.today.reviewed = (S.today.reviewed||0)+1;
+}
+
+/* ---------- rendering ---------- */
+const app = document.getElementById('app');
+const h = (tag, attrs={}, ...kids) => {
+  const el = document.createElement(tag);
+  for (const [k,v] of Object.entries(attrs)) {
+    if (k==='class') el.className=v; else if (k==='html') el.innerHTML=v; else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else if (v===false||v==null) {} else el.setAttribute(k, v===true?'':v);
+  }
+  for (const c of kids.flat()) if (c!=null) el.append(c.nodeType ? c : document.createTextNode(c));
+  return el;
+};
+
+function render(){
+  ensureToday();
+  document.getElementById('dateLabel').textContent = longDate();
+  const route = location.hash.replace('#','') || 'today';
+  document.getElementById('navToday').hidden = route==='today';
+  document.getElementById('navManage').hidden = route==='manage';
+  document.getElementById('navProgress').hidden = route==='progress';
+  document.getElementById('navPrint').hidden = route==='print';
+  app.replaceChildren(route==='manage' ? renderManage() : route==='progress' ? renderProgress() : route==='print' ? renderPrint() : renderToday());
+}
+
+function renderToday(){
+  ensurePrayerSelection();
+  ensureLearningCard();
+  const doneCount = STEPS.filter(s=>S.today.done[s.id]).length;
+  if (!stepChosen) { const first = STEPS.findIndex(s=>!S.today.done[s.id]); currentStep = first<0 ? STEPS.length : first; }
+  const frag = document.createDocumentFragment();
+
+  const strip = h('ol',{class:'steps'}, STEPS.map((s,i)=> h('li',{class:(S.today.done[s.id]?'done ':'')+(i===currentStep?'cur':'')},
+    h('button',{onclick:()=>{ currentStep=i; stepChosen=true; render(); }, 'aria-label':s.label+(S.today.done[s.id]?', done':'')}, h('span',{class:'bar'}), h('span',{class:'lbl'}, s.label)))));
+  frag.append(strip);
+
+  if (currentStep >= STEPS.length || (doneCount===STEPS.length && !stepChosen)) { frag.append(renderFinish()); return frag; }
+  const step = STEPS[currentStep].id;
+  const body = {read:renderRead, pray:renderPray, memory:renderMemory, journal:renderJournal, kids:renderKids}[step]();
+  frag.append(body);
+  return frag;
+}
+
+function doneRow(stepId, {label='Done', onDone}={}){
+  const isDone = !!S.today.done[stepId];
+  const next = () => { const i = STEPS.findIndex((s,j)=> j>currentStep && !S.today.done[s.id]); currentStep = i<0 ? (STEPS.findIndex(s=>!S.today.done[s.id])<0 ? STEPS.length : STEPS.findIndex(s=>!S.today.done[s.id])) : i; stepChosen=true; };
+  return h('div',{class:'done-row'},
+    h('span',{class:'tiny'}, isDone ? 'Marked done for today.' : `Step ${currentStep+1} of ${STEPS.length}`),
+    h('div',{class:'actions',style:'margin:0'},
+      isDone ? h('button',{class:'btn quiet',onclick:()=>{ delete S.today.done[stepId]; store.save(); render(); }}, 'Undo') : null,
+      h('button',{class:'btn primary',onclick:()=>{ if(!isDone){ S.today.done[stepId]=true; onDone&&onDone(); store.save(); } next(); render(); }}, isDone ? 'Next →' : label + ' →')
+    ));
+}
+
+/* Read */
+function renderRead(){
+  const segs = todaysReading();
+  const plan = PLANS[S.plan.id];
+  const sec = h('section',{class:'step'},
+    h('p',{class:'eyebrow'}, 'Read · ' + plan.name),
+    h('h1',{}, refLabel(segs)),
+  );
+  const text = h('div',{class:'scripture'});
+  const showKey = 'seekfirst.showText';
+  let show = true; try { show = localStorage.getItem(showKey)!=='0'; } catch {}
+  const toggle = h('button',{class:'btn quiet sm',onclick:()=>{ show=!show; try{localStorage.setItem(showKey, show?'1':'0')}catch{}; text.hidden=!show; toggle.textContent = show?'Hide text':'Show text'; if(show&&!text.dataset.loaded){ text.dataset.loaded='1'; renderPassage(text, segs, {chapterLabels: segs.length>1}); } }}, show?'Hide text':'Show text');
+  sec.append(h('div',{class:'actions',style:'margin-top:6px'}, toggle));
+  text.hidden = !show;
+  if (show) { text.dataset.loaded='1'; renderPassage(text, segs, {chapterLabels: segs.length>1}); }
+  sec.append(text);
+  sec.append(doneRow('read',{label:'Read', onDone: advanceReading}));
+  return sec;
+}
+
+/* Pray */
+function renderPray(){
+  const sec = h('section',{class:'step'}, h('p',{class:'eyebrow'},'Pray'), h('h1',{}, S.today.prayIds.length ? 'Today’s prayer list' : 'Whom to pray for'));
+  const items = S.today.prayIds.map(id=>S.prayer.items.find(p=>p.id===id)).filter(Boolean);
+  const k = dayKey();
+  if (!items.length) sec.append(h('p',{class:'empty'}, 'Add the people and needs on your heart. Each day this page brings back the ones you haven’t prayed for in the longest.'));
+  else {
+    const list = h('div',{class:'list'});
+    for (const p of items){
+      const prayed = p.lastPrayed===k;
+      const row = h('div',{class:'item'+(prayed?' prayed':'')},
+        h('div',{}, h('div',{class:'who'}, p.who), p.what ? h('div',{class:'what'}, p.what) : null,
+          h('div',{class:'meta'}, h('span',{class:'chip'}, p.cat||'—'), p.daily?h('span',{class:'chip'},'daily'):null, p.until?h('span',{class:'chip'},'through '+shortDate(p.until)):null, `last prayed ${ago(p.lastPrayed===k ? p.prevPrayed : p.lastPrayed)}`)),
+        h('div',{class:'side'},
+          h('button',{class:'btn sm'+(prayed?' quiet':''),onclick:()=>{ if(prayed){ p.lastPrayed=p.prevPrayed||''; } else { p.prevPrayed=p.lastPrayed||''; p.lastPrayed=k; p.count=(p.count||0)+1; S.today.prayed=(S.today.prayed||0)+1; } store.save(); render(); }}, prayed?'Undo':'Prayed'),
+          h('button',{class:'btn sm quiet',title:'Mark answered',onclick:()=>{ p.answered=k; store.save(); render(); }}, 'Answered')));
+      list.append(row);
+    }
+    sec.append(list);
+    const active = S.prayer.items.filter(isActive).length;
+    sec.append(h('p',{class:'tiny'}, `${active} on the list · ${S.prayer.perDay} rotate in each day, plus any marked daily.`));
+  }
+  sec.append(prayerChat());
+  sec.append(h('details',{class:'formwrap'}, h('summary',{},'Add with a form instead'), prayerForm()));
+  sec.append(doneRow('pray',{label:'Prayed'}));
+  return sec;
+}
+function prayerForm(){
+  const who = h('input',{id:'pr-who',placeholder:'Who — a name, a family, a country',autocomplete:'off'});
+  const what = h('input',{id:'pr-what',placeholder:'What — the request (optional)',autocomplete:'off'});
+  const cat = h('select',{id:'pr-cat'}, PRAY_CATS.map(c=>h('option',{value:c},c)));
+  const daily = h('input',{type:'checkbox',id:'pr-daily',style:'width:auto;margin-right:6px'});
+  const add = () => { if(!who.value.trim()) { who.focus(); return; } addRequest({who:who.value, what:what.value, cat:cat.value, daily:daily.checked}); who.value=''; what.value=''; daily.checked=false; store.save(); render(); };
+  who.addEventListener('keydown',e=>{ if(e.key==='Enter') add(); }); what.addEventListener('keydown',e=>{ if(e.key==='Enter') add(); });
+  return h('div',{class:'form'},
+    h('h3',{},'Add a request'),
+    h('div',{class:'row'}, h('div',{}, h('label',{for:'pr-who'},'Who'), who), h('div',{}, h('label',{for:'pr-what'},'What'), what)),
+    h('div',{class:'row'}, h('div',{}, h('label',{for:'pr-cat'},'Category'), cat), h('div',{style:'display:flex;align-items:end;gap:10px'}, h('label',{for:'pr-daily',style:'display:flex;align-items:center;text-transform:none;letter-spacing:0;font-size:14px;color:var(--ink-2);margin:0 0 10px'}, daily, 'Pray daily'), h('button',{class:'btn sm',style:'margin-bottom:6px',onclick:add},'Add'))));
+}
+
+/* Prayer chat: plain words in, structured requests out */
+const chatLog = [];  // session-only transcript
+function addRequest(o){
+  const item = {id:uid(), who:(o.who||'').trim(), what:(o.what||'').trim(), cat:PRAY_CATS.includes(o.cat)?o.cat:'Friends', daily:!!o.daily, until:/^\d{4}-\d{2}-\d{2}$/.test(o.until||'')?o.until:'', added:dayKey(), lastPrayed:'', count:0, answered:'', ended:''};
+  if (!item.who) return null;
+  S.prayer.items.push(item);
+  if (item.daily || S.today.prayIds.length < S.prayer.perDay) S.today.prayIds.push(item.id);
+  return item;
+}
+function heuristicParse(text){
+  const k = dayKey(); const t = text.trim(); const low = t.toLowerCase();
+  const answered = low.match(/^(answered|praise)[:\s-]+(.+)$/);
+  if (answered) { const who = answered[2].trim(); const p = S.prayer.items.filter(isActive).find(x=>who.toLowerCase().includes(x.who.toLowerCase())); return p ? {actions:[{type:'answered',id:p.id}], reply:''} : {actions:[], reply:`I couldn't find "${who}" on the list.`}; }
+  let until=''; let body = t.replace(/^(please\s+)?(pray|praying|prayer)\s+(for|about)\s+/i,'');
+  const dur = low.match(/\b(this week|this month|today|for (\d+) (day|days|week|weeks))\b/);
+  if (dur) { const m=dur[0]; until = m==='today'?k : m==='this week'?addDays(k,7) : m==='this month'?addDays(k,30) : addDays(k, +dur[2] * (dur[3].startsWith('week')?7:1)); body = body.replace(new RegExp('\\s*'+m.replace(/\s+/g,'\\s+'),'i'),''); }
+  const daily = /\b(every day|daily|each day)\b/i.test(body); body = body.replace(/\b(every day|daily|each day)\b/i,'');
+  const m = body.match(/^(.+?)\s*(?:—|–|-|:|,|\babout\b|\bwho\b|\bwhose\b|\bthat\b|\bregarding\b|\bneeds?\b|\bfor\b)\s*(.*)$/i);
+  let who = (m ? m[1] : body).replace(/^(my|our)\s+/i,'').trim(); let what = (m ? m[2] : '').replace(/[.\s]+$/,'').trim();
+  if (who.split(/\s+/).length > 4 && !m) { what = who; who = who.split(/\s+/).slice(0,2).join(' '); }
+  who = who.charAt(0).toUpperCase()+who.slice(1);
+  const b = (who+' '+what).toLowerCase();
+  const cat = /\b(mom|dad|mother|father|wife|husband|son|daughter|kids?|children|brother|sister|grand\w+|family|parents?)\b/.test(b)?'Family' : /\b(church|pastor|elders?|small group|congregation|sunday school|youth group)\b/.test(b)?'Church' : /\b(missionar\w+|nation|country|world|persecuted|war|israel|ukraine|china|india|africa|government|president)\b/.test(b)?'World' : /^(me|myself|i)\b/.test(who.toLowerCase())||/\b(my own|myself)\b/.test(b)?'Me' : 'Friends';
+  return {actions:[{type:'add',who,what,cat,daily,until}], reply:''};
+}
+function chatInstruction(){
+  const list = S.prayer.items.filter(isActive).map(p=>`${p.id} · ${p.who}${p.what?' · '+p.what:''}`).join('\n') || '(empty)';
+  return `You turn a person's plain-language note into prayer-list actions for a personal devotions app. Today is ${dayKey()}.
+Existing active requests (id · who · what):
+${list}
+
+Reply with ONLY this JSON, no prose: {"actions":[...],"reply":"one short warm sentence, no more than 12 words"}
+Action shapes:
+{"type":"add","who":"person or group","what":"the need in the writer's words, short; empty if none","cat":"Family|Friends|Church|World|Me","daily":false,"until":"YYYY-MM-DD or empty"}
+{"type":"answered","id":"id of an existing request"}
+{"type":"remove","id":"id of an existing request"}
+Rules: one add per distinct person or need. Time words set until: "today" = today, "this week" = 7 days from today, "this month" = 30 days, "for N days/weeks" accordingly, otherwise empty. "every day"/"daily" sets daily true. cat: spouse, children, parents, siblings → Family; pastor, church, small group → Church; nations, missionaries, leaders, disasters → World; the writer's own need (I, me, my) → Me; anyone else → Friends. If the note says an existing request was answered, resolved, healed, or is no longer needed, use answered (or remove if they say to remove or delete it) with the matching id — do not add a duplicate.`;
+}
+async function handleChat(text, log, input){
+  const my = h('div',{class:'msg me'}, text); log.append(my);
+  const thinking = h('div',{class:'msg bot thinking'}, 'Thinking…'); log.append(thinking); thinking.scrollIntoView({block:'nearest'});
+  let result;
+  if (store.sample) {
+    try { result = await store.sample.json(chatInstruction() + '\n\nNote (between the markers): <<<' + text.replace(/>>>/g,'') + '>>>', {modelTier:'quick', cache:false}); }
+    catch(e) { if (e && e.code==='not_granted') store.sample=null; else console.warn('sample failed', e); result = heuristicParse(text); }
+  } else result = heuristicParse(text);
+  if (!result || !Array.isArray(result.actions)) result = heuristicParse(text);
+  const bot = h('div',{class:'msg bot'});
+  let n=0;
+  for (const a of result.actions){
+    if (a.type==='add') { const it = addRequest(a); if(!it) continue; n++;
+      const line = h('span',{class:'act'}, 'Added ', h('span',{class:'k'}, it.who), it.what?` — ${it.what}`:'', ` · ${it.cat}${it.daily?' · daily':''}${it.until?' · through '+shortDate(it.until):''}`,
+        h('button',{onclick:()=>{ S.prayer.items=S.prayer.items.filter(x=>x.id!==it.id); S.today.prayIds=S.today.prayIds.filter(x=>x!==it.id); store.save(); line.replaceChildren('Removed ', h('span',{class:'k'},it.who)); rerenderPrayList(); }},'undo'));
+      bot.append(line);
+    } else if (a.type==='answered' || a.type==='remove') { const p = S.prayer.items.find(x=>x.id===a.id); if(!p) continue; n++;
+      const prev = {answered:p.answered, ended:p.ended};
+      if (a.type==='answered') p.answered = dayKey(); else p.ended = dayKey();
+      const line = h('span',{class:'act'}, a.type==='answered'?'Marked answered: ':'Removed: ', h('span',{class:'k'}, p.who),
+        h('button',{onclick:()=>{ Object.assign(p, prev); store.save(); line.replaceChildren('Restored ', h('span',{class:'k'},p.who)); rerenderPrayList(); }},'undo'));
+      bot.append(line);
+    }
+  }
+  if (!n) bot.append(result.reply || "I couldn't make a request out of that — try “pray for Ana about her surgery on Friday”.");
+  else if (result.reply) bot.append(h('span',{class:'act',style:'color:var(--ink-3)'}, String(result.reply)));
+  thinking.replaceWith(bot);
+  chatLog.push(my, bot);
+  if (n) { store.save(); rerenderPrayList(); }
+  input.focus();
+}
+function rerenderPrayList(){ const keep = document.querySelector('.chat .row input'); const v = keep ? keep.value : ''; render(); const inp = document.querySelector('.chat .row input'); if (inp) { inp.value = v; inp.focus(); } }
+function prayerChat(){
+  const log = h('div',{class:'log'}, chatLog.slice(-8));
+  const input = h('input',{id:'chat-in',placeholder:'e.g. pray for Michael about his back this week',autocomplete:'off','aria-label':'Describe a prayer request'});
+  const send = () => { const t = input.value.trim(); if(!t) return; input.value=''; handleChat(t, log, input); };
+  input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); send(); } });
+  return h('div',{class:'chat'},
+    log,
+    h('div',{class:'row'}, input, h('button',{class:'btn primary',onclick:send},'Add')),
+    h('p',{class:'hint'}, store.sample ? 'Write it however it comes to mind — a name, a need, how long. “Sarah’s surgery went well” marks hers answered.' : 'Write “pray for <who> about <what> this week”. Add “daily” to keep it every day.'));
+}
+
+/* Memorize */
+function renderMemory(){
+  const sec = h('section',{class:'step'}, h('p',{class:'eyebrow'},'Memorize · Topical Memory System'));
+  const learning = S.memory.cards.find(c=>c.status==='learning');
+  const due = dueReviews();
+  const k = dayKey();
+  sec.append(h('h1',{}, learning ? 'New verse' : 'Nothing new to learn'));
+  if (learning){
+    const recitedToday = learning.lastRep===k;
+    const text = h('p',{class:'verse-block'}, learning.text);
+    let hidden=false;
+    const hideBtn = h('button',{class:'btn sm',onclick:()=>{ hidden=!hidden; text.classList.toggle('hidden',hidden); hideBtn.textContent = hidden?'Show text':'Hide text & recite'; }}, 'Hide text & recite');
+    sec.append(h('div',{class:'card'},
+      h('p',{class:'eyebrow'}, `${learning.series} · ${learning.topic}`),
+      h('p',{class:'ref'}, learning.ref), text,
+      h('div',{class:'actions'}, hideBtn,
+        h('button',{class:'btn sm'+(recitedToday?' quiet':''),onclick:()=>{ if(!recitedToday){ learning.reps=(learning.reps||0)+1; learning.lastRep=k; store.save(); render(); } }}, recitedToday ? `Recited today ✓ (${learning.reps} days)` : `I recited it (${learning.reps||0} days so far)`),
+        h('button',{class:'btn sm quiet',onclick:()=>{ promoteToReview(learning, 2); store.save(); render(); }}, 'I know it — move to review')),
+      h('p',{class:'tiny',style:'margin:12px 0 0'}, 'Say it aloud with the reference before and after. When you can say it three days running without looking, move it to review; the next verse starts then.')));
+  } else if (S.memory.nextTms >= TMS.length) {
+    sec.append(h('p',{class:'empty'}, 'You have started all 60 verses. Add your own under Manage, or keep reviewing.'));
+  }
+
+  sec.append(h('h2',{style:'margin-top:26px'}, due.length ? `Review · ${due.length} due` : 'Review'));
+  if (!due.length) {
+    const rev = S.memory.cards.filter(c=>c.status==='review');
+    const nextDue = rev.map(c=>c.due).filter(Boolean).sort()[0];
+    sec.append(h('p',{class:'muted'}, rev.length ? `Nothing due today. ${rev.length} in review; next one ${nextDue===addDays(k,1)?'tomorrow':'on '+nextDue}.` : 'Verses you already know go here — mark them under Manage → Memory verses and they will come back on a spaced schedule.'));
+  } else {
+    const list = h('div',{class:'review-list'});
+    for (const c of due.slice(0,4)) {
+      const text = h('p',{class:'verse-block hidden'}, c.text);
+      let shown=false;
+      const reveal = h('button',{class:'btn sm',onclick:()=>{ shown=true; text.classList.remove('hidden'); reveal.hidden=true; grades.hidden=false; }}, 'Reveal');
+      const grades = h('div',{class:'actions',hidden:true,style:'margin-top:10px'},
+        h('button',{class:'btn sm primary',onclick:()=>{ gradeReview(c,true); store.save(); render(); }}, 'Remembered'),
+        h('button',{class:'btn sm',onclick:()=>{ gradeReview(c,false); store.save(); render(); }}, 'Forgot — see it tomorrow'));
+      list.append(h('div',{class:'card'}, h('p',{class:'eyebrow'}, c.topic||'Custom'), h('p',{class:'ref'}, c.ref), text, h('div',{class:'actions'}, reveal), grades));
+    }
+    if (due.length>4) list.append(h('p',{class:'tiny'}, `${due.length-4} more waiting — they’ll show once these are done.`));
+    sec.append(list);
+  }
+  sec.append(doneRow('memory',{label:'Done'}));
+  return sec;
+}
+
+/* Journal */
+function renderJournal(){
+  const k = dayKey();
+  const dayNum = Math.floor(new Date(k).getTime()/864e5);
+  const prompt = PROMPTS[(dayNum + (S.today.promptShift||0) + PROMPTS.length*100) % PROMPTS.length];
+  const sec = h('section',{class:'step'}, h('p',{class:'eyebrow'}, 'Journal · ' + refLabel(todaysReading())), h('h1',{}, prompt));
+  const ta = h('textarea',{id:'journal-'+k,placeholder:'Write a few honest lines…','aria-label':'Journal entry'});
+  const state = h('span',{class:'save-state'},'');
+  let timer=null, loaded=false;
+  store.loadJournal(k).then(t=>{ if(!loaded){ loaded=true; if(!ta.value) ta.value=t; } });
+  ta.addEventListener('input',()=>{ state.textContent='…'; clearTimeout(timer); timer=setTimeout(async()=>{ try{ await store.saveJournal(k, ta.value); state.textContent='Saved'; }catch{ state.textContent='Not saved'; } },700); });
+  sec.append(h('div',{class:'actions',style:'margin-top:4px;justify-content:space-between;align-items:center'},
+    h('button',{class:'btn quiet sm',onclick:()=>{ S.today.promptShift=(S.today.promptShift||0)+1; store.save(); render(); }}, 'Different prompt'), state));
+  sec.append(h('div',{style:'margin-top:12px'}, ta));
+  sec.append(doneRow('journal',{label:'Done'}));
+  return sec;
+}
+
+/* Kids */
+function renderKids(){
+  const idx = S.kids.pos % STORIES.length;
+  const [title, ref, ask] = STORIES[idx];
+  const sec = h('section',{class:'step'}, h('p',{class:'eyebrow'}, `Kids · story ${idx+1} of ${STORIES.length}`), h('h1',{}, title), h('p',{class:'ref',style:'font-size:20px;color:var(--ink-2)'}, ref));
+  sec.append(h('p',{class:'muted',style:'margin-top:14px'}, h('strong',{style:'font-weight:600'},'Ask them: '), ask));
+  const text = h('div',{class:'scripture'});
+  const segs = parseRef(ref);
+  let show=false;
+  const toggle = h('button',{class:'btn quiet sm',onclick:()=>{ show=!show; text.hidden=!show; toggle.textContent=show?'Hide text':'Show text'; if(show&&!text.dataset.loaded&&segs){ text.dataset.loaded='1'; renderPassage(text, segs, {chapterLabels: segs.length>1}); } }}, 'Show text');
+  sec.append(h('div',{class:'actions',style:'margin-top:8px'}, segs ? toggle : null, h('button',{class:'btn quiet sm',onclick:()=>{ S.kids.pos=(S.kids.pos+1)%STORIES.length; store.save(); render(); }}, 'Skip this one')));
+  text.hidden=true; sec.append(text);
+  sec.append(doneRow('kids',{label:'Read to them', onDone:()=>{ S.kids.pos=(S.kids.pos+1)%STORIES.length; }}));
+  return sec;
+}
+
+/* Finish */
+function renderFinish(){
+  const learning = S.memory.cards.find(c=>c.status==='learning') || S.memory.cards.filter(c=>c.status==='review').sort((a,b)=>a.due<b.due?-1:1)[0] || TMS[36];
+  return h('section',{class:'finish'},
+    h('p',{class:'eyebrow'}, 'All five done'),
+    h('h1',{}, 'Go in peace.'),
+    h('p',{class:'verse-block'}, learning.text),
+    h('p',{class:'cite'}, learning.ref),
+    h('div',{class:'actions',style:'margin-top:26px'}, h('a',{class:'btn',href:'#progress'}, 'See your progress'), h('button',{class:'btn quiet',onclick:()=>{ currentStep=0; stepChosen=true; render(); }}, 'Look back over today')));
+}
+
+/* ---------- progress ---------- */
+function streaks(){
+  const k = dayKey(); const hist = S.history;
+  const has = d => !!(hist[d] && hist[d].done && hist[d].done.length);
+  let cur=0, d = has(k) ? k : addDays(k,-1);
+  while (has(d)) { cur++; d = addDays(d,-1); }
+  let best=0, run=0, prev=null;
+  for (const day of Object.keys(hist).sort()) { if (!has(day)) { run=0; prev=null; continue; } run = (prev && daysBetween(prev,day)===1) ? run+1 : 1; prev=day; best=Math.max(best,run); }
+  return {cur, best:Math.max(best,cur)};
+}
+function renderProgress(){
+  syncHistory();
+  const k = dayKey(); const hist = S.history;
+  const st = streaks();
+  const days = Object.values(hist).filter(d=>d.done&&d.done.length);
+  const fullDays = days.filter(d=>d.done.length===STEPS.length).length;
+  const readDays = days.filter(d=>d.done.includes('read')).length;
+  const prayersPrayed = S.prayer.items.reduce((n,p)=>n+(p.count||0),0);
+  const answered = S.prayer.items.filter(p=>p.answered).length;
+  const inReview = S.memory.cards.filter(c=>c.status==='review').length;
+  const root = h('div',{class:'prog'});
+  root.append(h('div',{class:'hero'},
+    h('div',{}, h('div',{class:'n'}, st.cur), h('div',{class:'l'}, 'day streak')),
+    h('div',{}, h('div',{class:'n'}, fullDays), h('div',{class:'l'}, 'full days')),
+    h('div',{}, h('div',{class:'n'}, inReview), h('div',{class:'l'}, 'verses by heart'))));
+  // heat calendar: 16 weeks, Sunday-first columns
+  const start = addDays(k, -(new Date().getDay() + 15*7));
+  const grid = h('div',{class:'heat',role:'img','aria-label':'Steps completed per day over the last 16 weeks'});
+  const cap = h('div',{class:'heat-cap'}, `Steps done each day · showed up ${days.filter(d=>true).length ? Object.keys(hist).filter(d=>d>=start&&hist[d].done.length).length : 0} of the last ${daysBetween(start,k)+1} days`);
+  for (let i=0;i<16*7;i++){
+    const d = addDays(start,i); const n = hist[d] ? hist[d].done.length : 0; const future = d>k;
+    const c = h('div',{class:'c'+(future?' future':'')+(d===k?' today':''), 'data-n':future?0:n, title: future?'' : `${d} · ${n} of 5`});
+    if (!future) { const show=()=>{ cap.textContent = `${shortDate(d)} · ${n} of 5 steps${hist[d]&&hist[d].prayed?` · prayed for ${hist[d].prayed}`:''}${hist[d]&&hist[d].reviewed?` · reviewed ${hist[d].reviewed}`:''}`; }; c.addEventListener('mouseenter',show); c.addEventListener('click',show); }
+    grid.append(c);
+  }
+  const legend = h('div',{class:'legend'}, 'none', ...[1,2,3,4,5].map(n=>h('span',{class:'c',style:`background:var(--h${n})`})), 'all five');
+  root.append(h('section',{}, h('h2',{}, 'Showing up'), h('p',{class:'muted'}, `Best streak ${st.best} day${st.best===1?'':'s'}. A day counts when you finish at least one step; the shade is how many of the five.`), grid, cap, legend));
+  // plan
+  const plan = PLANS[S.plan.id]; const planSec = h('section',{}, h('h2',{}, 'Reading plan'), h('p',{class:'muted'}, plan.name));
+  plan.tracks.forEach((t,i)=>{ const pos=S.plan.pos[i], total=t.chapters.length, per = plan.tracks.length===1?S.plan.perDay:1; const left = total-pos;
+    planSec.append(h('div',{class:'bar-row'}, h('span',{class:'name'}, t.name), h('span',{class:'val'}, `${pos} / ${total} chapters`), h('div',{class:'track'}, h('div',{class:'fill',style:`width:${(100*pos/total).toFixed(1)}%`})), h('span',{class:'sub'}, `${left} to go · about ${Math.ceil(left/per)} days at this pace`))); });
+  root.append(planSec);
+  // memory dots
+  const series = [...new Set(TMS.map(v=>v.series))];
+  const byTms = Object.fromEntries(S.memory.cards.filter(c=>c.tms!=null).map(c=>[c.tms,c]));
+  const dots = h('div',{class:'dots'});
+  series.forEach(sname=>{ const row = h('div',{class:'rowd'}); TMS.forEach((v,i)=>{ if(v.series!==sname) return; const c=byTms[i]; row.append(h('span',{class:'d'+(c?' '+c.status:''), title:`${v.ref} — ${c?c.status:'not started'}`})); }); dots.append(h('span',{class:'sname'}, sname.replace(/^[A-E]\. /,'')), row); });
+  const customs = S.memory.cards.filter(c=>c.tms==null).length;
+  root.append(h('section',{}, h('h2',{}, 'Hidden in your heart'), h('p',{class:'muted'}, `${inReview} in review${customs?` (${customs} of your own)`:''} · ${S.memory.cards.filter(c=>c.status==='learning').length} learning · ${60 - Object.keys(byTms).length} of the 60 still ahead. Filled = in review, gold ring = learning now.`), dots));
+  // prayer
+  root.append(h('section',{}, h('h2',{}, 'Prayer'), h('div',{class:'hero',style:'padding-block:6px 0'},
+    h('div',{}, h('div',{class:'n'}, prayersPrayed), h('div',{class:'l'}, 'prayers prayed')),
+    h('div',{}, h('div',{class:'n'}, answered), h('div',{class:'l'}, 'answered')),
+    h('div',{}, h('div',{class:'n'}, S.prayer.items.filter(isActive).length), h('div',{class:'l'}, 'on the list')))));
+  // kids
+  const kpos = S.kids.pos % STORIES.length;
+  root.append(h('section',{}, h('h2',{}, 'Kids’ stories'), h('div',{class:'bar-row'}, h('span',{class:'name'}, 'Genesis to Revelation'), h('span',{class:'val'}, `${kpos} / ${STORIES.length}`), h('div',{class:'track'}, h('div',{class:'fill',style:`width:${(100*kpos/STORIES.length).toFixed(1)}%`})), h('span',{class:'sub'}, kpos ? `Next: ${STORIES[kpos][0]}` : 'Starting at the beginning'))));
+  // milestones
+  const miles = [
+    ['First full day', fullDays>=1], ['7-day streak', st.best>=7], ['30-day streak', st.best>=30], ['100-day streak', st.best>=100],
+    ['First verse by heart', inReview>=1], ['12 verses — one series', inReview>=12], ['All 60 verses', inReview>=60],
+    ['First answered prayer', answered>=1], ['100 prayers prayed', prayersPrayed>=100],
+    ['Kids through the Old Testament', kpos>=52], ['Kids through the whole story', S.kids.pos>=STORIES.length],
+    ['100 chapters read', readDays*(plan.tracks.length===1?S.plan.perDay:plan.tracks.length)>=100],
+  ];
+  root.append(h('section',{}, h('h2',{}, 'Milestones'), h('div',{class:'miles'}, miles.map(([n,hit])=>h('span',{class:'mile'+(hit?' hit':'')}, n)))));
+  return root;
+}
+
+/* ---------- print sheet ---------- */
+function renderPrint(){
+  ensurePrayerSelection(); ensureLearningCard();
+  const k = dayKey();
+  const segs = todaysReading();
+  const learning = S.memory.cards.find(c=>c.status==='learning');
+  const due = dueReviews();
+  const prayers = S.today.prayIds.map(id=>S.prayer.items.find(p=>p.id===id)).filter(Boolean);
+  const dayNum = Math.floor(new Date(k).getTime()/864e5);
+  const prompt = PROMPTS[(dayNum + (S.today.promptShift||0) + PROMPTS.length*100) % PROMPTS.length];
+  const [ktitle, kref, kask] = STORIES[S.kids.pos % STORIES.length];
+  let includeText = true; try { includeText = localStorage.getItem('seekfirst.printText')!=='0'; } catch {}
+  const root = h('div',{});
+  const chk = h('input',{type:'checkbox',id:'print-text',style:'width:auto;margin-right:6px',checked:includeText});
+  chk.addEventListener('change',()=>{ try{localStorage.setItem('seekfirst.printText', chk.checked?'1':'0')}catch{}; passageWrap.hidden = !chk.checked; if (chk.checked && !passage.dataset.loaded) { passage.dataset.loaded='1'; renderPassage(passage, segs, {chapterLabels:segs.length>1}); } });
+  root.append(h('div',{class:'actions noprint',style:'margin-top:18px;align-items:center;justify-content:space-between'},
+    h('button',{class:'btn primary',onclick:()=>window.print()}, 'Print this page'),
+    h('label',{for:'print-text',style:'display:flex;align-items:center;font-size:14px;color:var(--ink-2)'}, chk, 'Include the passage text')));
+  const sheet = h('div',{class:'sheet'});
+  sheet.append(h('div',{class:'mast'}, h('span',{class:'wm'}, 'Seek First'), h('span',{class:'dt'}, new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'}))));
+  const left = h('div',{}); const right = h('div',{});
+  left.append(h('div',{class:'blk'}, h('h4',{}, '1 · Read'), h('p',{class:'big'}, refLabel(segs)), h('p',{class:'small'}, PLANS[S.plan.id].name + (includeText?' · text below':''))));
+  const pl = h('ul',{class:'pl'});
+  for (const p of prayers) pl.append(h('li',{}, h('span',{class:'box'}), h('strong',{style:'font-weight:600'}, p.who), p.what?h('span',{class:'w'}, ' — '+p.what):null));
+  for (let i=0;i<2;i++) pl.append(h('li',{}, h('span',{class:'box'}), h('span',{class:'line',style:'display:inline-block;width:80%;height:12px'})));
+  left.append(h('div',{class:'blk'}, h('h4',{}, '2 · Pray'), pl));
+  const mem = h('div',{class:'blk'}, h('h4',{}, '3 · Memorize'));
+  if (learning) mem.append(h('p',{class:'big',style:'font-size:15px'}, learning.ref, h('span',{class:'small',style:'font-family:var(--sans);font-weight:400;margin-left:8px'}, learning.topic)), h('p',{class:'v'}, learning.text));
+  if (due.length) { mem.append(h('p',{class:'small',style:'margin:8px 0 2px'}, 'Review from memory:')); for (const c of due.slice(0,4)) mem.append(h('p',{class:'v',style:'margin:2px 0'}, h('span',{class:'box'}), c.ref)); }
+  if (!learning && !due.length) mem.append(h('p',{class:'small'}, 'Nothing due today.'));
+  left.append(mem);
+  const jr = h('div',{class:'blk'}, h('h4',{}, '4 · Journal'), h('p',{class:'v',style:'font-style:italic'}, prompt));
+  for (let i=0;i<9;i++) jr.append(h('div',{class:'line wide'}));
+  right.append(jr);
+  right.append(h('div',{class:'blk'}, h('h4',{}, '5 · Kids'), h('p',{class:'big',style:'font-size:16px'}, ktitle), h('p',{class:'v',style:'margin:0'}, kref), h('p',{class:'small'}, 'Ask them: ' + kask)));
+  sheet.append(h('div',{class:'cols'}, left, right));
+  const passage = h('div',{class:'passage'});
+  const passageWrap = h('div',{class:'blk passage-wrap',hidden:!includeText}, h('h4',{}, refLabel(segs)), passage);
+  if (includeText) { passage.dataset.loaded='1'; renderPassage(passage, segs, {chapterLabels:segs.length>1}); }
+  sheet.append(passageWrap);
+  root.append(sheet);
+  root.append(h('p',{class:'tiny noprint',style:'margin-top:12px'}, 'Prints on one sheet; the passage may run onto the back. “Save as PDF” in the print dialog works too.'));
+  return root;
+}
+
+/* ---------- manage ---------- */
+function renderManage(){
+  const root = h('div',{class:'manage'});
+  // reading plan
+  const planSel = h('select',{id:'m-plan'}, Object.entries(PLANS).map(([id,p])=>h('option',{value:id,selected:id===S.plan.id},p.name)));
+  const perDay = h('select',{id:'m-perday'}, [1,2,3].map(n=>h('option',{value:n,selected:n===S.plan.perDay},`${n} chapter${n>1?'s':''} a day`)));
+  const posWrap = h('div',{});
+  const buildPos = () => {
+    posWrap.replaceChildren();
+    const plan = PLANS[S.plan.id];
+    plan.tracks.forEach((t,i)=>{
+      const sel = h('select',{id:'m-pos-'+i}, t.chapters.map(([b,c],idx)=>h('option',{value:idx,selected:idx===S.plan.pos[i]},`${bookName(b)} ${c}`)));
+      sel.addEventListener('change',()=>{ S.plan.pos[i]=+sel.value; store.save(); });
+      posWrap.append(h('div',{style:'margin-top:10px'}, h('label',{for:'m-pos-'+i}, plan.tracks.length>1 ? `Next up · ${t.name}` : 'Next up'), sel));
+    });
+  };
+  planSel.addEventListener('change',()=>{ S.plan.id=planSel.value; S.plan.pos=PLANS[S.plan.id].tracks.map(()=>0); store.save(); buildPos(); perDay.disabled = PLANS[S.plan.id].tracks.length>1; });
+  perDay.addEventListener('change',()=>{ S.plan.perDay=+perDay.value; store.save(); });
+  perDay.disabled = PLANS[S.plan.id].tracks.length>1;
+  buildPos();
+  root.append(h('section',{}, h('h2',{},'Reading plan'),
+    h('div',{class:'row2'}, h('div',{}, h('label',{for:'m-plan'},'Plan'), planSel), h('div',{}, h('label',{for:'m-perday'},'Pace'), perDay)),
+    posWrap,
+    h('p',{class:'notice'}, 'Missed a day? Nothing to catch up — the plan simply continues from where you left off.')));
+
+  // prayer
+  const active = S.prayer.items.filter(isActive).sort((a,b)=>(a.cat||'')<(b.cat||'')?-1:1);
+  const answered = S.prayer.items.filter(p=>p.answered||p.ended).sort((a,b)=>(a.answered||a.ended)<(b.answered||b.ended)?1:-1);
+  const perDayP = h('select',{id:'m-pperday'}, [2,3,4,5,6,8,10].map(n=>h('option',{value:n,selected:n===S.prayer.perDay},`${n} a day`)));
+  perDayP.addEventListener('change',()=>{ S.prayer.perDay=+perDayP.value; store.save(); });
+  const plist = h('div',{class:'list'});
+  for (const p of active) {
+    plist.append(h('div',{class:'item'},
+      h('div',{}, h('div',{class:'who'}, p.who), p.what?h('div',{class:'what'},p.what):null, h('div',{class:'meta'}, h('span',{class:'chip'},p.cat||'—'), p.daily?h('span',{class:'chip'},'daily'):null, p.until?h('span',{class:'chip'},'through '+shortDate(p.until)):null, `added ${p.added} · prayed ${p.count||0}× · last ${ago(p.lastPrayed)}`)),
+      h('div',{class:'side'},
+        h('button',{class:'btn sm quiet',onclick:()=>{ p.daily=!p.daily; store.save(); render(); }}, p.daily?'Un-daily':'Daily'),
+        h('button',{class:'btn sm quiet',onclick:()=>{ const w=prompt('Who',p.who); if(w===null) return; const t=prompt('What',p.what||''); if(t===null) return; p.who=w.trim()||p.who; p.what=t.trim(); store.save(); render(); }}, 'Edit'),
+        h('button',{class:'btn sm quiet',onclick:()=>{ p.answered=dayKey(); store.save(); render(); }}, 'Answered'),
+        h('button',{class:'btn sm quiet danger',onclick:()=>{ if(confirm(`Remove ${p.who}?`)){ S.prayer.items=S.prayer.items.filter(x=>x.id!==p.id); store.save(); render(); } }}, 'Remove'))));
+  }
+  const alist = h('div',{class:'list'});
+  for (const p of answered) alist.append(h('div',{class:'item'}, h('div',{}, h('div',{class:'who'}, p.who), p.what?h('div',{class:'what'},p.what):null, h('div',{class:'meta'}, p.answered ? `answered ${p.answered}` : `ended ${p.ended}`)), h('div',{class:'side'}, h('button',{class:'btn sm quiet',onclick:()=>{ p.answered=''; p.ended=''; p.until=''; store.save(); render(); }},'Reopen'), h('button',{class:'btn sm quiet danger',onclick:()=>{ if(confirm(`Delete ${p.who} for good?`)){ S.prayer.items=S.prayer.items.filter(x=>x.id!==p.id); store.save(); render(); } }},'Delete'))));
+  root.append(h('section',{}, h('h2',{},'Prayer list'),
+    h('div',{class:'row2'}, h('div',{}, h('label',{for:'m-pperday'},'How many rotate in each day'), perDayP)),
+    active.length ? plist : h('p',{class:'empty'},'No requests yet.'),
+    prayerForm(),
+    answered.length ? h('div',{style:'margin-top:22px'}, h('h3',{},`Answered & past · ${answered.length}`), alist) : null));
+
+  // memory
+  const byTms = Object.fromEntries(S.memory.cards.filter(c=>c.tms!=null).map(c=>[c.tms,c]));
+  const tl = h('div',{class:'tms-list'});
+  let lastSeries='';
+  TMS.forEach((v,i)=>{
+    if (v.series!==lastSeries){ lastSeries=v.series; tl.append(h('div',{class:'series'}, v.series)); }
+    const c = byTms[i];
+    const status = c ? (c.status==='learning' ? 'learning' : `review · due ${c.due}`) : (i===S.memory.nextTms ? 'next' : '');
+    const side = h('div',{class:'side'});
+    if (!c) {
+      side.append(h('button',{class:'btn sm quiet',onclick:()=>{ S.memory.cards.push({id:uid(),tms:i,ref:v.ref,text:v.text,topic:v.topic,series:v.series,status:'review',reps:3,lastRep:dayKey(),interval:7,due:addDays(dayKey(),1),added:dayKey()}); store.save(); render(); }}, 'Already know it'));
+      side.append(h('button',{class:'btn sm quiet',onclick:()=>{ const cur=S.memory.cards.find(x=>x.status==='learning'); if(cur){ cur.status='paused'; } S.memory.cards.push({id:uid(),tms:i,ref:v.ref,text:v.text,topic:v.topic,series:v.series,status:'learning',reps:0,lastRep:'',interval:0,due:'',added:dayKey()}); store.save(); render(); }}, 'Learn now'));
+    } else if (c.status==='paused') {
+      side.append(h('button',{class:'btn sm quiet',onclick:()=>{ const cur=S.memory.cards.find(x=>x.status==='learning'); if(cur) cur.status='paused'; c.status='learning'; store.save(); render(); }}, 'Resume'));
+    } else {
+      side.append(h('button',{class:'btn sm quiet danger',onclick:()=>{ S.memory.cards=S.memory.cards.filter(x=>x.id!==c.id); if(i<S.memory.nextTms) S.memory.nextTms=Math.min(S.memory.nextTms,i); store.save(); render(); }}, 'Reset'));
+    }
+    tl.append(h('div',{class:'tms-row'}, h('div',{}, h('div',{class:'t'}, v.topic), h('div',{}, v.ref, ' ', h('span',{class:'st '+(c?c.status:'')}, c&&c.status==='paused' ? 'paused' : status))), side));
+  });
+  const customs = S.memory.cards.filter(c=>c.tms==null);
+  const cref = h('input',{id:'m-cref',placeholder:'Reference, e.g. Psalm 23:1'}); const ctext = h('textarea',{id:'m-ctext',placeholder:'Verse text',style:'min-height:90px'});
+  const addCustom = () => { if(!cref.value.trim()||!ctext.value.trim()) return; S.memory.cards.push({id:uid(),tms:null,ref:cref.value.trim(),text:ctext.value.trim(),topic:'Custom',series:'',status:'review',reps:0,lastRep:'',interval:1,due:dayKey(),added:dayKey()}); cref.value=''; ctext.value=''; store.save(); render(); };
+  root.append(h('section',{}, h('h2',{},'Memory verses'),
+    h('p',{class:'muted'}, `${S.memory.cards.filter(c=>c.status==='review').length} in review · ${S.memory.cards.filter(c=>c.status==='learning').length} learning. Sixty verses in five series, patterned after the Navigators’ Topical Memory System. Mark the ones you already know so they enter the review rotation.`),
+    tl,
+    customs.length ? h('div',{style:'margin-top:22px'}, h('h3',{},'Your own verses'), h('div',{class:'list'}, customs.map(c=>h('div',{class:'item'}, h('div',{}, h('div',{class:'who'},c.ref), h('div',{class:'what'},c.text), h('div',{class:'meta'},`review · due ${c.due}`)), h('div',{class:'side'}, h('button',{class:'btn sm quiet danger',onclick:()=>{ S.memory.cards=S.memory.cards.filter(x=>x.id!==c.id); store.save(); render(); }},'Remove')))))) : null,
+    h('div',{class:'form'}, h('h3',{},'Add your own verse'), h('div',{}, h('label',{for:'m-cref'},'Reference'), cref), h('div',{}, h('label',{for:'m-ctext'},'Text'), ctext), h('div',{}, h('button',{class:'btn sm',onclick:addCustom},'Add to review')))));
+
+  // kids
+  const ksel = h('select',{id:'m-kids'}, STORIES.map((s,i)=>h('option',{value:i,selected:i===S.kids.pos%STORIES.length},`${i+1}. ${s[0]} — ${s[1]}`)));
+  ksel.addEventListener('change',()=>{ S.kids.pos=+ksel.value; store.save(); });
+  root.append(h('section',{}, h('h2',{},'Kids’ stories'), h('label',{for:'m-kids'},'Next story'), ksel, h('p',{class:'notice'}, `${STORIES.length} stories from Genesis to Revelation, in order. Read from any Bible or story Bible — the reference is the anchor.`)));
+
+  // journal
+  const jl = h('div',{class:'jlist'}, h('p',{class:'tiny'},'Loading…'));
+  store.listJournal().then(entries=>{ jl.replaceChildren(); if(!entries.length){ jl.append(h('p',{class:'empty'},'No entries yet.')); return; } for (const e of entries) jl.append(h('details',{}, h('summary',{}, e.date, h('span',{}, e.text.slice(0,60).replace(/\s+/g,' ')+(e.text.length>60?'…':''))), h('div',{class:'body'}, e.text))); });
+  root.append(h('section',{}, h('h2',{},'Journal'), jl));
+
+  root.append(h('section',{}, h('p',{class:'tiny'}, store.db ? 'Saved to this page’s private store; open it on any device.' : 'Saved in this browser only.')));
+  return root;
+}
+
+/* ---------- boot ---------- */
+(function boot(){
+  const local = store.readLocal();
+  if (local) S = migrate(local);
+  ensureToday();
+  render();
+  window.addEventListener('hashchange', ()=>{ stepChosen=false; render(); });
+  store.init();
+  // roll over at midnight if the page is left open
+  setInterval(()=>{ if (S.today.date !== dayKey()) { stepChosen=false; render(); } }, 60000);
+})();
+</script>
