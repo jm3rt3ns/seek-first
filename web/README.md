@@ -1,26 +1,45 @@
-# Seek First — daily devotions
+# Seek First — the app
 
-A single-page, distraction-free guide for a 15-minute devotion: today's reading,
-who to pray for, a memory verse (new + spaced review), a journal prompt, and a
-Bible story for the kids. Prayer requests can be typed in plain words
-("pray for Michael about his back this week") — the page asks Claude to
-structure them when published as an artifact, with a rule-based fallback
-otherwise. `#progress` shows streaks and a step-per-day calendar; `#print`
-lays the day out as a one-page printable sheet.
+A single static page. No server, no account, no network calls except the two font files
+and (only if you ask for a PDF) the jsPDF library.
 
-- `index.html` — the whole app (no build step).
-- `bible/*.json` — ASV text per book, exported from `../assets/bible-sqlite.db`;
-  `books.json` (names, chapter counts) and `tms.json` (the 60 Topical Memory
-  System verses) are also inlined into the page.
+- `index.html` — the whole app: the five steps, progress, the printable sheet, and Manage.
+- `sw.js` — service worker: caches the app shell, and each Bible chapter the first time
+  you read it, so it works on a plane.
+- `assets/` — crown icon, wordmark, web manifest.
+- `bible/` — public-domain text exported from `../assets/bible-sqlite.db`:
+  `web/`, `asv/`, `kjv/` (one JSON file per book), plus `books.json`, `tms.json`
+  (the 60 Topical Memory System verses), and `sections.json` (passage divisions).
+- `_headers` — security and caching headers for Cloudflare.
 
-Run it locally from this folder with any static server, e.g.
-`python3 -m http.server 8765` and open <http://localhost:8765/>.
-State is kept in the browser's localStorage (or in the artifact's store when
-published as a claude.ai artifact).
+## Where the data lives
 
-## Deploying for real
+`localStorage`, on the device you're using. Each device keeps its own copy; move it with
+**Manage → Download backup / Restore from backup**. Clearing the browser's site data
+erases it, so keep a backup.
 
-`../cloudflare/` holds a Cloudflare Worker that serves this folder as static assets and
-adds Google sign-in, per-user storage in D1, and a server-side prayer-note parser. The
-page detects that API automatically (`/api/me`), so the same `index.html` runs as a
-local file, as a claude.ai artifact, or behind the Worker. See `../cloudflare/README.md`.
+## Reading
+
+Three tracks, each moving one passage a day:
+
+| Track | Default | Shown as |
+|---|---|---|
+| Study | 1 Corinthians | WEB / ASV / KJV, or all three verse by verse |
+| Longer read | Exodus | one translation |
+| Gospel | Mark | one translation |
+
+Passages follow hand-drawn section breaks for Exodus, Matthew, Mark, Luke, John, Acts,
+Romans and 1 Corinthians; other books are split into even pieces of about 14 verses.
+Change the book or jump to any passage under Manage → Reading.
+
+NLT, ESV and NET are under copyright and can't be bundled, so each passage carries
+one-tap links that open it in those translations on Bible Gateway.
+
+## Working on it
+
+```sh
+cd web && python3 -m http.server 8000     # then open http://localhost:8000
+```
+
+Regenerate the Bible data from the SQLite source with the scripts documented in the
+repository root. Deployment lives in `../cloudflare/`.

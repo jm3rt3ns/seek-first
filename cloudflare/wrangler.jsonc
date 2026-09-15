@@ -1,30 +1,13 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "seek-first",
-  "main": "src/index.ts",
   "compatibility_date": "2025-09-01",
-  "compatibility_flags": ["nodejs_compat"],
+  // Static site only: no Worker script, no database, no secrets. Everything runs in the browser.
   "assets": {
     "directory": "../web",
-    "binding": "ASSETS",
-    "run_worker_first": true,
     "not_found_handling": "none"
-  },
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "seek-first",
-      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
-      "migrations_dir": "migrations"
-    }
-  ],
-  "vars": {
-    // Public values. Secrets (GOOGLE_CLIENT_SECRET, ANTHROPIC_API_KEY) are set with `wrangler secret put`.
-    "GOOGLE_CLIENT_ID": "REPLACE_WITH_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
-    "APP_ORIGIN": "https://seekfirst.jackmertens.com"
   },
   "routes": [
     { "pattern": "seekfirst.jackmertens.com", "custom_domain": true }
-  ],
-  "observability": { "enabled": true }
+  ]
 }
