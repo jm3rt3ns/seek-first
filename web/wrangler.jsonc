@@ -1,0 +1,10 @@
+{
+  // Seek First is a static site: index.html plus the bible/*.json data files.
+  // There is no Worker script and no build step, so `assets` is the whole config.
+  // Deploy with `npx wrangler deploy` from this directory.
+  "name": "seek-first",
+  "compatibility_date": "2026-09-15",
+  "assets": {
+    "directory": "."
+  }
+}
