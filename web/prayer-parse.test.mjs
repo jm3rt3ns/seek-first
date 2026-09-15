@@ -27,7 +27,7 @@ const { parseNote, splitClauses, splitWhoWhat, extractWhen, ruleCategory } =
 const TODAY = '2026-09-15';                      // a Tuesday
 const ITEMS = [
   { id: 'a1', who: 'Sarah', what: 'her surgery' },
-  { id: 'a2', who: 'Michael', what: 'his back' },
+  { id: 'a2', who: 'Priya', what: 'her shoulder' },
   { id: 'a3', who: 'The Ortiz family', what: 'their move to Denver' },
 ];
 const parse = (note, items = ITEMS, lastWho = '') => parseNote(note, { today: TODAY, items, lastWho });
@@ -39,9 +39,9 @@ const one = note => {
 };
 
 test('a name and a need', () => {
-  const a = one('pray for Michael about his back');
-  assert.equal(a.who, 'Michael');
-  assert.equal(a.what, 'his back');
+  const a = one('pray for Priya about her shoulder');
+  assert.equal(a.who, 'Priya');
+  assert.equal(a.what, 'her shoulder');
 });
 
 test('the leading ask is stripped however it is phrased', () => {
@@ -53,7 +53,7 @@ test('the leading ask is stripped however it is phrased', () => {
 });
 
 test('a possessive splits the person from the need', () => {
-  assert.deepEqual(pick(one("Michael's back")), { who: 'Michael', what: 'back' });
+  assert.deepEqual(pick(one("Priya's shoulder")), { who: 'Priya', what: 'shoulder' });
   assert.deepEqual(pick(one('pray for my neighbour Dave’s chemo')), { who: 'Dave', what: 'chemo' });
 });
 
@@ -87,8 +87,8 @@ test('a category nobody voted for is left open for the on-device model', () => {
 });
 
 test('time words set an end date and are cut from the need', () => {
-  assert.equal(one('pray for Michael about his back this week').until, '2026-09-22');
-  assert.equal(one('pray for Michael about his back this week').what, 'his back');
+  assert.equal(one('pray for Priya about her shoulder this week').until, '2026-09-22');
+  assert.equal(one('pray for Priya about her shoulder this week').what, 'her shoulder');
   assert.equal(one('pray for Ruth for the next three weeks').until, '2026-10-06');
   assert.equal(one('pray for Ruth for 10 days').until, '2026-09-25');
   assert.equal(one('pray for Ruth today').until, TODAY);
@@ -113,9 +113,9 @@ test('“every day” marks a request daily', () => {
 });
 
 test('one line, several requests', () => {
-  assert.deepEqual(adds('please pray for Ana and Michael').map(a => a.who), ['Ana', 'Michael']);
-  assert.deepEqual(adds('pray for Michael’s back and my mom’s knee').map(a => a.who), ['Michael', 'Mom']);
-  assert.deepEqual(adds('Pray for Ana. Also Michael needs work.').map(a => a.who), ['Ana', 'Michael']);
+  assert.deepEqual(adds('please pray for Ana and Priya').map(a => a.who), ['Ana', 'Priya']);
+  assert.deepEqual(adds('pray for Priya’s shoulder and my mom’s knee').map(a => a.who), ['Priya', 'Mom']);
+  assert.deepEqual(adds('Pray for Ana. Also Priya needs work.').map(a => a.who), ['Ana', 'Priya']);
   assert.deepEqual(adds('pray for Ana\nthe Baker family').map(a => a.who), ['Ana', 'Baker family']);
   assert.deepEqual(adds('pray for Ana and the Ortiz family').map(a => a.who), ['Ana', 'Ortiz family']);
 });
@@ -125,13 +125,13 @@ test('a stray conjunction never lands in the need', () => {
 });
 
 test('a need with “and” in it stays one request', () => {
-  assert.deepEqual(adds('pray for Michael’s back and knee').map(a => a.who), ['Michael']);
+  assert.deepEqual(adds('pray for Priya’s shoulder and knee').map(a => a.who), ['Priya']);
   assert.equal(splitClauses('Dr. Reyes about her clinic').length, 1);   // not a sentence break
 });
 
 test('“and his wife” carries the last person forward', () => {
   assert.deepEqual(adds('pray for John and his wife').map(a => a.who), ['John', 'John’s wife']);
-  assert.equal(parse('also his wife', ITEMS, 'Michael').actions[0].who, 'Michael’s wife');
+  assert.equal(parse('also his wife', ITEMS, 'John').actions[0].who, 'John’s wife');
   assert.equal(parse('also his wife').misses[0].reason, 'empty');       // nobody to carry forward
 });
 
@@ -143,8 +143,8 @@ test('good news closes the matching request', () => {
 });
 
 test('a request can be taken off the list', () => {
-  for (const note of ['take Michael off the list', 'remove Michael', 'we can stop praying for Michael',
-                      'delete the request about his back']) {
+  for (const note of ['take Priya off the list', 'remove Priya', 'we can stop praying for Priya',
+                      'delete the request about her shoulder']) {
     assert.equal(parse(note).actions[0].type, 'remove', note);
     assert.equal(parse(note).actions[0].id, 'a2', note);
   }
@@ -182,7 +182,7 @@ test('parseNote never throws on junk', () => {
 });
 
 test('every action is shaped the way addRequest expects', () => {
-  for (const a of adds('pray for my wife Ana about her exams this week and for Michael every day')) {
+  for (const a of adds('pray for my wife Ana about her exams this week and for Priya every day')) {
     assert.equal(typeof a.who, 'string');
     assert.equal(typeof a.what, 'string');
     assert.ok(['Family', 'Friends', 'Church', 'World', 'Me'].includes(a.cat), a.cat);
