@@ -3,5 +3,6 @@
 wrangler.jsonc
 .assetsignore
 README.md
+prayer-parse.test.mjs
 .wrangler
 node_modules

@@ -441,6 +441,7 @@ const STEPS = [
 ];
 
 /* ---------- dates ---------- */
+/*#region dates*/
 const pad = n => String(n).padStart(2,'0');
 const dayKey = (d=new Date()) => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const addDays = (key,n) => { const [y,m,d]=key.split('-').map(Number); const t=new Date(y,m-1,d+n); return dayKey(t); };
@@ -448,6 +449,7 @@ const daysBetween = (a,b) => { const [y1,m1,d1]=a.split('-').map(Number),[y2,m2,
 const shortDate = key => { const [y,m,d]=key.split('-').map(Number); return new Date(y,m-1,d).toLocaleDateString(undefined,{month:'short',day:'numeric'}); };
 const ago = key => { if(!key) return 'never'; const n=daysBetween(key,dayKey()); return n===0?'today':n===1?'yesterday':`${n} days ago`; };
 const longDate = () => new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+/*#endregion*/
 
 /* ---------- state ---------- */
 const defaultState = () => ({
@@ -456,6 +458,7 @@ const defaultState = () => ({
   prayer:{items:[], perDay:4},
   memory:{cards:[], nextTms:0},
   kids:{pos:0},
+  settings:{parser:'auto'},
   history:{},
   today:{date:'', done:{}, prayIds:[], promptShift:0, recited:false, prayed:0, reviewed:0},
 });
@@ -514,7 +517,7 @@ const store = {
     return out.sort((a,b)=>a.date<b.date?1:-1);
   }
 };
-function migrate(d){ const base = defaultState(); return Object.assign(base, d, {plan:{...base.plan,...d.plan}, prayer:{...base.prayer,...d.prayer}, memory:{...base.memory,...d.memory}, kids:{...base.kids,...d.kids}, history:{...(d.history||{})}, today:{...base.today,...d.today}}); }
+function migrate(d){ const base = defaultState(); return Object.assign(base, d, {plan:{...base.plan,...d.plan}, prayer:{...base.prayer,...d.prayer}, memory:{...base.memory,...d.memory}, kids:{...base.kids,...d.kids}, settings:{...base.settings,...d.settings}, history:{...(d.history||{})}, today:{...base.today,...d.today}}); }
 function syncHistory(){
   if (!S.today.date) return;
   const done = Object.keys(S.today.done).filter(k=>S.today.done[k]);
@@ -743,8 +746,463 @@ function prayerForm(){
     h('div',{class:'row'}, h('div',{}, h('label',{for:'pr-cat'},'Category'), cat), h('div',{style:'display:flex;align-items:end;gap:10px'}, h('label',{for:'pr-daily',style:'display:flex;align-items:center;text-transform:none;letter-spacing:0;font-size:14px;color:var(--ink-2);margin:0 0 10px'}, daily, 'Pray daily'), h('button',{class:'btn sm',style:'margin-bottom:6px',onclick:add},'Add'))));
 }
 
-/* Prayer chat: plain words in, structured requests out */
-const chatLog = [];  // session-only transcript
+/* Prayer chat: plain words in, structured requests out.
+
+   Three engines answer a note, in this order of preference:
+     rules  — the regex parser below. Instant, offline, always available.
+     local  — a 23 MB sentence-embedding model (MiniLM) run in this browser by
+              transformers.js. It only refines what the rules produced: the
+              category, add-vs-answered, and which existing request a note is
+              about. Downloads once, then lives in the browser's cache.
+     claude — one sampling call, available only when this page is published as
+              a claude.ai artifact.
+   Manage → Prayer list picks between them; the rules are the floor under all
+   three, so a failed download or a revoked grant never costs more than accuracy. */
+
+/*#region prayer-parse — pure functions, no DOM and no app state; see prayer-parse.test.mjs */
+const WEEKDAYS = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+const NUMWORDS = {a:1,an:1,one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,eleven:11,twelve:12,couple:2,few:3};
+const RELATIONS = "wife|husband|spouse|fianc[eé]e?|son|daughter|kids?|child|children|mom|mum|mother|dad|father|parents?|brother|sister|sibling|grandma|grandpa|grandmother|grandfather|grandson|granddaughter|aunt|uncle|cousin|nephew|niece|in-laws?|family|friend|neighbou?r|coworker|co-worker|colleague|classmate|roommate|boss|pastor|teacher";
+const SMALL_WORDS = new Set(['of','the','and','for','in','at','on','a','an','to','my','our','from']);
+
+const FILLER_RE = /^(?:ok(?:ay)?|so|umm?|uh+|hey|hi|hello|well|and|also|plus|then|oh|yeah|just)\b[\s,]*/i;
+const ASK_RE = /^(?:(?:could|can|would|will)\s+(?:you|we|u)\s+)?(?:please\s+)?(?:remember|lift\s+up|keep\s+praying|be\s+praying|start\s+praying|praying|prayers?|pray|add|put|include)\b\s*(?:for|about|over|on)?\s*[:,-]?\s*/i;
+const TRAIL_RE = /(?:\s*,?\s*(?:please|thanks|thank\s+you|thx))?(?:\s+to\s+(?:the|my|our)\s+(?:prayer\s+)?list)?\s*[.!?,;:\s-]*$/i;
+const REMOVE_RE = /\b(?:remove|delete|take\s+(?:\S+\s+){0,4}?off|drop|stop\s+praying|no\s+longer\s+(?:need|want|praying))\b/i;
+const ANSWERED_PREFIX_RE = /^(?:answered|praise(?:\s+(?:god|the\s+lord|jesus))?|good\s+news|update)\b[\s:—–-]+/i;
+const ANSWERED_RE = /\b(?:answer(?:ed|s)\b|praise\s+(?:god|the\s+lord)|went\s+(?:well|great|fine)|(?:is|are|'s|’s)\s+(?:better|healed|home|well|fine|through\s+it|out\s+of\s+(?:the\s+)?hospital|cancer[-\s]free|in\s+remission)|got\s+(?:the|a)\s+(?:job|offer|house|place|visa)|was\s+hired|healed\b|recovered\b|recovering\s+well|came\s+(?:home|through)|all\s+clear|clean\s+bill|arrived\s+safely|passed\s+(?:the|her|his|their)\s+\w+)/i;
+
+/* "and Ana", "and my brother", "and his wife" start a new request; "and knee" does not. */
+const SPLIT_RE = new RegExp(
+  ',?\\s+(?:and\\s+also|and|also|plus)\\s+(?=' +
+    '(?:please\\s+)?(?:pray|remember|lift)\\b' +
+    '|for\\s+\\S' +
+    '|(?:my|our)\\s+\\S' +
+    '|(?:his|her|their)\\s+(?:' + RELATIONS + ')\\b' +
+    '|the\\s+[A-Z]' +
+    '|[A-Z][a-z’\'-]+' +
+  ')', 'g');
+/* Where a "who" ends and the need begins. Punctuation is dropped, verbs are kept. */
+const SEP_RE = /\s*(?:—|–|--|:|;)\s*|\s+-\s+|\s*,\s*|\s+(?:about|regarding|concerning|who\s+is|who's|who’s|whose|who|that\s+is|because|since|as\s+(?:she|he|they)|with|struggling|dealing|going\s+through|starting|having|facing|awaiting|recovering|waiting|moving|travel?ling|fighting|battling|grieving|expecting|needs?|needing|has|have|had|is|are|was|were)\s+/i;
+
+const words = s => String(s || '').toLowerCase().match(/[a-z0-9']+/g) || [];
+const cutMatch = (s, m) => (s.slice(0, m.index) + ' ' + s.slice(m.index + m[0].length)).replace(/\s{2,}/g, ' ').replace(/\s+([,.;:])/g, '$1').trim();
+function properCase(s){
+  const t = String(s || '').trim();
+  if (/[A-Z]/.test(t)) return t;                    // the writer capitalised it themselves
+  return t.split(/\s+/).map((w, i) => (i && SMALL_WORDS.has(w)) ? w : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+function nextWeekday(today, name){
+  const want = WEEKDAYS.indexOf(name.toLowerCase());
+  const [y, m, d] = today.split('-').map(Number);
+  return addDays(today, (want - new Date(y, m - 1, d).getDay() + 7) % 7);
+}
+
+/* Time words → an end date, plus the "every day" flag. Both are cut from the text. */
+function extractWhen(text, today){
+  let s = text, until = '', daily = false;
+  const d = s.match(/\b(?:every|each)\s+(?:day|morning|evening|night)\b|\bdaily\b/i);
+  if (d) { daily = true; s = cutMatch(s, d); }
+  const rules = [
+    [/\bfor\s+(?:the\s+next\s+)?(\d+|a|an|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|couple(?:\s+of)?|few)\s+(day|week|month)s?\b/i,
+      g => addDays(today, (NUMWORDS[g[1].toLowerCase().replace(/\s+of$/, '')] || Number(g[1]) || 1) * (g[2][0] === 'd' ? 1 : g[2][0] === 'w' ? 7 : 30))],
+    [/\b(?:until|till|til|thr(?:ough|u))\s+(?:the\s+end\s+of\s+)?(?:this\s+|next\s+|the\s+)?(week|month|year|sunday|monday|tuesday|wednesday|thursday|friday|saturday)\b/i,
+      g => { const w = g[1].toLowerCase(); return w === 'week' ? addDays(today, 7) : w === 'month' ? addDays(today, 30) : w === 'year' ? addDays(today, 365) : nextWeekday(today, w); }],
+    [/\bnext\s+(week|month)\b/i, g => addDays(today, g[1][0] === 'w' ? 14 : 60)],
+    [/\bthis\s+(week|month)\b/i, g => addDays(today, g[1][0] === 'w' ? 7 : 30)],
+    [/\b(today|tonight|tomorrow)\b/i, g => /tomorrow/i.test(g[1]) ? addDays(today, 1) : today],
+  ];
+  for (const [re, end] of rules) { const g = s.match(re); if (g) { until = end(g); s = cutMatch(s, g); break; } }
+  /* "her surgery on Friday" dates the request but belongs in the words, so it is not cut. */
+  if (!until) { const g = s.match(/\bon\s+(sunday|monday|tuesday|wednesday|thursday|friday|saturday)\b/i); if (g) until = nextWeekday(today, g[1]); }
+  return { text: s.replace(TRAIL_RE, '').trim(), until, daily };
+}
+
+/* "my neighbour Dave's chemo" → who Dave, what chemo, hint neighbour. */
+function splitWhoWhat(raw){
+  let s = String(raw || '').trim().replace(/^for\s+/i, '');
+  let hint = '';
+  const mine = s.match(/^(?:my|our)\s+/i);
+  if (mine) { hint = 'mine'; s = s.slice(mine[0].length); }
+  if (hint === 'mine' && /^own\b/i.test(s)) return { who: 'Me', what: ('my ' + s).replace(TRAIL_RE, '').trim(), hint: 'me' };
+  if (/^(?:me|myself|i)\b/i.test(s)) {
+    const rest = s.replace(/^(?:me|myself|i)\b[\s,:—–-]*/i, '').replace(/^(?:about|with|and|for)\s+/i, '');
+    return { who: 'Me', what: rest.replace(TRAIL_RE, '').trim(), hint: 'me' };
+  }
+  let who = '', what = '';
+  /* a relation followed by a name: the name is the person, the relation is a category hint */
+  const first = (s.split(/\s+/)[0] || '').replace(/[^\w'’-]/g, '');
+  if (new RegExp('^(?:' + RELATIONS + ')$', 'i').test(first)) {
+    hint = hint === 'mine' || !hint ? first.toLowerCase() : hint;
+    const after = s.slice(first.length).replace(/^[\s,]+/, '');
+    const named = after.match(/^([A-Z][\w'’-]*(?:\s+[A-Z][\w'’-]*)?)/);
+    if (named) {
+      who = named[1].replace(/['’]s$/, '');
+      what = after.slice(named[1].length).replace(/^['’]s\s*/, '').replace(/^[\s,]+/, '');
+    }
+  }
+  if (!who) {
+    const poss = s.match(/^(.{1,40}?)['’]s\s+(.+)$/);
+    if (poss && words(poss[1]).length <= 3) { who = poss[1]; what = poss[2]; }
+  }
+  if (!who) {
+    const g = s.match(SEP_RE);
+    if (g && g.index > 0 && words(s.slice(0, g.index)).length <= 5) {
+      who = s.slice(0, g.index).trim();
+      what = s.slice(g.index).replace(/^\s*(?:—|–|--|:|;|,)\s*/, '').replace(/^\s+-\s+/, '').trim();
+    }
+  }
+  if (!who) {
+    const w = s.replace(/^the\s+/i, '').split(/\s+/);
+    const named = w.length > 1 && /^[A-Z]/.test(w[0]) && /^[A-Z]/.test(w[1]);
+    if (named) { who = w.slice(0, 2).join(' '); what = w.slice(2).join(' '); }
+    else if (/^[A-Z]/.test(w[0]) && w.length > 3) { who = w[0]; what = w.slice(1).join(' '); }
+    else if (w.length <= 6) { who = w.join(' '); what = ''; }          // "the persecuted church in Nigeria"
+    else { who = w.slice(0, 3).join(' '); what = w.join(' '); }
+  }
+  who = properCase(who.replace(/^(?:my|our|the)\s+/i, '').replace(TRAIL_RE, '').trim());
+  who = who.charAt(0).toUpperCase() + who.slice(1);
+  what = what.replace(/^(?:about|regarding|concerning)\s+/i, '').replace(TRAIL_RE, '').trim();
+  return { who, what, hint };
+}
+
+/* sure:false means "no keyword said so, this is just the default" — the on-device
+   model is allowed to overrule those and only those. */
+function ruleCategory(who, what, hint){
+  const b = (hint + ' ' + who + ' ' + what).toLowerCase();
+  if (hint === 'me' || /^(?:me|myself)$/i.test(who)) return { cat: 'Me', sure: true };
+  if (/\b(?:wife|husband|spouse|fianc|son|daughter|kids?|child|children|mom|mum|mother|dad|father|parents?|brother|sister|sibling|grand(?:ma|pa|mother|father|son|daughter)|aunt|uncle|cousin|nephew|niece|in-laws?|family)\b/.test(b)) return { cat: 'Family', sure: true };
+  if (/\b(?:missionar\w+|nations?|country|world|persecuted|war|famine|earthquake|flood|refugees?|israel|ukraine|gaza|china|india|africa|sudan|government|president|election|leaders)\b/.test(b)) return { cat: 'World', sure: true };
+  if (/\b(?:church|pastor|elders?|deacons?|small\s+group|congregation|sunday\s+school|youth\s+group|worship\s+team|bible\s+study|ministry)\b/.test(b)) return { cat: 'Church', sure: true };
+  if (/\b(?:friend|neighbou?r|coworker|co-worker|colleague|classmate|roommate|boss|teammate)\b/.test(b)) return { cat: 'Friends', sure: true };
+  if (hint === 'mine' && /\b(?:own|heart|faith|walk|temptation|patience|attitude|anger|anxiety|worry|habit|tongue|pride)\b/.test(b)) return { cat: 'Me', sure: false };
+  return { cat: 'Friends', sure: false };
+}
+
+function splitClauses(text){
+  const out = [];
+  for (const chunk of String(text || '').split(/[\n;]+|(?<!\b(?:Dr|Mr|Mrs|Ms|St|Sr|Jr|Prof|Rev|Fr|vs|etc))[.!?]+\s+(?=[A-Z])/)) {
+    const s = chunk.trim();
+    if (!s) continue;
+    let last = 0, m;
+    SPLIT_RE.lastIndex = 0;
+    while ((m = SPLIT_RE.exec(s))) { out.push(s.slice(last, m.index)); last = m.index + m[0].length; }
+    out.push(s.slice(last));
+  }
+  return out.map(s => s.trim()).filter(Boolean);
+}
+
+/* Which existing request is this note about? Names count for more than needs, and
+   the words everybody uses count for nothing — "the request about his back" must
+   not land on "The Ortiz family" because both say "the". */
+const MATCH_STOP = new Set(['the','and','for','her','his','its','our','their','them','they','that','this','with','about','from','just','been','have','has','had','was','were','will','would','pray','prayer','prayers','praying','request','requests','list','off','take','please','thing','one','some','any','all','now','still','again','over']);
+const keyWords = (s, min) => words(s).filter(w => w.length > (min || 2) && !MATCH_STOP.has(w));
+function matchItem(text, items, used){
+  const toks = new Set(keyWords(text, 2));
+  const low = String(text || '').toLowerCase();
+  let best = null, top = 0;
+  for (const p of items || []) {
+    if (used && used.has(p.id)) continue;
+    let score = 0;
+    if (p.who && low.includes(p.who.toLowerCase())) score += 3;
+    else if (keyWords(p.who, 2).some(w => toks.has(w))) score += 2;
+    const overlap = keyWords(p.what, 3).filter(w => toks.has(w)).length;
+    if (overlap) score += Math.min(2, overlap * 2);
+    if (score > top) { top = score; best = p; }
+  }
+  return top >= 2 ? best : null;
+}
+
+function parseAdd(clause, ctx){
+  let t = clause;
+  const ask = t.match(ASK_RE);
+  if (ask) t = t.slice(ask[0].length);
+  t = t.replace(TRAIL_RE, '').trim();
+  if (!t) return { type: 'miss', reason: 'empty', text: clause };
+  const when = extractWhen(t, ctx.today);
+  const ww = splitWhoWhat(when.text);
+  let who = ww.who;
+  /* "…and his wife" carries the last person forward */
+  const follow = who.match(new RegExp('^(?:his|her|their)\\s+(' + RELATIONS + ')$', 'i'));
+  if (follow) {
+    if (!ctx.lastWho) return { type: 'miss', reason: 'empty', text: clause };
+    who = ctx.lastWho + '’s ' + follow[1].toLowerCase();
+  }
+  if (!who || !/[a-z0-9]/i.test(who)) return { type: 'miss', reason: 'empty', text: clause };
+  const c = ruleCategory(who, ww.what, ww.hint);
+  return { type: 'add', who, what: ww.what, cat: c.cat, catSure: c.sure, daily: when.daily, until: when.until, src: clause };
+}
+
+function parseClause(clause, ctx){
+  let s = clause.replace(/^[\s,.-]+/, '');
+  for (let i = 0; i < 3; i++) { const m = s.match(FILLER_RE); if (!m) break; s = s.slice(m[0].length); }
+  if (!s.trim()) return null;
+  const prefix = s.match(ANSWERED_PREFIX_RE);
+  const body = prefix ? s.slice(prefix[0].length) : s;
+  if (REMOVE_RE.test(s)) {
+    const p = matchItem(body, ctx.items, ctx.used);
+    return p ? { type: 'remove', id: p.id, who: p.who } : { type: 'miss', reason: 'remove', text: body.replace(TRAIL_RE, '') };
+  }
+  if (prefix || ANSWERED_RE.test(s)) {
+    const p = matchItem(body, ctx.items, ctx.used);
+    if (p) return { type: 'answered', id: p.id, who: p.who };
+    if (prefix) return { type: 'miss', reason: 'answered', text: body.replace(TRAIL_RE, '') };
+    /* only a soft signal and nobody it could mean — read it as a fresh request */
+  }
+  return parseAdd(s, ctx);
+}
+
+/* The whole rule engine: a note in, {actions, misses} out. Never throws. */
+function parseNote(text, ctx){
+  const c = ctx || {};
+  const inner = { today: c.today || '1970-01-01', items: c.items || [], lastWho: c.lastWho || '', used: new Set() };
+  const actions = [], misses = [];
+  for (const clause of splitClauses(text)) {
+    const a = parseClause(clause, inner);
+    if (!a) continue;
+    if (a.type === 'miss') { misses.push(a); continue; }
+    actions.push(a);
+    if (a.id) inner.used.add(a.id);
+    if (a.type === 'add' && a.who) inner.lastWho = a.who;
+  }
+  return { actions, misses, lastWho: inner.lastWho, engine: 'rules' };
+}
+/*#endregion*/
+
+/*#region brain — MiniLM sentence embeddings, run on this device by transformers.js.
+   It never extracts text; it only judges meaning where the keywords above had to
+   guess: the category, whether a note reports an answer, and which request it is
+   about. One 384-dim vector per short string, a few milliseconds each. */
+const BRAIN_SRC = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.2.0/dist/transformers.min.js';
+const BRAIN_MODEL = 'Xenova/all-MiniLM-L6-v2';
+const BRAIN_SIZE = '45 MB';   // measured first load: 22 MB model, 22 MB ONNX runtime, ~1 MB tokenizer and loader
+const PROTOS = {
+  intent: {
+    /* No names here: a prototype containing "Michael" pulls in every note that
+       mentions Michael, whatever the note actually says. */
+    add: ['please pray for a friend who is sick', 'add someone to the prayer list',
+          'pray for a neighbour about an exam next week', 'keep praying for a brother and his job search',
+          'please keep praying about this same need', 'pray again about the thing we raised before'],
+    answered: ['God answered our prayer about this', 'her surgery went well and she is recovering',
+               'he got the job we had been praying about', 'she is out of hospital and doing fine',
+               'praise God, the test results came back clear', 'they arrived safely and are settling in',
+               'the move went through and they are in the new house', 'he is back at work and free of pain'],
+    remove: ['take that person off the prayer list', 'please remove that request from the list',
+             'delete the request about the car', 'we can stop praying for that one now'],
+  },
+  cat: {
+    Family: ['my wife', 'my husband and our children', 'my mother and her health',
+             'my brother and his family', 'our son struggling at school', 'my parents'],
+    Friends: ['my friend from work', 'my neighbour who is unwell', 'a coworker going through a hard time',
+              'someone I know from school', 'a family we are close to'],
+    Church: ['our pastor and the elders', 'our small group at church', 'the youth ministry in our congregation',
+             'Sunday worship and the sermon', 'our church building fund'],
+    World: ['missionaries serving overseas', 'the persecuted church in other nations',
+            'the war and the people suffering in it', 'our country and its leaders',
+            'families caught in the earthquake', 'unreached people groups',
+            'believers in another country', 'Christians facing pressure abroad'],
+    Me: ['my own heart and my walk with God', 'I am anxious and need peace',
+         'my own temptation and sin', 'help me with my temper', 'my faith feels dry'],
+  },
+};
+const dot = (a, b) => { let s = 0; for (let i = 0; i < a.length; i++) s += a[i] * b[i]; return s; };
+
+const brain = {
+  state: 'idle',            // idle · loading · ready · failed
+  detail: '', ms: 0, pipe: null, protos: null, loading: null, cached: true,
+  files: new Map(), tick: 0, vecs: new Map(),
+  ready(){ return this.state === 'ready'; },
+
+  load(){
+    if (this.loading) return this.loading;
+    if (this.state === 'ready') return Promise.resolve();
+    this.state = 'loading'; this.detail = 'starting'; this.files.clear(); onBrainChange();
+    const t0 = Date.now();
+    this.loading = (async () => {
+      const tf = await import(BRAIN_SRC);
+      tf.env.allowLocalModels = false;
+      const build = cache => {
+        tf.env.useBrowserCache = cache;              // cached, the download survives a reload
+        return tf.pipeline('feature-extraction', BRAIN_MODEL,
+          { dtype: 'q8', device: 'wasm', progress_callback: p => this.onProgress(p) });
+      };
+      // A private window or an embedded webview may have no Cache API at all, and
+      // transformers.js treats that as fatal rather than simply fetching. Working
+      // without the cache is much better than not working.
+      try { this.pipe = await build(true); }
+      catch (e) {
+        if (!/cache/i.test(String((e && e.message) || e))) throw e;
+        console.warn('no browser cache available — loading the model without it', e);
+        this.cached = false;
+        this.pipe = await build(false);
+      }
+      const keys = [], lines = [];
+      for (const kind of Object.keys(PROTOS))
+        for (const label of Object.keys(PROTOS[kind]))
+          for (const line of PROTOS[kind][label]) { keys.push([kind, label]); lines.push(line); }
+      const v = await this.embed(lines);
+      this.protos = { intent: [], cat: [] };
+      keys.forEach(([kind, label], i) => this.protos[kind].push({ label, vec: v[i] }));
+      this.ms = Date.now() - t0;
+      this.state = 'ready'; this.detail = '';
+    })().catch(e => {
+      this.state = 'failed';
+      this.detail = String((e && e.message) || e).slice(0, 90);
+      console.warn('on-device model failed to load', e);
+    }).finally(() => { this.loading = null; onBrainChange(); });
+    return this.loading;
+  },
+
+  onProgress(p){
+    if (!p || !p.file) return;
+    if (p.status === 'progress' && p.total) this.files.set(p.file, { loaded: p.loaded || 0, total: p.total });
+    else if (p.status === 'initiate' && !this.files.has(p.file)) this.files.set(p.file, { loaded: 0, total: 0 });
+    else if (p.status === 'done' && this.files.has(p.file)) { const f = this.files.get(p.file); f.loaded = f.total; }
+    const now = Date.now();
+    if (p.status === 'progress' && now - this.tick < 300) return;
+    this.tick = now;
+    let l = 0, t = 0;
+    for (const f of this.files.values()) { l += f.loaded; t += f.total; }
+    this.detail = t ? `${Math.round(Math.min(l, t) / 1048576)} of ${Math.round(t / 1048576)} MB` : 'starting';
+    onBrainChange();
+  },
+
+  async embed(texts){
+    const out = await this.pipe(texts, { pooling: 'mean', normalize: true });
+    const [n, d] = out.dims;
+    return Array.from({ length: n }, (_, i) => out.data.subarray(i * d, (i + 1) * d));
+  },
+
+  pick(vec, protos){
+    const best = new Map();
+    for (const p of protos) { const s = dot(vec, p.vec); if (s > (best.has(p.label) ? best.get(p.label) : -1)) best.set(p.label, s); }
+    const ranked = [...best].sort((a, b) => b[1] - a[1]);
+    return { label: ranked[0][0], score: ranked[0][1], margin: ranked[0][1] - (ranked[1] ? ranked[1][1] : 0) };
+  },
+
+  async itemVecs(items){
+    const want = items.filter(p => !this.vecs.has(p.id + '|' + p.who + '|' + p.what));
+    if (want.length) {
+      const v = await this.embed(want.map(p => `${p.who} — ${p.what || 'a prayer request'}`));
+      want.forEach((p, i) => this.vecs.set(p.id + '|' + p.who + '|' + p.what, v[i]));
+    }
+    return items.map(p => this.vecs.get(p.id + '|' + p.who + '|' + p.what));
+  },
+
+  async nearest(text, vec, items, floor){
+    if (!items || !items.length) return null;
+    const q = vec || (await this.embed([text]))[0];
+    const iv = await this.itemVecs(items);
+    let best = null, top = floor;
+    items.forEach((p, i) => { const s = dot(q, iv[i]); if (s > top) { top = s; best = p; } });
+    return best;
+  },
+
+  /* Take what the rules produced and sharpen only the parts they were unsure of. */
+  async refine(base, text, ctx){
+    if (!this.ready()) return base;
+    try {
+      const adds = base.actions.filter(a => a.type === 'add');
+      const probe = [text, ...adds.map(a => a.src || (a.who + ' ' + (a.what || '')).trim())];
+      const v = await this.embed(probe);
+      const intent = this.pick(v[0], this.protos.intent);
+
+      // A note the keywords read as a new request but that really closes an old one.
+      // The margin between the winning intent and the runner-up is what separates the
+      // two cases — on a spread of hand-checked notes every genuine close-out cleared
+      // 0.06 and every "pray for them again" stayed under 0.02, while the raw score
+      // overlapped badly. Resembling an existing request is the second gate, so a note
+      // about someone new stays an add however it is phrased.
+      if (adds.length && adds.length === base.actions.length && intent.label !== 'add' &&
+          intent.score > 0.30 && intent.margin > 0.05) {
+        const hit = await this.nearest(text, v[0], ctx.items, 0.45);
+        if (hit) {
+          const asked = /\b(?:stop|no longer|don'?t need|do not need|off the list|remove|delete|drop|not needed|never mind)\b/i.test(text);
+          return { actions: [{ type: asked ? 'remove' : 'answered', id: hit.id, who: hit.who }],
+                   misses: [], lastWho: base.lastWho, engine: 'local' };
+        }
+      }
+      // Categories the keyword list had to fall back on. Me is left out of the vote:
+      // it means the writer wrote about themselves, which is a fact about the words
+      // ("I", "my own"), not a matter of meaning — the rules already settle it, and a
+      // model guessing it puts other people's needs on the writer's own line.
+      // The bar is high on purpose. Measured over a spread of notes, this model only
+      // earns its vote when the note actually describes someone — "the believers in
+      // Nigeria" clears it, a bare "Dave" or "Michael about his back" does not, and
+      // below the bar its guesses were no better than the Friends default.
+      const catProtos = this.protos.cat.filter(p => p.label !== 'Me');
+      adds.forEach((a, i) => {
+        if (a.catSure) return;
+        const c = this.pick(v[i + 1], catProtos);
+        if (c.score > 0.40 && c.margin > 0.10) a.cat = c.label;
+      });
+      // "that one is answered" — a close-out whose person the rules could not place.
+      for (const m of base.misses) {
+        if (m.reason !== 'answered' && m.reason !== 'remove') continue;
+        const hit = await this.nearest(m.text, null, ctx.items, 0.40);
+        if (hit) { base.actions.push({ type: m.reason === 'remove' ? 'remove' : 'answered', id: hit.id, who: hit.who }); m.done = true; }
+      }
+      base.misses = base.misses.filter(m => !m.done);
+      base.engine = 'local';
+      return base;
+    } catch (e) { console.warn('on-device refine failed', e); return base; }
+  },
+
+  async forget(){
+    try { if (window.caches) for (const k of await caches.keys()) if (/transformers/i.test(k)) await caches.delete(k); }
+    catch (e) { console.warn('could not clear the model cache', e); }
+    this.pipe = null; this.protos = null; this.vecs.clear(); this.files.clear();
+    this.loading = null; this.ms = 0; this.state = 'idle'; this.detail = '';
+    onBrainChange();
+  },
+};
+/*#endregion*/
+
+/* ---------- which engine answers a note ---------- */
+const inArtifact = () => !!(window.claude && window.claude.use);
+function resolveEngine(){
+  const mode = (S.settings && S.settings.parser) || 'auto';
+  if (mode === 'rules') return 'rules';
+  if (mode === 'local') return 'local';
+  if (mode === 'claude') return store.sample ? 'claude' : 'rules';
+  return (store.sample || inArtifact()) ? 'claude' : 'local';       // auto
+}
+/* Metered connections are not the place to spend 45 MB nobody asked for, so
+   "Best available" holds off on a phone data plan or with Data Saver on. Picking
+   the on-device model by hand is asking, and always downloads. */
+function meteredConnection(){
+  const c = navigator.connection;
+  return !!c && (c.saveData === true || /^(?:slow-2g|2g|3g)$/.test(c.effectiveType || '') ||
+                 (c.type === 'cellular' && (S.settings.parser || 'auto') === 'auto'));
+}
+function autoHeldBack(){ return (S.settings.parser || 'auto') === 'auto' && meteredConnection(); }
+function warmBrain(){
+  if (resolveEngine() !== 'local' || brain.state !== 'idle' || autoHeldBack()) return;
+  const go = () => brain.load();
+  if (window.requestIdleCallback) requestIdleCallback(go, { timeout: 2500 }); else setTimeout(go, 500);
+}
+function brainStatusText(brief){
+  const e = resolveEngine();
+  if (e === 'claude') return brief ? '' : 'Claude is reading your notes — this page is published as an artifact.';
+  if (e === 'rules') return brief ? '' : 'Simple rules only — instant, nothing downloaded.';
+  switch (brain.state) {
+    case 'ready':   return brief ? '' : `Running on this device · model ready in ${(brain.ms / 1000).toFixed(1)}s${brain.cached ? '' : ', without a browser cache (it will download again next time)'}.`;
+    case 'loading': return `Warming up the on-device model… ${brain.detail}. Rules are reading your notes until it lands.`;
+    case 'failed':  return `The on-device model could not load (${brain.detail}) — reading your notes with simple rules.`;
+    default:        return autoHeldBack()
+      ? `Holding off on the ${BRAIN_SIZE} download on this connection — simple rules are reading your notes. Choose “On-device model” to fetch it anyway.`
+      : (brief ? '' : `Not loaded yet · about ${BRAIN_SIZE}, downloaded once and then cached.`);
+  }
+}
+function onBrainChange(){
+  for (const el of document.querySelectorAll('[data-brain-status]')) el.textContent = brainStatusText(el.dataset.brainStatus === 'brief');
+}
+
+/* Prayer chat */
+const chatLog = [];                                  // session-only transcript
+const chatState = { lastWho: '', awaiting: '' };
+function chatCtx(){ return { today: dayKey(), items: S.prayer.items.filter(isActive), lastWho: chatState.lastWho }; }
+
 function addRequest(o){
   const item = {id:uid(), who:(o.who||'').trim(), what:(o.what||'').trim(), cat:PRAY_CATS.includes(o.cat)?o.cat:'Friends', daily:!!o.daily, until:/^\d{4}-\d{2}-\d{2}$/.test(o.until||'')?o.until:'', added:dayKey(), lastPrayed:'', count:0, answered:'', ended:''};
   if (!item.who) return null;
@@ -752,22 +1210,7 @@ function addRequest(o){
   if (item.daily || S.today.prayIds.length < S.prayer.perDay) S.today.prayIds.push(item.id);
   return item;
 }
-function heuristicParse(text){
-  const k = dayKey(); const t = text.trim(); const low = t.toLowerCase();
-  const answered = low.match(/^(answered|praise)[:\s-]+(.+)$/);
-  if (answered) { const who = answered[2].trim(); const p = S.prayer.items.filter(isActive).find(x=>who.toLowerCase().includes(x.who.toLowerCase())); return p ? {actions:[{type:'answered',id:p.id}], reply:''} : {actions:[], reply:`I couldn't find "${who}" on the list.`}; }
-  let until=''; let body = t.replace(/^(please\s+)?(pray|praying|prayer)\s+(for|about)\s+/i,'');
-  const dur = low.match(/\b(this week|this month|today|for (\d+) (day|days|week|weeks))\b/);
-  if (dur) { const m=dur[0]; until = m==='today'?k : m==='this week'?addDays(k,7) : m==='this month'?addDays(k,30) : addDays(k, +dur[2] * (dur[3].startsWith('week')?7:1)); body = body.replace(new RegExp('\\s*'+m.replace(/\s+/g,'\\s+'),'i'),''); }
-  const daily = /\b(every day|daily|each day)\b/i.test(body); body = body.replace(/\b(every day|daily|each day)\b/i,'');
-  const m = body.match(/^(.+?)\s*(?:—|–|-|:|,|\babout\b|\bwho\b|\bwhose\b|\bthat\b|\bregarding\b|\bneeds?\b|\bfor\b)\s*(.*)$/i);
-  let who = (m ? m[1] : body).replace(/^(my|our)\s+/i,'').trim(); let what = (m ? m[2] : '').replace(/[.\s]+$/,'').trim();
-  if (who.split(/\s+/).length > 4 && !m) { what = who; who = who.split(/\s+/).slice(0,2).join(' '); }
-  who = who.charAt(0).toUpperCase()+who.slice(1);
-  const b = (who+' '+what).toLowerCase();
-  const cat = /\b(mom|dad|mother|father|wife|husband|son|daughter|kids?|children|brother|sister|grand\w+|family|parents?)\b/.test(b)?'Family' : /\b(church|pastor|elders?|small group|congregation|sunday school|youth group)\b/.test(b)?'Church' : /\b(missionar\w+|nation|country|world|persecuted|war|israel|ukraine|china|india|africa|government|president)\b/.test(b)?'World' : /^(me|myself|i)\b/.test(who.toLowerCase())||/\b(my own|myself)\b/.test(b)?'Me' : 'Friends';
-  return {actions:[{type:'add',who,what,cat,daily,until}], reply:''};
-}
+
 function chatInstruction(){
   const list = S.prayer.items.filter(isActive).map(p=>`${p.id} · ${p.who}${p.what?' · '+p.what:''}`).join('\n') || '(empty)';
   return `You turn a person's plain-language note into prayer-list actions for a personal devotions app. Today is ${dayKey()}.
@@ -781,23 +1224,64 @@ Action shapes:
 {"type":"remove","id":"id of an existing request"}
 Rules: one add per distinct person or need. Time words set until: "today" = today, "this week" = 7 days from today, "this month" = 30 days, "for N days/weeks" accordingly, otherwise empty. "every day"/"daily" sets daily true. cat: spouse, children, parents, siblings → Family; pastor, church, small group → Church; nations, missionaries, leaders, disasters → World; the writer's own need (I, me, my) → Me; anyone else → Friends. If the note says an existing request was answered, resolved, healed, or is no longer needed, use answered (or remove if they say to remove or delete it) with the matching id — do not add a duplicate.`;
 }
+async function claudeParse(text){
+  try {
+    const r = await store.sample.json(chatInstruction() + '\n\nNote (between the markers): <<<' + text.replace(/>>>/g, '') + '>>>', { modelTier: 'quick', cache: false });
+    if (!r || !Array.isArray(r.actions)) return null;
+    return { actions: r.actions, misses: [], reply: typeof r.reply === 'string' ? r.reply : '', lastWho: chatState.lastWho, engine: 'claude' };
+  } catch (e) {
+    if (e && e.code === 'not_granted') store.sample = null; else console.warn('sampling failed', e);
+    return null;
+  }
+}
+async function classify(text){
+  const engine = resolveEngine();
+  const ctx = chatCtx();
+  if (engine === 'claude' && store.sample) { const r = await claudeParse(text); if (r) return r; }
+  const base = parseNote(text, ctx);                 // instant, and the floor under everything
+  if (engine === 'local') {
+    if (brain.ready()) return await brain.refine(base, text, ctx);
+    warmBrain();                                     // answer from the rules now, be sharper next time
+  }
+  return base;
+}
+
+function composeReply(added, closed, misses){
+  const bits = [];
+  const answered = closed.filter(c => c.type === 'answered').length;
+  if (answered) bits.push(answered === 1 ? 'Thank God.' : 'Thank God for every one of those.');
+  for (const m of misses) {
+    if (m.reason === 'empty') { if (!added.length && !closed.length) bits.push('Who should I put on the list?'); }
+    else bits.push(`I couldn’t find “${m.text}” on the list.`);
+  }
+  if (!added.length && !closed.length && !bits.length)
+    return 'Who should I pray for? A name and a need is plenty — “Ana, her surgery on Friday”.';
+  return bits.join(' ');
+}
+
 async function handleChat(text, log, input){
+  let note = text;
+  if (chatState.awaiting === 'who' && text.split(/\s+/).length <= 6 && !/\b(pray|about|for)\b/i.test(text)) note = 'pray for ' + text;
+  chatState.awaiting = '';
   const my = h('div',{class:'msg me'}, text); log.append(my);
-  const thinking = h('div',{class:'msg bot thinking'}, 'Thinking…'); log.append(thinking); thinking.scrollIntoView({block:'nearest'});
-  let result;
-  if (store.sample) {
-    try { result = await store.sample.json(chatInstruction() + '\n\nNote (between the markers): <<<' + text.replace(/>>>/g,'') + '>>>', {modelTier:'quick', cache:false}); }
-    catch(e) { if (e && e.code==='not_granted') store.sample=null; else console.warn('sample failed', e); result = heuristicParse(text); }
-  } else result = heuristicParse(text);
-  if (!result || !Array.isArray(result.actions)) result = heuristicParse(text);
+  const thinking = h('div',{class:'msg bot thinking'}, 'One moment…'); log.append(thinking); thinking.scrollIntoView({block:'nearest'});
+
+  let r;
+  try { r = await classify(note); } catch (e) { console.warn('classify failed', e); }
+  if (!r || !Array.isArray(r.actions)) r = parseNote(note, chatCtx());
+
   const bot = h('div',{class:'msg bot'});
-  let n=0;
-  for (const a of result.actions){
-    if (a.type==='add') { const it = addRequest(a); if(!it) continue; n++;
+  const added = [], closed = [];
+  for (const a of r.actions){
+    if (a.type === 'add') {
+      const it = addRequest(a); if (!it) continue;
+      added.push(it);
       const line = h('span',{class:'act'}, 'Added ', h('span',{class:'k'}, it.who), it.what?` — ${it.what}`:'', ` · ${it.cat}${it.daily?' · daily':''}${it.until?' · through '+shortDate(it.until):''}`,
         h('button',{onclick:()=>{ S.prayer.items=S.prayer.items.filter(x=>x.id!==it.id); S.today.prayIds=S.today.prayIds.filter(x=>x!==it.id); store.save(); line.replaceChildren('Removed ', h('span',{class:'k'},it.who)); rerenderPrayList(); }},'undo'));
       bot.append(line);
-    } else if (a.type==='answered' || a.type==='remove') { const p = S.prayer.items.find(x=>x.id===a.id); if(!p) continue; n++;
+    } else if (a.type === 'answered' || a.type === 'remove') {
+      const p = S.prayer.items.find(x=>x.id===a.id); if (!p) continue;
+      closed.push({p, type:a.type});
       const prev = {answered:p.answered, ended:p.ended};
       if (a.type==='answered') p.answered = dayKey(); else p.ended = dayKey();
       const line = h('span',{class:'act'}, a.type==='answered'?'Marked answered: ':'Removed: ', h('span',{class:'k'}, p.who),
@@ -805,23 +1289,31 @@ async function handleChat(text, log, input){
       bot.append(line);
     }
   }
-  if (!n) bot.append(result.reply || "I couldn't make a request out of that — try “pray for Ana about her surgery on Friday”.");
-  else if (result.reply) bot.append(h('span',{class:'act',style:'color:var(--ink-3)'}, String(result.reply)));
+  const n = added.length + closed.length;
+  chatState.lastWho = added.length ? added[added.length-1].who : (r.lastWho || chatState.lastWho);
+  if (!n) chatState.awaiting = 'who';
+  const reply = (typeof r.reply === 'string' && r.reply) ? r.reply : composeReply(added, closed, r.misses || []);
+  if (!n) bot.append(reply || 'Who should I pray for?');
+  else if (reply) bot.append(h('span',{class:'act',style:'color:var(--ink-3)'}, reply));
   thinking.replaceWith(bot);
   chatLog.push(my, bot);
   if (n) { store.save(); rerenderPrayList(); }
   input.focus();
 }
+
 function rerenderPrayList(){ const keep = document.querySelector('.chat .row input'); const v = keep ? keep.value : ''; render(); const inp = document.querySelector('.chat .row input'); if (inp) { inp.value = v; inp.focus(); } }
+
 function prayerChat(){
   const log = h('div',{class:'log'}, chatLog.slice(-8));
   const input = h('input',{id:'chat-in',placeholder:'e.g. pray for Michael about his back this week',autocomplete:'off','aria-label':'Describe a prayer request'});
   const send = () => { const t = input.value.trim(); if(!t) return; input.value=''; handleChat(t, log, input); };
   input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); send(); } });
+  warmBrain();
   return h('div',{class:'chat'},
     log,
     h('div',{class:'row'}, input, h('button',{class:'btn primary',onclick:send},'Add')),
-    h('p',{class:'hint'}, store.sample ? 'Write it however it comes to mind — a name, a need, how long. “Sarah’s surgery went well” marks hers answered.' : 'Write “pray for <who> about <what> this week”. Add “daily” to keep it every day.'));
+    h('p',{class:'hint'}, 'Write it however it comes to mind — a name, a need, how long. Several in one line is fine, and “Sarah’s surgery went well” marks hers answered.'),
+    h('p',{class:'hint','data-brain-status':'brief'}, brainStatusText(true)));
 }
 
 /* Memorize */
@@ -1071,8 +1563,23 @@ function renderManage(){
   }
   const alist = h('div',{class:'list'});
   for (const p of answered) alist.append(h('div',{class:'item'}, h('div',{}, h('div',{class:'who'}, p.who), p.what?h('div',{class:'what'},p.what):null, h('div',{class:'meta'}, p.answered ? `answered ${p.answered}` : `ended ${p.ended}`)), h('div',{class:'side'}, h('button',{class:'btn sm quiet',onclick:()=>{ p.answered=''; p.ended=''; p.until=''; store.save(); render(); }},'Reopen'), h('button',{class:'btn sm quiet danger',onclick:()=>{ if(confirm(`Delete ${p.who} for good?`)){ S.prayer.items=S.prayer.items.filter(x=>x.id!==p.id); store.save(); render(); } }},'Delete'))));
+  const parserSel = h('select',{id:'m-parser'}, [
+    ['auto','Best available'],
+    ['local','On-device model'],
+    ['rules','Simple rules — no download'],
+    ['claude','Claude — published artifact only'],
+  ].map(([v,l])=>h('option',{value:v,selected:(S.settings.parser||'auto')===v}, l)));
+  parserSel.addEventListener('change',()=>{ S.settings.parser=parserSel.value; store.save(); onBrainChange(); if (resolveEngine()==='local') brain.load(); });
+  const brainBtns = h('div',{class:'actions',style:'margin-top:10px'},
+    h('button',{class:'btn sm',onclick:()=>brain.load()}, 'Load the model now'),
+    h('button',{class:'btn sm quiet',onclick:()=>brain.forget()}, 'Forget the download'));
+
   root.append(h('section',{}, h('h2',{},'Prayer list'),
-    h('div',{class:'row2'}, h('div',{}, h('label',{for:'m-pperday'},'How many rotate in each day'), perDayP)),
+    h('div',{class:'row2'}, h('div',{}, h('label',{for:'m-pperday'},'How many rotate in each day'), perDayP),
+      h('div',{}, h('label',{for:'m-parser'},'Understanding what you type'), parserSel)),
+    h('p',{class:'tiny','data-brain-status':'full'}, brainStatusText()),
+    brainBtns,
+    h('p',{class:'notice'}, `The chat on the Pray step turns plain words into requests. Simple rules do that instantly and always work. The on-device model is a small language model (about ${BRAIN_SIZE}) that downloads once into this browser and then reads your notes here — nothing you write leaves the device. Claude reads them only when this page is opened as a published claude.ai artifact. Set this to simple rules if the model gets things wrong.`),
     active.length ? plist : h('p',{class:'empty'},'No requests yet.'),
     prayerForm(),
     answered.length ? h('div',{style:'margin-top:22px'}, h('h3',{},`Answered & past · ${answered.length}`), alist) : null));
