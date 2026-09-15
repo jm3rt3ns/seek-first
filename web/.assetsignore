@@ -1,0 +1,7 @@
+# Files under this directory that configure, document, or are scratch output of
+# the deploy, rather than part of the site served to visitors.
+wrangler.jsonc
+.assetsignore
+README.md
+.wrangler
+node_modules
