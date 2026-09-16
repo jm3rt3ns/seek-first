@@ -11,10 +11,13 @@ devotion can be picked up on another device without an account.
 ### Requirement: One State Object
 
 All app state except journal prose SHALL live in a single serializable object with a
-version, a last-updated timestamp, and five parts: `plan` (id, per-track positions,
+version, a last-updated timestamp, and these parts: `plan` (id, per-track positions,
 chapters per day), `prayer` (items, how many rotate in a day), `memory` (cards, the
-course pointer), `kids` (position), `history` (per-day records), and `today` (the
-date, the done map, the day's prayer selection, prompt shift, and counters).
+course pointer), `kids` (position), `settings` (the prayer parser, the reading
+translation, the memory translation), `history` (per-day records), and `today` (the
+date, the done map, the day's prayer selection, prompt shift, and counters). Secrets
+SHALL NOT live here: a reader's Bible API key stays in `localStorage` alone, so it is
+never mirrored to the artifact store.
 
 #### Scenario: Inspecting state
 
@@ -78,11 +81,20 @@ reconciled against today's date before the first render.
 ### Requirement: No Account, No Server, No Telemetry
 
 The app SHALL NOT require sign-in and SHALL NOT send a reader's prayer requests,
-journal entries, or progress anywhere except the store described above. The only
-outbound requests SHALL be for its own static assets and, where sampling is granted,
-the prayer-parsing request the reader initiates.
+journal entries, or progress anywhere except the store described above. Outbound
+requests SHALL be limited to its own static assets; where sampling is granted, the
+prayer-parsing request the reader initiates; and, when the reader has chosen a
+translation that is not the ASV, a request to that publisher's API carrying the
+passage reference and, for the ESV and the NLT, the reader's own key — nothing about
+them or their devotion.
 
 #### Scenario: Reading the network tab
 
-- **WHEN** a devotion is completed on the static site
+- **WHEN** a devotion is completed on the static site with the default translation
 - **THEN** the only requests are for the page, its fonts, and the books read
+
+#### Scenario: A chosen translation is fetched
+
+- **WHEN** the reader has chosen the ESV and opens the Read step
+- **THEN** the one request that leaves carries the passage reference and their key, and
+  the request is made only for the passage on screen
