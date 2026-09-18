@@ -27,6 +27,7 @@ No build step, no framework, no dependencies, no `npm install`. Edit the file, r
 web/index.html      the whole app
 web/bible/N.json    ASV text, one file per book (1–66): [chapter][verse] strings
 web/bible/books.json, tms.json   also inlined into index.html as <script type="application/json">
+web/favicon.*, *icon*.png, manifest.webmanifest   the brand mark as the page's icons
 web/*.test.mjs      node --test over the #region blocks lifted out of index.html
 web/wrangler.jsonc  Cloudflare Workers static-assets config (no Worker script)
 ```
@@ -54,6 +55,9 @@ bible loading and `parseRef` → per-feature logic → `render*` functions → `
 
 - No dependencies, no bundler, no `innerHTML` with untrusted text (use `h()` or
   `esc()`). The only external resources are the two Google fonts.
+- The Seek First lockup (crown + SEEKFIRST) is two inline `<symbol>`s filled with
+  `currentColor`, traced from `assets/icon.png` and `assets/header_wordmark.png`; the
+  header and the print masthead both `<use>` them. See `web/README.md`.
 - Wrap every `localStorage` access in try/catch — a blocked store must degrade to an
   in-memory session, never a broken page.
 - Theme: full light palette on bare `:root`, dark redefined under both

@@ -30,8 +30,39 @@ page is useful before any network request. No bundler, transpiler, framework, or
 
 - **WHEN** the page needs a resource from outside the file
 - **THEN** the only permitted ones are the Google Fonts stylesheet (Inter, Literata),
-  each with a real system fallback stack, and `bible/<book>.json` fetched from the
-  same origin
+  each with a real system fallback stack, and same-origin files the page names in its
+  own head or fetches by path: `bible/<book>.json`, the icon files, and
+  `manifest.webmanifest`
+
+### Requirement: The Brand Mark Identifies the App
+
+The header SHALL open with the Seek First lockup — the crown mark beside the
+SEEKFIRST wordmark — as inline SVG filled with `currentColor`, so one copy of the
+artwork serves both themes and stays sharp at any size. The crown and the wordmark
+SHALL be `<symbol>`s defined once in the page and drawn with `<use>`, so the print
+sheet's masthead reuses the same artwork. The page SHALL also carry the crown as its
+favicon (SVG, with an `.ico` fallback), as an Apple touch icon, and through
+`manifest.webmanifest`, whose icons include a maskable one that keeps the crown
+inside the 80% safe circle. The vector artwork is traced from `assets/icon.png` and
+`assets/header_wordmark.png` and keeps their proportions.
+
+#### Scenario: Reading in dark mode
+
+- **WHEN** the dark palette is in force
+- **THEN** the lockup is drawn in `--ink` like the text around it, with no second
+  image file and no request
+
+#### Scenario: Installing to a home screen
+
+- **WHEN** a reader adds the app to their home screen
+- **THEN** the manifest names it "Seek First" and supplies the pine crown at 192px,
+  512px, and 512px maskable, so no launcher crops the mark or renames the app
+
+#### Scenario: Printing the day
+
+- **WHEN** the print sheet renders
+- **THEN** its masthead shows the same lockup in black, drawn from the same symbols
+  the hidden header used
 
 ### Requirement: Hash Routing Between Four Views
 
