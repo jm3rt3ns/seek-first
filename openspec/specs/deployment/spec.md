@@ -19,7 +19,8 @@ SHALL match the existing Worker, or the deploy creates a second one alongside it
 #### Scenario: Deploying
 
 - **WHEN** `npx wrangler deploy` is run in `web/`
-- **THEN** `index.html` and `bible/*.json` are published as static assets
+- **THEN** `index.html`, `bible/*.json`, the icon files, and `manifest.webmanifest`
+  are published as static assets
 
 #### Scenario: Dashboard build settings
 

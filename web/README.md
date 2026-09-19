@@ -14,6 +14,9 @@ step-per-day calendar; `#print` lays the day out as a one-page printable sheet.
 - `bible/*.json` — ASV text per book, exported from `../assets/bible-sqlite.db`;
   `books.json` (names, chapter counts) and `tms.json` (the 60 Topical Memory
   System verses) are also inlined into the page.
+- `favicon.svg`, `favicon.ico`, `apple-touch-icon.png`, `icon-192.png`,
+  `icon-512.png`, `icon-maskable-512.png`, `manifest.webmanifest` — the brand
+  mark as the page's icons. See *The mark* below.
 
 ## Reading prayer notes
 
@@ -50,6 +53,23 @@ Run it locally from this folder with any static server, e.g.
 `python3 -m http.server 8765` and open <http://localhost:8765/>.
 State is kept in the browser's localStorage (or in the artifact's store when
 published as a claude.ai artifact).
+
+## The mark
+
+The crown and the SEEKFIRST wordmark in the header are one inline SVG. They are
+two `<symbol>`s near the top of `index.html`, traced with `potrace` from the
+brand art in `../assets/` — the crown from the white shape inside `icon.png`,
+the wordmark from the ink in `header_wordmark.png` — and laid out in the same
+proportions as `header.png`. They are filled with `currentColor`, so the light
+and dark palettes need only the one copy, and `#print` draws its masthead from
+the same two symbols.
+
+The icon files are the crown on the pine disc from `icon.png`, whose background
+is a linear gradient from `#122d23` to `#414d47`. `icon-maskable-512.png` is a
+full-bleed square with the crown scaled to sit inside the 80% safe circle
+Android masks to; `apple-touch-icon.png` is opaque, since iOS puts black behind
+transparency. Regenerating them means re-tracing from `../assets/` — nothing in
+the build or the page depends on it, and there is no build step to run.
 
 ## Deploying to Cloudflare
 
